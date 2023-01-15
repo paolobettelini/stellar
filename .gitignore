@@ -1,0 +1,30 @@
+# LuaLaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
+*.synctex(busy)
+*.dvi
+*.log
+*.log
+
+# Hyperref
+*.out
+
+# BibTeX
+*-blx.bib
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+
+# Lilypond
+tmp*.pdf
+
+# OS X
+.DS_Store
+
+# Rust
+target

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manim-web Examples</title>
+    <style>
+        body {
+            background-color: #161923;
+        }
+
+        h1 {
+            color: #c8c9db;
+        }
+
+        #content {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
+        <script src="load-pdfjs.js"></script>
+
+        <!-- Content -->
+
+        <h1>Fourier Transform</h1>
+
+        <canvas id="pdf1"></canvas>
+        <script>loadPDF('./fourier.pdf', 'pdf1');</script>
+
+        <div id="canvas-container"></div>
+        <script src="example.dart.js"></script>
+    </div>
+</body>
+</html>

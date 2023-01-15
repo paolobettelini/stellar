@@ -11,7 +11,7 @@ dart pub global activate webdev <br>
 manim_web init --directory manim_dart <br>
 cd manim_dart <br>
 # In pubspec.yaml mettere X altrimenti non va la "non-nullable" language feature <br>
-  sdk: ">=2.12.0 <3.0.0" <br>
+  sdk: ">=2.12.0 <3.0.0"> <br>
 dart pub upgrade manim_web <br>
 
 # Mettere il codice in example.dart  <br>
@@ -27,3 +27,7 @@ Nel file html mettere <br>
 
 <div id="canvas-container-1"></div> <br>
 <script src="example.dart.js"></script> <br>
+
+
+# Per settare il colore
+    camera.backgroundColor = Color(r: 0.0862745, g: 0.09804, b: 0.1372549, a: 1);
