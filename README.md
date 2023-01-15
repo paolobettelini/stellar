@@ -24,5 +24,6 @@ Serve solamente example.dart.js<br>
 # Per farlo funzionare dato il file example.dart.js <br>
 Nel file sostituire "canvas-container" con un nome univoco "canvas-container-1" <br>
 Nel file html mettere <br>
-    <div id="canvas-container-1"></div> <br>
-    <script src="example.dart.js"></script> <br>
+
+<div id="canvas-container-1"></div> <br>
+<script src="example.dart.js"></script> <br>
