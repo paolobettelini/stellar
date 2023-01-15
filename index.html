@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html class="js sidebar-visible">
     <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manim-web Examples</title>
+    <link rel="stylesheet" href="sidebar.css">
     <style>
         body {
             background-color: #161923;
@@ -15,10 +16,9 @@
         }
 
         #content {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: 40%;
+            display: grid;
+	        place-items: center;
+            padding-left: 300px; /* --sidebar-width */
         }
     </style>
 </head>
@@ -36,6 +36,24 @@
 
         <div id="canvas-container"></div>
         <script src="example.dart.js"></script>
+
     </div>
+
+
+    <div class="left-buttons">
+        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar" aria-expanded="true">
+            <i class="fa fa-bars"></i>
+            Ciaooo
+        </button>
+    </div>
+
+    <nav id="sidebar" class="sidebar" aria-label="Table of contents" aria-hidden="false">
+        <div class="sidebar-scrollbox">
+            <ol class="chapter"><li class="chapter-item expanded affix "><a href="title-page.html" class="active" tabindex="0">The Rust Programming Language</a></li><li class="chapter-item expanded affix "><a href="foreword.html" tabindex="0">Foreword</a></li><li class="chapter-item expanded affix "><a href="ch00-00-introduction.html" tabindex="0">Introduction</a></li><li class="chapter-item expanded "><a href="ch01-00-getting-started.html" tabindex="0"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01-installation.html" tabindex="0"><strong aria-hidden="true">1.1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="ch01-02-hello-world.html" tabindex="0"><strong aria-hidden="true">1.2.</strong> Hello, World!</a></li><li class="chapter-item expanded "></li></ol>
+        </div>
+        <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+    </nav>
+
+    <script src="sidebar.js"></script>
 </body>
 </html>
