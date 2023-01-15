@@ -7,9 +7,6 @@ if (document.body.clientWidth >= 1080) {
 html.classList.remove('sidebar-visible');
 html.classList.add("sidebar-" + sidebar);
 
-
-
-
 (function sidebar() {
     var html = document.querySelector("html");
     var sidebar = document.getElementById("sidebar");

@@ -37,9 +37,12 @@
         <div id="canvas-container"></div>
         <script src="example.dart.js"></script>
 
+        <canvas id="pdf2"></canvas>
+        <script>loadPDF('./category.pdf', 'pdf2');</script>
+
     </div>
 
-
+    <!-- Buttons -->
     <div class="left-buttons">
         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar" aria-expanded="true">
             <i class="fa fa-bars"></i>
@@ -47,6 +50,7 @@
         </button>
     </div>
 
+    <!-- Sidebar -->
     <nav id="sidebar" class="sidebar" aria-label="Table of contents" aria-hidden="false">
         <div class="sidebar-scrollbox">
             <ol class="chapter"><li class="chapter-item expanded affix "><a href="title-page.html" class="active" tabindex="0">The Rust Programming Language</a></li><li class="chapter-item expanded affix "><a href="foreword.html" tabindex="0">Foreword</a></li><li class="chapter-item expanded affix "><a href="ch00-00-introduction.html" tabindex="0">Introduction</a></li><li class="chapter-item expanded "><a href="ch01-00-getting-started.html" tabindex="0"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01-installation.html" tabindex="0"><strong aria-hidden="true">1.1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="ch01-02-hello-world.html" tabindex="0"><strong aria-hidden="true">1.2.</strong> Hello, World!</a></li><li class="chapter-item expanded "></li></ol>
