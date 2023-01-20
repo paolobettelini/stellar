@@ -1,0 +1,29 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{notepiece}[2023/01/01 Shrink TeX snippet]
+
+\RequirePackage{xcolor}
+\RequirePackage[active, tightpage]{preview}
+\RequirePackage{geometry}
+
+% cut the margins
+\geometry{
+    % set margins to zero
+    left=0mm,
+    right=0mm,
+    top=0mm,
+    bottom=0mm,
+    % reduce paperwidth to textwidth to avoid writing where the margins were
+    paperwidth=\the\textwidth
+}
+
+\pagenumbering{gobble}
+
+\AtBeginDocument{
+    \begin{preview}
+    \pagecolor[HTML]{161923}
+    \color[HTML]{c8c9db}
+}
+
+\AtEndDocument{
+    \end{preview}
+}

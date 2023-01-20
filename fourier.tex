@@ -4,21 +4,11 @@
 \usepackage{amssymb}
 \usepackage{parskip}
 \usepackage{hyperref}
-\usepackage{xcolor}
-\usepackage[tightpage, active]{preview}
-\usepackage[landscape]{geometry}
-
+\usepackage{fullpage}
 \usepackage{tikz}
 \usepackage{float}
 
-\geometry{
-    left=0mm,
-    right=0mm,
-    top=0mm,
-    bottom=0mm,
-}
-
-\pagenumbering{gobble}
+\usepackage{notepiece}
 
 \hypersetup{
     colorlinks=true,
@@ -31,15 +21,10 @@
 \newcommand{\integral}[4]{\int\limits_{#1}^{#2} #3\,d#4}
     
 \begin{document}
-\begin{preview}
-\pagecolor[HTML]{161923}
-\color[HTML]{c8c9db}
-\Huge
-
 
 \begin{minipage}{0.5\textwidth}
     \begin{tikzpicture}[
-        scale=3,
+        scale=2,
         declare function={
             func(\x) = \x*sin(\x r);
             Width=3;
@@ -85,7 +70,7 @@
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
     \begin{tikzpicture}[
-        scale=3,
+        scale=2,
         declare function={
             func(\x) = (\x+0.6)*sin((\x+0.6) r)-0.5;
             Width=3;
@@ -105,5 +90,4 @@
     \end{tikzpicture}
 \end{minipage}
 
-\end{preview}
 \end{document}
