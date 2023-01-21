@@ -35,8 +35,10 @@ fn main() {
 
     let preamble = &content[..begin_index_before];
 
-    let mut section_name: Option<&str> = None;
-    let mut section_type: Option<SectionType> = None;
+    let mut notes_list = vec![];
+
+    let mut section_name = None;
+    let mut section_type = None;
 
     let mut last_section_name = String::from("");
     let mut last_subsection_name = String::from("");
@@ -60,8 +62,8 @@ fn main() {
                 if !section_content.is_empty() {
                     // Construct filename as "<last_sec>-<last_subsec>-sec"
                     // Don't put dashed if not needed
-                    let file_name = format!(
-                        "{}{}{name}.tex",
+                    let note_name = format!(
+                        "{}{}{name}",
                         if section_type > SectionType::Section && !last_section_name.is_empty() {
                             format!("{last_section_name}-")
                         } else {
@@ -74,7 +76,8 @@ fn main() {
                         },
                     );
 
-                    println!("{}", &file_name);
+                    notes_list.push(note_name.clone());
+                    let file_name = format!("{note_name}.tex");
 
                     // Save file
                     let document = make_full_document(&preamble, &section_content);
@@ -113,6 +116,10 @@ fn main() {
         }
 
         current_index_start = section_index_end + section_separator_length;
+    }
+
+    for note_name in notes_list {
+        println!("{note_name}");
     }
 }
 

@@ -12,7 +12,7 @@ function loadPDF(url, canvasId) {
     // Fetch the first page
     let pageNumber = 1;
     pdf.getPage(pageNumber).then(function(page) {
-        let scale = 1.5;
+        let scale = 2.5;
         // This line breaks interactivity on the animation canvas
         let viewport = page.getViewport({scale: scale});
         // Prepare canvas using PDF page dimensions

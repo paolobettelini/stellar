@@ -11,7 +11,7 @@
             background-color: #161923;
         }
 
-        h1 {
+        h1, h2, h3, h4, h5, h6 {
             color: #c8c9db;
         }
 
@@ -29,16 +29,68 @@
 
         <!-- Content -->
 
-        <h1>Fourier Transform</h1>
+        <!--
+            <div id="canvas-container"></div>
+            <script src="example.dart.js"></script>
+        -->
 
-        <div id="canvas-container"></div>
-        <script src="example.dart.js"></script>
-
+        <h1>Definition</h1>
+        <h2>Tangent</h2>
         <canvas id="pdf1"></canvas>
-        <script>loadPDF('./fourier.pdf', 'pdf1');</script>
-
+        <script>loadPDF('./snippets/definition-tangent.pdf', 'pdf1');</script>
+        <h3>Subtangent</h3>
         <canvas id="pdf2"></canvas>
-        <script>loadPDF('./category.pdf', 'pdf2');</script>
+        <script>loadPDF('./snippets/definition-tangent-subtangent.pdf', 'pdf2');</script>
+        <h2>Derivative</h2>
+        <canvas id="pdf3"></canvas>
+        <script>loadPDF('./snippets/definition-derivative.pdf', 'pdf3');</script>
+        <h1>interpretation</h1>
+        <h2>Rate of Growth</h2>
+        <canvas id="pdf4"></canvas>
+        <script>loadPDF('./snippets/interpretation-rate-of-growth.pdf', 'pdf4');</script>
+        <h2>First derivative test</h2>
+        <canvas id="pdf5"></canvas>
+        <script>loadPDF('./snippets/interpretation-first-derivative-test.pdf', 'pdf5');</script>
+        <h2>Concavity</h2>
+        <canvas id="pdf6"></canvas>
+        <script>loadPDF('./snippets/interpretation-concavity.pdf', 'pdf6');</script>
+        <h2>Second derivative test</h2>
+        <canvas id="pdf7"></canvas>
+        <script>loadPDF('./snippets/interpretation-second-derivative-test.pdf', 'pdf7');</script>
+        <h1>Absolute Extrema</h1>
+        <canvas id="pdf8"></canvas>
+        <script>loadPDF('./snippets/absolute-extrema.pdf', 'pdf8');</script>
+        <h1>Rules for differentiation</h1>
+        <canvas id="pdf9"></canvas>
+        <script>loadPDF('./snippets/rules-for-differentiation.pdf', 'pdf9');</script>
+        <h1>L'Hopital's Rule</h1>
+        <canvas id="pdf10"></canvas>
+        <script>loadPDF('./snippets/hopital-rule.pdf', 'pdf10');</script>
+        <h1>Intermediate value theorem</h1>
+        <canvas id="pdf11"></canvas>
+        <script>loadPDF('./snippets/intermediate-value-theorem.pdf', 'pdf11');</script>
+        <h1>Bolzano Theorem</h1>
+        <canvas id="pdf12"></canvas>
+        <script>loadPDF('./snippets/bolzano-theorem.pdf', 'pdf12');</script>
+        <h1>Weierstrass Theorem</h1>
+        <canvas id="pdf13"></canvas>
+        <script>loadPDF('./snippets/weierstrass-theorem.pdf', 'pdf13');</script>
+        <h1>Rolle Theorem</h1>
+        <canvas id="pdf14"></canvas>
+        <script>loadPDF('./snippets/rolle-theorem.pdf', 'pdf14');</script>
+        <h1>Mean value theorem</h1>
+        <canvas id="pdf15"></canvas>
+        <script>loadPDF('./snippets/mean-value-theorem.pdf', 'pdf15');</script>
+        <h1>Chain rule</h1>
+        <h2>Definition</h2>
+        <canvas id="pdf16"></canvas>
+        <script>loadPDF('./snippets/chain-rule-definition.pdf', 'pdf16');</script>
+        <h2>Proof</h2>
+        <canvas id="pdf17"></canvas>
+        <script>loadPDF('./snippets/chain-rule-proof.pdf', 'pdf17');</script>
+        <h1>Differentials</h1>
+        <canvas id="pdf18"></canvas>
+        <script>loadPDF('./snippets/differentials.pdf', 'pdf18');</script>
 
     </div>
 
@@ -53,7 +105,32 @@
     <!-- Sidebar -->
     <nav id="sidebar" class="sidebar" aria-label="Table of contents" aria-hidden="false">
         <div class="sidebar-scrollbox">
-            <ol class="chapter"><li class="chapter-item expanded affix "><a href="title-page.html" class="active" tabindex="0">The Rust Programming Language</a></li><li class="chapter-item expanded affix "><a href="foreword.html" tabindex="0">Foreword</a></li><li class="chapter-item expanded affix "><a href="ch00-00-introduction.html" tabindex="0">Introduction</a></li><li class="chapter-item expanded "><a href="ch01-00-getting-started.html" tabindex="0"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01-installation.html" tabindex="0"><strong aria-hidden="true">1.1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="ch01-02-hello-world.html" tabindex="0"><strong aria-hidden="true">1.2.</strong> Hello, World!</a></li><li class="chapter-item expanded "></li></ol>
+            <ol class="chapter">
+                <li class="chapter-item expanded affix">
+                    <a href="title-page.html" class="active" tabindex="0">The Rust Programming Language</a>
+                </li>
+                <li class="chapter-item expanded affix ">
+                    <a href="foreword.html" tabindex="0">Foreword</a>
+                </li>
+                <li class="chapter-item expanded affix ">
+                    <a href="ch00-00-introduction.html" tabindex="0">Introduction</a>
+                </li>
+                <li class="chapter-item expanded ">
+                    <a href="ch01-00-getting-started.html" tabindex="0"><strong aria-hidden="true">1.</strong> Getting Started</a>
+                </li>
+                <li>
+                    <ol class="section">
+                        <li class="chapter-item expanded ">
+                            <a href="ch01-01-installation.html" tabindex="0"><strong aria-hidden="true">1.1.</strong>
+                                Installation</a>
+                        </li>
+                        <li class="chapter-item expanded ">
+                            <a href="ch01-02-hello-world.html" tabindex="0"><strong aria-hidden="true">1.2.</strong> Hello, World!</a>
+                        </li>
+                        <li class="chapter-item expanded "></li>
+                    </ol>
+                </li>
+            </ol>
         </div>
         <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
     </nav>
