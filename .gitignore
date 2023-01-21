@@ -28,3 +28,6 @@ tmp*.pdf
 
 # Rust
 target
+
+temp
+snippets
