@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::Path;
+use serde::Serialize;
 mod args;
 use args::*;
 
@@ -19,10 +20,17 @@ enum SectionType {
     Subsubsection = 3,
 }
 
+#[derive(Serialize)]
 struct NotePiece {
     level: u8,
     title: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     file: Option<String>
+}
+
+#[derive(Serialize)]
+struct Page {
+    notes: Vec<NotePiece>
 }
 
 fn main() {
@@ -47,11 +55,12 @@ fn main() {
 
     let mut notes_list = vec![];
 
-    let mut section_name = None;
+    let mut section_id = None;
     let mut section_type = None;
+    let mut section_name: Option<&str> = None;
 
-    let mut last_section_name = String::from("");
-    let mut last_subsection_name = String::from("");
+    let mut last_section_id = String::from("");
+    let mut last_subsection_id = String::from("");
 
     let mut current_index_start = begin_index_after;
     while let Some(section_length) = {
@@ -67,35 +76,46 @@ fn main() {
         let section_index_end = current_index_start + section_length;
         let section_content = &content[current_index_start..section_index_end].trim();
 
-        if let Some(name) = section_name {
+        if let Some(id) = section_id {
             if let Some(section_type) = section_type {
-                if section_content.is_empty() {
-                    // title without content
-                } else {
-                    // Construct filename as "<last_sec>-<last_subsec>-sec"
-                    // Don't put dashed if not needed
-                    let note_name = format!(
-                        "{}{}{}",
-                        if section_type > SectionType::Section && !last_section_name.is_empty() {
-                            format!("{last_section_name}-")
-                        } else {
-                            "".to_string()
-                        },
-                        if section_type > SectionType::Subsection && !last_section_name.is_empty() {
-                            format!("{last_subsection_name}-")
-                        } else {
-                            "".to_string()
-                        },
-                        name
-                    );
+                if let Some(section_name) = section_name {
+                    if section_content.is_empty() {
+                        notes_list.push(NotePiece {
+                            level: section_type as u8,
+                            file: None,
+                            title: section_name.to_owned(),
+                        });
+                    } else {
+                        // Construct filename as "<last_sec>-<last_subsec>-sec"
+                        // Don't put dashed if not needed
+                        let note_name = format!(
+                            "{}{}{}",
+                            if section_type > SectionType::Section && !last_section_id.is_empty() {
+                                format!("{last_section_id}-")
+                            } else {
+                                "".to_string()
+                            },
+                            if section_type > SectionType::Subsection && !last_section_id.is_empty() {
+                                format!("{last_subsection_id}-")
+                            } else {
+                                "".to_string()
+                            },
+                            id
+                        );
 
-                    notes_list.push(note_name.clone());
-                    let file_name = format!("{note_name}.tex");
+                        notes_list.push(NotePiece {
+                            level: section_type as u8,
+                            file: Some(note_name.clone()),
+                            title: section_name.to_owned(),
+                        });
 
-                    // Save file
-                    let document = make_full_document(&preamble, &section_content);
-                    fs::write(out_folder.join(file_name), document.as_bytes())
-                        .expect("Couldn't write to file");
+                        let file_name = format!("{note_name}.tex");
+
+                        // Save file
+                        let document = make_full_document(&preamble, &section_content);
+                        fs::write(out_folder.join(file_name), document.as_bytes())
+                            .expect("Couldn't write to file");
+                    }
                 }
             }
         }
@@ -103,8 +123,9 @@ fn main() {
         let remaining = &content[section_index_end..];
 
         // set next section name
-        section_name = get_section_name(remaining);
+        section_id = get_section_id(remaining);
         section_type = get_section_type(remaining);
+        section_name = get_section_name(remaining);
 
         // length of "\section{...}" and such
         let section_separator_length = remaining.find('\n');
@@ -116,13 +137,13 @@ fn main() {
 
         // set last_section_name and last_subsection_name
         if let Some(ref section_type) = section_type {
-            if let Some(section_name) = section_name {
+            if let Some(section_id) = section_id {
                 match section_type {
                     SectionType::Section => {
-                        last_section_name = section_name.to_string();
-                        last_subsection_name = String::from("");
+                        last_section_id = section_id.to_string();
+                        last_subsection_id = String::from("");
                     }
-                    SectionType::Subsection => last_subsection_name = section_name.to_string(),
+                    SectionType::Subsection => last_subsection_id = section_id.to_string(),
                     SectionType::Subsubsection => {}
                 }
             }
@@ -131,15 +152,17 @@ fn main() {
         current_index_start = section_index_end + section_separator_length;
     }
 
-    for note_name in notes_list {
-        println!("{note_name}");
-    }
+    let page = Page { notes: notes_list };
+    let json = serde_json::to_string(&page).unwrap();
+    println!("{json}");
 }
 
-/// Gets the section name from the
-/// % {name}
-/// comment, otherwise it constructs it from the section name
-fn get_section_name(content: &str) -> Option<&str> {
+/// \subsubsection{Hello} % custom-id
+/// -> "custom-id"
+/// 
+/// \subsection{World's Hello}
+/// -> "world-hello"
+fn get_section_id(content: &str) -> Option<&str> {
     let next_comment_index = content.find('%')?;
     let next_line_index = content.find('\n')?;
 
@@ -150,24 +173,28 @@ fn get_section_name(content: &str) -> Option<&str> {
         return Some(name.trim());
     }
 
-    /*
-    // Construct it from title value
-    let section_name_start = content.find('{')? + 1;
-    let section_name_end = content.find('}')?;
-    let section_name = &content[section_name_start..section_name_end];
-    // follow me (the cursor)
-    // come with me? uwu <3 :3? where when exact program please
-    // Zangio we have some borrowing issues
-    // Up there
-    // I LOVE INTERIOR MUTABILITY
-
-    Some(
+    // construct from section name
+    /*Some(
         section_name
             .replace('\'', "")
             .replace(' ', "-")
             .to_lowercase(),
     )*/
+
     None
+}
+
+/// \subsubsection{Hello} % custom-id
+/// -> "Hello"
+/// 
+/// \subsection{World's Hello}
+/// -> "World's Hello"
+fn get_section_name(content: &str) -> Option<&str> {
+    let section_name_start = content.find('{')? + 1;
+    let section_name_end = content.find('}')?;
+    let section_name = &content[section_name_start..section_name_end];
+
+    Some(section_name)
 }
 
 fn get_section_type(content: &str) -> Option<SectionType> {
