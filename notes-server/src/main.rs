@@ -34,24 +34,27 @@ pub fn get_routes(
 
             let response = json! ({
                 "notes": [
-                    { "name": "definition-tangent" },
-                    { "name": "definition-tangent-subtangent" },
-                    { "name": "definition-derivative" },
-                    { "name": "interpretation-rate-of-growth" },
-                    { "name": "interpretation-first-derivative-test" },
-                    { "name": "interpretation-concavity" },
-                    { "name": "interpretation-second-derivative-test" },
-                    { "name": "absolute-extrema" },
-                    { "name": "rules-for-differentiation" },
-                    { "name": "hopital-rule" },
-                    { "name": "intermediate-value-theorem" },
-                    { "name": "bolzano-theorem" },
-                    { "name": "weierstrass-theorem" },
-                    { "name": "rolle-theorem" },
-                    { "name": "mean-value-theorem" },
-                    { "name": "chain-rule-definition" },
-                    { "name": "chain-rule-proof" },
-                    { "name": "differentials" }
+                    { "title": "Definition", "level": 1 },
+                    { "title": "Tangent", "file": "definition-tangent", "level": 2},
+                    { "title": "Subtangent", "file": "definition-tangent-subtangent" , "level": 3},
+                    { "title": "Derivative", "file": "definition-derivative", "level": 2 },
+                    { "title": "Interpretation", "level": 1 },
+                    { "title": "Rate of Growth", "file": "interpretation-rate-of-growth", "level": 2 },
+                    { "title": "First Derivative Test", "file": "interpretation-first-derivative-test", "level": 2 },
+                    { "title": "Concavity", "file": "interpretation-concavity", "level": 2 },
+                    { "title": "Second Derivative Test", "file": "interpretation-second-derivative-test", "level": 2 },
+                    { "title": "Absolute Extrema", "file": "absolute-extrema", "level": 1 },
+                    { "title": "Rules for differentation", "file": "rules-for-differentiation", "level": 1 },
+                    { "title": "L'Hopital's Rule", "file": "hopital-rule", "level": 1 },
+                    { "title": "Intermediate value theorem", "file": "intermediate-value-theorem", "level": 1 },
+                    { "title": "Bolzano Theorem", "file": "bolzano-theorem", "level": 1 },
+                    { "title": "Weierstrass Theorem", "file": "weierstrass-theorem", "level": 1 },
+                    { "title": "Rolle Theorem", "file": "rolle-theorem", "level": 1 },
+                    { "title": "Mean Value Theorem", "file": "mean-value-theorem", "level": 1 },
+                    { "title": "Chain Rule", "level": 1 },
+                    { "title": "Definition", "file": "chain-rule-definition", "level": 2 },
+                    { "title": "Proof", "file": "chain-rule-proof", "level": 2 },
+                    { "title": "Differentials", "file": "differentials", "level": 1 }
                 ]
             });
 

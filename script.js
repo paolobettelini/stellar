@@ -25,18 +25,26 @@ function renderPage(pageName) {
     postData(`/page/${pageName}`)
         .then(page => {
             page.notes.forEach(note => {
-                renderPiece(note.name);
+                renderPiece(note);
             });
         });
 }
 
 var counter = 0;
-function renderPiece(noteName) {
-    let canvas = document.createElement('canvas');
-    let id = `pdf${++counter}`;
-    canvas.id = id;
+function renderPiece(note) {
+    let title = document.createElement(`h${note.level}`);
+    title.id = note.file;
+    let titleText = document.createTextNode(note.title);
+    title.appendChild(titleText);
 
-    container.appendChild(canvas);
+    container.appendChild(title);
 
-    loadPDF(`/note/${noteName}`, id);
+    if (note.file != undefined) {
+        let canvas = document.createElement('canvas');
+        let id = `pdf${++counter}`;
+        canvas.id = id;
+    
+        container.appendChild(canvas);
+        loadPDF(`/note/${note.file}`, id);
+    }
 }
