@@ -12,9 +12,6 @@ const SUBSUBSECTION: &str = r"\subsubsection{";
 const PAGEBREAK: &str = r"\pagebreak";
 const NEWPAGE: &str = r"\newpage";
 
-// compile everything in a directory
-// find . -type f -name "*.tex" -exec lualatex {} \;
-
 fn main() {
     let args = Args::parse();
 

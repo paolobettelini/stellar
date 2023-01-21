@@ -31,3 +31,10 @@ Nel file html mettere <br>
 
 # Per settare il colore
     camera.backgroundColor = Color(r: 0.0862745, g: 0.09804, b: 0.1372549, a: 1);
+
+# Per usare il mio programma
+```bash
+cargo run -- -i differentiation.tex -o snippets/
+cd snippets/
+find . -type f -name "*.tex" -exec lualatex {} \;
+```
