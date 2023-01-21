@@ -55,8 +55,8 @@ pub fn get_routes(
                     { "title": "Definition", "file": "chain-rule-definition", "level": 2 },
                     { "title": "Proof", "file": "chain-rule-proof", "level": 2 },
                     { "title": "Differentials", "file": "differentials", "level": 1 }
-                ]
-            });
+                ] 
+            }); 
 
             Response::builder()
                 .status(StatusCode::OK)

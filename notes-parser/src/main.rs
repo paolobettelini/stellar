@@ -12,6 +12,19 @@ const SUBSUBSECTION: &str = r"\subsubsection{";
 const PAGEBREAK: &str = r"\pagebreak";
 const NEWPAGE: &str = r"\newpage";
 
+#[derive(Debug, PartialEq, PartialOrd)]
+enum SectionType {
+    Section = 1,
+    Subsection = 2,
+    Subsubsection = 3,
+}
+
+struct NotePiece {
+    level: u8,
+    title: String,
+    file: Option<String>
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -56,11 +69,13 @@ fn main() {
 
         if let Some(name) = section_name {
             if let Some(section_type) = section_type {
-                if !section_content.is_empty() {
+                if section_content.is_empty() {
+                    // title without content
+                } else {
                     // Construct filename as "<last_sec>-<last_subsec>-sec"
                     // Don't put dashed if not needed
                     let note_name = format!(
-                        "{}{}{name}",
+                        "{}{}{}",
                         if section_type > SectionType::Section && !last_section_name.is_empty() {
                             format!("{last_section_name}-")
                         } else {
@@ -71,6 +86,7 @@ fn main() {
                         } else {
                             "".to_string()
                         },
+                        name
                     );
 
                     notes_list.push(note_name.clone());
@@ -100,7 +116,7 @@ fn main() {
 
         // set last_section_name and last_subsection_name
         if let Some(ref section_type) = section_type {
-            if let Some(ref section_name) = section_name {
+            if let Some(section_name) = section_name {
                 match section_type {
                     SectionType::Section => {
                         last_section_name = section_name.to_string();
@@ -120,13 +136,6 @@ fn main() {
     }
 }
 
-#[derive(Debug, PartialEq, PartialOrd)]
-enum SectionType {
-    Section = 1,
-    Subsection = 2,
-    Subsubsection = 3,
-}
-
 /// Gets the section name from the
 /// % {name}
 /// comment, otherwise it constructs it from the section name
@@ -134,13 +143,31 @@ fn get_section_name(content: &str) -> Option<&str> {
     let next_comment_index = content.find('%')?;
     let next_line_index = content.find('\n')?;
 
-    if next_line_index < next_comment_index {
-        return None;
+    // A comment % is specified
+    if next_line_index > next_comment_index {
+        let name = &content[next_comment_index + 1..next_line_index];
+
+        return Some(name.trim());
     }
 
-    let name = &content[next_comment_index + 1..next_line_index];
+    /*
+    // Construct it from title value
+    let section_name_start = content.find('{')? + 1;
+    let section_name_end = content.find('}')?;
+    let section_name = &content[section_name_start..section_name_end];
+    // follow me (the cursor)
+    // come with me? uwu <3 :3? where when exact program please
+    // Zangio we have some borrowing issues
+    // Up there
+    // I LOVE INTERIOR MUTABILITY
 
-    Some(name.trim())
+    Some(
+        section_name
+            .replace('\'', "")
+            .replace(' ', "-")
+            .to_lowercase(),
+    )*/
+    None
 }
 
 fn get_section_type(content: &str) -> Option<SectionType> {

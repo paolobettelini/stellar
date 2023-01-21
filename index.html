@@ -15,11 +15,16 @@
             color: #c8c9db;
         }
 
-        #content {
-            display: grid;
-	        place-items: center;
-            /* padding-left: 300px; --sidebar-width */
+        h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+            color: #c8c9db;
+            text-decoration: none;
         }
+
+        #content {
+            display: flex;
+            justify-content: center;
+        }
+
     </style>
 </head>
 <body>
@@ -27,6 +32,7 @@
     <script src="load-pdfjs.js"></script>
 
     <div id="content">
+        <div id="inner-content">
 
         <!-- Content -->
 
@@ -34,7 +40,7 @@
             <div id="canvas-container"></div>
             <script src="example.dart.js"></script>
         -->
-
+        <div>
     </div>
 
     <script src="script.js"></script>

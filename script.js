@@ -18,7 +18,7 @@ async function postData(url = '', data = {}) {
     return await response.json();
 }
 
-let container = document.getElementById('content');
+let container = document.getElementById('inner-content');
 renderPage('anything-goes');
 
 function renderPage(pageName) {
@@ -32,10 +32,15 @@ function renderPage(pageName) {
 
 var counter = 0;
 function renderPiece(note) {
+    // <h1 id="page"><a href="#page">Title</a></h1>
+    // l'<a> non va
     let title = document.createElement(`h${note.level}`);
     title.id = note.file;
     let titleText = document.createTextNode(note.title);
-    title.appendChild(titleText);
+    let link = document.createElement('a');
+    link.href = `#${title.id}`;
+    link.appendChild(titleText);
+    title.appendChild(link);
 
     container.appendChild(title);
 
