@@ -19,7 +19,7 @@ async function postData(url = '', data = {}) {
 }
 
 let container = document.getElementById('inner-content');
-renderPage('anything-goes');
+renderPage('differentiation');
 
 function renderPage(pageName) {
     postData(`/page/${pageName}`)
@@ -37,10 +37,7 @@ function renderPiece(note) {
     let title = document.createElement(`h${note.level}`);
     title.id = note.file;
     let titleText = document.createTextNode(note.title);
-    let link = document.createElement('a');
-    link.href = `#${title.id}`;
-    link.appendChild(titleText);
-    title.appendChild(link);
+    title.appendChild(titleText);
 
     container.appendChild(title);
 
