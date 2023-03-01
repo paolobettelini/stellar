@@ -6,8 +6,8 @@ CHange "note" to "snippet"
 
 Angular:
 npm install -g @angular/cli
-ng new pdfviewtest # no Routing
-cd pdfviewtest
+ng new pdfviewtest2 # no Routing
+cd pdfviewtest2
 npm install ng2-pdf-viewer
 
 ng build # will create dist/

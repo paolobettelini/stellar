@@ -33,7 +33,7 @@ function renderPage(pageName) {
 var counter = 0;
 function renderPiece(note) {
     // <h1 id="page"><a href="#page">Title</a></h1>
-    // l'<a> non va
+    // l'<a> non va perché lo genera dopo
     let title = document.createElement(`h${note.level}`);
     title.id = note.file;
     let titleText = document.createTextNode(note.title);
@@ -43,10 +43,23 @@ function renderPiece(note) {
 
     if (note.file != undefined) {
         let canvas = document.createElement('canvas');
-        let id = `pdf${++counter}`;
-        canvas.id = id;
+        
+        let textLayer = document.createElement('div');
+        //textLayer.classList.add('text-layer');
+
+        let wrapper = document.createElement('div');
+        wrapper.classList.add('wrapper');
+        wrapper.style.position = 'relative';
+
+        ++counter;
+        let canvasId = `pdf${counter}`;
+        let textLayerId = `tl${counter}`;
+        canvas.id = canvasId;
+        textLayer.id = textLayerId;
     
-        container.appendChild(canvas);
-        loadPDF(`/note/${note.file}`, id);
+        wrapper.appendChild(canvas);
+        wrapper.appendChild(textLayer);
+        container.appendChild(wrapper);
+        loadPDF(`/note/${note.file}`, canvasId, textLayerId);
     }
 }
