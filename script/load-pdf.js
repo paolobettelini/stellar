@@ -10,8 +10,9 @@ function loadPDF(url, canvasId, textLayerId) {
     loadingTask.promise.then(function(pdf) {
         // Fetch the first page
         let pageNumber = 1;
+        let scale = 2.5;
         pdf.getPage(pageNumber).then(function(page) {
-            let scale = 2.5;
+            document.querySelector(':root').style.setProperty('--scale-factor', scale);
 
             // This line breaks interactivity on the animation canvas
             let viewport = page.getViewport({scale: scale});
@@ -21,8 +22,6 @@ function loadPDF(url, canvasId, textLayerId) {
             
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            //canvas.style.width = `${(viewport.width * displayWidth) / scale}px`;
-            //canvas.style.width = `${(viewport.height * displayWidth) / scale}px`;
 
             // Render PDF page into canvas context
             var renderContext = {
@@ -35,19 +34,19 @@ function loadPDF(url, canvasId, textLayerId) {
             // Render text
             page.getTextContent().then(function(textContent) {
                 // Render text layer
-                let textLayer = document.getElementById(textLayerId);
-
+                let textLayerDiv = document.getElementById(textLayerId);
+                
                 let height = canvas.height;
                 let width = canvas.width;
 
-                textLayer.style.width = width;
-                textLayer.style.height = height;
-                textLayer.style.left = canvas.offsetLeft;
-                textLayer.style.top = canvas.offsetTop;
+                textLayerDiv.style.width = width;
+                textLayerDiv.style.height = height;
+                textLayerDiv.style.left = canvas.offsetLeft;
+                textLayerDiv.style.top = canvas.offsetTop;
 
                 pdfjsLib.renderTextLayer({
                     textContentSource: textContent,
-                    container: textLayer,
+                    container: textLayerDiv,
                     viewport: viewport,
                     textDivs: []
                 });

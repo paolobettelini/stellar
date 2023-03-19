@@ -1,7 +1,6 @@
 "use strict";
 
-// TODO make dynamic using window.location
-const API_URL = 'http://localhost:8080';
+const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
 
 async function postData(url = '', data = {}) {
     url = API_URL + url;
@@ -19,6 +18,8 @@ async function postData(url = '', data = {}) {
 }
 
 let container = document.getElementById('inner-content');
+
+// Hardcoded action
 renderPage('differentiation');
 
 function renderPage(pageName) {
@@ -41,11 +42,12 @@ function renderPiece(note) {
 
     container.appendChild(title);
 
+    console.log(note.file)
     if (note.file != undefined) {
         let canvas = document.createElement('canvas');
         
         let textLayer = document.createElement('div');
-        //textLayer.classList.add('text-layer');
+        textLayer.classList.add('textLayer');
 
         let wrapper = document.createElement('div');
         wrapper.classList.add('wrapper');
