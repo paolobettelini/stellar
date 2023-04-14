@@ -38,7 +38,3 @@ cargo run -- -i differentiation.tex -o snippets/
 cd snippets/
 find . -type f -name "*.tex" -exec lualatex {} \;
 ```
-
-
-# Renderer:
-https://www.npmjs.com/package/ng2-pdf-viewer

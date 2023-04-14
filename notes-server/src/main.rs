@@ -9,9 +9,9 @@ use warp::{
 #[tokio::main]
 async fn main() {
     start_service(
-        &"/home/paolo/Scrivania/github/notes-v2/",
-        &"/home/paolo/Scrivania/github/notes-v2/data/snippets",
-        &"/home/paolo/Scrivania/github/notes-v2/data/pages",
+        &"/home/paolo/Desktop/notes-v2/",
+        &"/home/paolo/Desktop/notes-v2/data/snippets",
+        &"/home/paolo/Desktop/notes-v2/data/pages",
         &"0.0.0.0",
         8080u16,
     )

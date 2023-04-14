@@ -3,11 +3,3 @@ sidebar
 generazione json
 get_section_id deve usare get_section_name se il commento non c'è
 CHange "note" to "snippet"
-
-Angular:
-npm install -g @angular/cli
-ng new pdfviewtest2 # no Routing
-cd pdfviewtest2
-npm install ng2-pdf-viewer
-
-ng build # will create dist/
