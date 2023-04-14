@@ -1,0 +1,24 @@
+{
+    "notes":[
+        {
+            "level": 1,
+            "title": "Rate of Growth",
+            "file": "differentiation-interpretation-rate-of-growth"
+        },
+        {
+            "level": 1,
+            "title": "First Derivative Test",
+            "file": "differentiation-interpretation-first-derivative-test"
+        },
+        {
+            "level": 1,
+            "title": "Concavity",
+            "file": "differentiation-interpretation-concavity"
+        },
+        {
+            "level": 1,
+            "title": "Second Derivative Test",
+            "file": "differentiation-interpretation-second-derivative-test"
+        }
+    ]
+}

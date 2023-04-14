@@ -29,5 +29,5 @@ tmp*.pdf
 # Rust
 target
 
-temp
+source
 snippets

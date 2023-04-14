@@ -1,6 +1,6 @@
+use serde::Serialize;
 use std::fs;
 use std::path::Path;
-use serde::Serialize;
 mod args;
 use args::*;
 
@@ -25,12 +25,12 @@ struct NotePiece {
     level: u8,
     title: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    file: Option<String>
+    file: Option<String>,
 }
 
 #[derive(Serialize)]
 struct Page {
-    notes: Vec<NotePiece>
+    notes: Vec<NotePiece>,
 }
 
 fn main() {
@@ -38,15 +38,18 @@ fn main() {
 
     let out_folder = Path::new(&args.output);
 
-    let mut content = fs::read_to_string(args.input)
+    let mut content = fs::read_to_string(&args.input)
         .unwrap()
         .replace(PAGEBREAK, "")
         .replace(NEWPAGE, "");
 
+    let filename = String::from(args.input.to_string_lossy());
+    let file_id = name_to_id(&strip_filename(&filename));
+
     let mut begin_index_before = content.find(BEGIN_DOCUMENT).unwrap();
     let mut begin_index_after = begin_index_before + BEGIN_DOCUMENT.len();
 
-    // load "notepiece" as last in the preamble
+    // load "notepiece.sty" as last in the preamble
     content.insert_str(begin_index_before, NOTEPIECE_PACKAGE);
     begin_index_before += NOTEPIECE_PACKAGE.len();
     begin_index_after += NOTEPIECE_PACKAGE.len();
@@ -95,13 +98,16 @@ fn main() {
                             } else {
                                 "".to_string()
                             },
-                            if section_type > SectionType::Subsection && !last_section_id.is_empty() {
+                            if section_type > SectionType::Subsection && !last_section_id.is_empty()
+                            {
                                 format!("{last_subsection_id}-")
                             } else {
                                 "".to_string()
                             },
                             id
                         );
+
+                        let note_name = format!("{file_id}-{note_name}");
 
                         notes_list.push(NotePiece {
                             level: section_type as u8,
@@ -126,8 +132,6 @@ fn main() {
         section_id = get_section_id(remaining);
         section_type = get_section_type(remaining);
         section_name = get_section_name(remaining);
-
-        println!("{:?}", &section_id);
 
         // length of "\section{...}" and such
         let section_separator_length = remaining.find('\n');
@@ -155,13 +159,13 @@ fn main() {
     }
 
     let page = Page { notes: notes_list };
-    let json = serde_json::to_string(&page).unwrap();
+    let json = serde_json::to_string_pretty(&page).unwrap();
     println!("{json}");
 }
 
 /// \subsubsection{Hello} % custom-id
 /// -> "custom-id"
-/// 
+///
 /// \subsection{World's Hello}
 /// -> "world-hello"
 fn get_section_id(content: &str) -> Option<String> {
@@ -174,7 +178,7 @@ fn get_section_id(content: &str) -> Option<String> {
             // A comment % is specified
             if next_line_index > next_comment_index {
                 let name = &content[next_comment_index + 1..next_line_index];
-        
+
                 return Some(name.trim().to_owned());
             }
         }
@@ -183,19 +187,21 @@ fn get_section_id(content: &str) -> Option<String> {
     // Construct from section name
     let section_name = get_section_name(content)?;
 
-    Some(
-        section_name
-            .replace("\'s", "")
-            .replace('\'', "")
-            .replace(' ', "-")
-            .replace("ô", "o")
-            .to_lowercase(),
-    )
+    Some(name_to_id(section_name))
+}
+
+fn name_to_id(value: &str) -> String {
+    value
+        .replace("\'s", "")
+        .replace('\'', "")
+        .replace(' ', "-")
+        .replace("ô", "o") // maybe remove this
+        .to_lowercase()
 }
 
 /// \subsubsection{Hello} % custom-id
 /// -> "Hello"
-/// 
+///
 /// \subsection{World's Hello}
 /// -> "World's Hello"
 fn get_section_name(content: &str) -> Option<&str> {
@@ -226,4 +232,17 @@ fn make_full_document(preamble: &str, section: &str) -> String {
 {section}
 \end{{document}}"
     )
+}
+
+// "/path/to/Document.tex" -> "Document"
+fn strip_filename(path: &str) -> String {
+    let mut components: Vec<&str> = path.split('/').collect();
+    if let Some(last_component) = components.pop() {
+        let mut filename = last_component.to_string();
+        if let Some(dot_idx) = filename.rfind('.') {
+            filename.truncate(dot_idx);
+        }
+        return filename;
+    }
+    panic!("File name could not be retrieved")
 }

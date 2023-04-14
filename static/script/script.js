@@ -21,7 +21,7 @@ async function postData(url = '', data = {}) {
 let container = document.getElementById('inner-content');
 
 // Hardcoded action
-renderCourse('analysis');
+renderCourse('analysis', 'limits-definition');
 
 function renderCourse(courseName, pageToRender = undefined) {
     postData(`/course/${courseName}`)
@@ -36,6 +36,9 @@ function renderCourse(courseName, pageToRender = undefined) {
 }
 
 function renderPage(pageName) {
+    container.innerHTML = '';
+    console.log("Rendering page: " + pageName);
+
     postData(`/page/${pageName}`)
         .then(page => {
             page.notes.forEach(note => {
@@ -85,4 +88,8 @@ function addPageToNavbar(title, level, file) {
     el.classList.add(`nav-title-level-${level}`);
     el.innerHTML = title; // Allow HTML tags
     navbarContent.appendChild(el);
+
+    el.onclick = _ => {
+        renderPage(file);
+    }
 }
