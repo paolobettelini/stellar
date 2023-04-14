@@ -1,5 +1,5 @@
 let navbarWidth = 200;
-const navbar = document.getElementById('navbar');
+let navbar = document.getElementById('navbar');
 /*let isResizing = false;
 const navbarToggle = document.getElementById('navbar-toggle');
 const resizeHandle = document.getElementById('resize-handle');

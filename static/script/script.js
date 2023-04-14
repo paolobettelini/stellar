@@ -1,6 +1,7 @@
 "use strict";
 
 const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
+let navbarContent = document.getElementById('navbar-content');
 
 async function postData(url = '', data = {}) {
     url = API_URL + url;
@@ -20,7 +21,19 @@ async function postData(url = '', data = {}) {
 let container = document.getElementById('inner-content');
 
 // Hardcoded action
-renderPage('differentiation');
+renderCourse('analysis');
+
+function renderCourse(courseName, pageToRender = undefined) {
+    postData(`/course/${courseName}`)
+        .then(course => {
+            course.pages.forEach(page => {
+                addPageToNavbar(page.title, page.level, page.file);
+            });
+
+            let page = pageToRender || course.pages[0].file;
+            renderPage(page);
+        });
+}
 
 function renderPage(pageName) {
     postData(`/page/${pageName}`)
@@ -64,4 +77,12 @@ function renderPiece(note) {
         container.appendChild(wrapper);
         loadPDF(`/note/${note.file}`, canvasId, textLayerId);
     }
+}
+
+function addPageToNavbar(title, level, file) {
+    let el = document.createElement(`span`);
+    el.classList.add('nav-title')
+    el.classList.add(`nav-title-level-${level}`);
+    el.innerHTML = title; // Allow HTML tags
+    navbarContent.appendChild(el);
 }

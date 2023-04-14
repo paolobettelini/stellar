@@ -28,7 +28,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     position: fixed;
     top: 0;
     left: 0;
-    width: 10vw;
+    width: 200px;
     height: 100%;
     background-color: #2c2d41;
     padding: 20px;
@@ -39,7 +39,6 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 #navbar-content {
     display: flex;
     flex-direction: column;
-    gap: 15px;
 }
 
 #navbar a {
@@ -47,7 +46,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     text-decoration: none;
 }
 
-#resize-handle {
+/*#resize-handle {
     position: absolute;
     top: 0;
     right: -5px;
@@ -55,23 +54,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     height: 100%;
     cursor: ew-resize;
     z-index: 200;
-}
-
-#navbar-toggle {
-    position: absolute;
-    left: 13vw;
-    top: 10px;
-    width: 2.5vw;
-    height: 2.5vw;
-    display: flex;
-    cursor: pointer;
-    z-index: 200;
-    transition: transform 0.3s ease-in-out;
-}
-
-#navbar-toggle.retracted {
-    transform: translateX(-12.5vw); /* 10 + 2.5 width */
-}
+}*/
 
 /* Navbar Animation */
 #navbar.retracted {
@@ -88,4 +71,36 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 #navbar-toggle.retracted span:last-child {
     transform: rotate(-45deg) translate(5px, -5px);
+}
+
+.nav-title {
+    color: #c8c9db;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    font-family: "Open Sans", sans-serif, monospace;
+}
+
+.nav-title:hover {
+    color: #286f96;
+}
+
+.nav-title-level-2 {
+    margin-left: 25px;
+}
+
+.nav-title-level-5 {
+    margin-left: 50px;
+}
+
+#navbar-toggle {
+    position: fixed;
+    left: 250px;
+    top: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    cursor: pointer;
+    z-index: 200;
+    transition: transform 0.3s ease-in-out;
 }
