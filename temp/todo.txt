@@ -1,5 +1,3 @@
 Controllare che i pdf generati siano UGUALI ai pdf grandi (sembrano diversi)
-sidebar
-generazione json
-get_section_id deve usare get_section_name se il commento non c'è
+
 CHange "note" to "snippet"

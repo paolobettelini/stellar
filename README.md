@@ -34,7 +34,7 @@ Nel file html mettere <br>
 
 # Per usare il mio programma
 ```bash
-cargo run -- -i differentiation.tex -o snippets/
-cd snippets/
-find . -type f -name "*.tex" -exec lualatex {} \;
+cargo run -- -i ../data/source/Differentiation.tex -o ../data/snippets/
+cd ../data/snippets/
+find . -type f -name "*.tex" -exec tectonic {} \;
 ```

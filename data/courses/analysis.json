@@ -6,7 +6,7 @@
         },
         {
             "level": 2,
-            "title": "<b>1.1</b>Definition",
+            "title": "<b>1.1</b> Definition",
             "file": "limits-definition"
         },
         {
@@ -30,65 +30,65 @@
         },
         {
             "level": 2,
-            "title": "<b>2.1</b> Interpretation",
+            "title": "<b>2.2</b> Interpretation",
             "file": "differentiation-interpretation"
         },
         {
             "level": 1,
-            "title": "<b>2.1</b> Indefinite Integrals"
+            "title": "<b>3.</b> Indefinite Integrals"
         },
         {
             "level": 2,
-            "title": "<b>2.1</b> Definition",
+            "title": "<b>3.1</b> Definition",
             "file": "integration-indefinite-integrals-definition"
         },
         {
             "level": 2,
-            "title": "<b>2.1</b> Properties",
+            "title": "<b>3.2</b> Properties",
             "file": "integration-indefinite-integrals-properties"
         },
         {
             "level": 2,
-            "title": "<b>2.1</b> Substitution Rule",
+            "title": "<b>3.3</b> Substitution Rule",
             "file": "integration-indefinite-integrals-substitution-rule"
         },
         {
             "level": 2,
-            "title": "<b>2.1</b> Integration By Parts",
+            "title": "<b>3.4</b> Integration By Parts",
             "file": "integration-indefinite-integrals-integration-by-parts"
         },
         {
             "level": 1,
-            "title": "Definite Integrals"
+            "title": "<b>4.</b> Definite Integrals"
           },
           {
             "level": 2,
-            "title": "Area Problem",
+            "title": "<b>4.1</b> Area Problem",
             "file": "integration-definite-integrals-area-problem"
           },
           {
             "level": 2,
-            "title": "Definition",
+            "title": "<b>4.2</b> Definition",
             "file": "integration-definite-integrals-definition"
           },
           {
             "level": 2,
-            "title": "Properties",
+            "title": "<b>4.3</b> Properties",
             "file": "integration-definite-integrals-properties"
           },
           {
             "level": 2,
-            "title": "Fundamental Theorem of Calculus",
+            "title": "<b>4.4</b> Fundamental Theorem of Calculus",
             "file": "integration-definite-integrals-fundamental-theorem-of-calculus"
           },
           {
             "level": 2,
-            "title": "Functions",
+            "title": "<b>4.5</b> Functions",
             "file": "integration-definite-integrals-functions"
           },
           {
             "level": 2,
-            "title": "Volume of solid revolutions",
+            "title": "<b>4.6</b> Volume of solid revolutions",
             "file": "integration-volume-of-solid-revolutions"
           }
     ]
