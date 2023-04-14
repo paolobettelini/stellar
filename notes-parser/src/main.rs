@@ -76,7 +76,7 @@ fn main() {
         let section_index_end = current_index_start + section_length;
         let section_content = &content[current_index_start..section_index_end].trim();
 
-        if let Some(id) = section_id {
+        if let Some(ref id) = &section_id {
             if let Some(section_type) = section_type {
                 if let Some(section_name) = section_name {
                     if section_content.is_empty() {
@@ -127,6 +127,8 @@ fn main() {
         section_type = get_section_type(remaining);
         section_name = get_section_name(remaining);
 
+        println!("{:?}", &section_id);
+
         // length of "\section{...}" and such
         let section_separator_length = remaining.find('\n');
         let section_separator_length = if let Some(v) = section_separator_length {
@@ -137,7 +139,7 @@ fn main() {
 
         // set last_section_name and last_subsection_name
         if let Some(ref section_type) = section_type {
-            if let Some(section_id) = section_id {
+            if let Some(ref section_id) = section_id {
                 match section_type {
                     SectionType::Section => {
                         last_section_id = section_id.to_string();
@@ -162,26 +164,33 @@ fn main() {
 /// 
 /// \subsection{World's Hello}
 /// -> "world-hello"
-fn get_section_id(content: &str) -> Option<&str> {
-    let next_comment_index = content.find('%')?;
-    let next_line_index = content.find('\n')?;
+fn get_section_id(content: &str) -> Option<String> {
+    let next_comment_index = content.find('%');
+    let next_line_index = content.find('\n');
 
-    // A comment % is specified
-    if next_line_index > next_comment_index {
-        let name = &content[next_comment_index + 1..next_line_index];
-
-        return Some(name.trim());
+    // Try reading the comment
+    if let Some(next_comment_index) = next_comment_index {
+        if let Some(next_line_index) = next_line_index {
+            // A comment % is specified
+            if next_line_index > next_comment_index {
+                let name = &content[next_comment_index + 1..next_line_index];
+        
+                return Some(name.trim().to_owned());
+            }
+        }
     }
 
-    // construct from section name
-    /*Some(
+    // Construct from section name
+    let section_name = get_section_name(content)?;
+
+    Some(
         section_name
+            .replace("\'s", "")
             .replace('\'', "")
             .replace(' ', "-")
+            .replace("ô", "o")
             .to_lowercase(),
-    )*/
-
-    None
+    )
 }
 
 /// \subsubsection{Hello} % custom-id

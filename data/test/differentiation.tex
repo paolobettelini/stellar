@@ -27,9 +27,9 @@
 \tableofcontents
 \pagebreak
 
-\section{Definition} % definition
+\section{Definition}
 
-\subsection{Tangent} % tangent
+\subsection{Tangent}
 
 \begin{minipage}{0.5\textwidth}
     \begin{tikzpicture}[
@@ -99,11 +99,11 @@
     \end{tikzpicture}
 \end{minipage}
 
-\subsubsection{Subtangent} %subtangent
+\subsubsection{Subtangent}
 
 This is the subtangent
 
-\subsection{Derivative} % derivative
+\subsection{Derivative}
 
 The derivative of a function \(f(x)\) is another function \(f'(x)\) which
 represents the rate of change of \(f(x)\). In other words, \(f'(x)\)
@@ -155,9 +155,9 @@ Using the derivative, the tangent line at \(x=a\) is given by
     y=f'(a)(x-a) + f(a)
 \]
 
-\section{Interpretation} % interpretation
+\section{Interpretation}
 
-\subsection{Rate of Growth} % rate-of-growth
+\subsection{Rate of Growth}
 
 Since the derivative \(f'(x)\) represents the rate of change of \(f(x)\),
 assuming that \(f(a)\) is defined.
@@ -178,7 +178,7 @@ and decreases iff
     \forall x_1, x_2 \in I f(x_1) > f(x_2)
 \]
 
-\subsection{First Derivative Test} % first-derivative-test
+\subsection{First Derivative Test}
 
 A critical point \(f'(c)=0\) does not generally imply that \(x=c\) is a minimum or a maximum. 
 
@@ -190,7 +190,7 @@ Let \(f(x)\) be critical at \(x=c\)
 \end{itemize}
 A function may also change sign when it is undefined.
 
-\subsection{Concavity} % concavity
+\subsection{Concavity}
 
 \begin{minipage}{0.5\textwidth}
     \begin{tikzpicture}[
@@ -239,7 +239,7 @@ A function may also change sign when it is undefined.
 An \textbf{inflection point} is a point where the function is continuous and the concavity at that point changes.
 Hence, when \(f''(x)\) changes sign we have an inflection point.
 
-\subsection{Second Derivative Test} % second-derivative-test
+\subsection{Second Derivative Test}
 
 Suppose that \(x=c\) is a critical point of \(f(x)\) such that \(f'(x)=0\)
 and that \(f''(x)\) is continuous around \(x=c\).
@@ -249,14 +249,14 @@ and that \(f''(x)\) is continuous around \(x=c\).
     \item If \(f''(x)=0\) then \(x=c\) could be a maximum, minimum or neither.
 \end{itemize}
 
-\section{Absolute Extrema} % absolute-extrema
+\section{Absolute Extrema}
 
 When looking for an absolute extrema in a function \(f(x)\), asking when
 \(f'(x)=0\) is not enough since the function may not be continuous and have a maxima at a discontinuity point.
 
 \pagebreak
 
-\section{Rules for differentiation} % rules-for-differentiation
+\section{Rules for differentiation}
 
 \[
     \frac{d}{dx}(n)=0
@@ -294,7 +294,7 @@ When looking for an absolute extrema in a function \(f(x)\), asking when
     \frac{d}{dx}(f^g)=f^g\left(\frac{f'g}{f}+g'\ln f\right)
 \]
 
-\section{L'Hôpital Rule} % hopital-rule
+\section{L'Hôpital Rule}
 
 Given the function \(f(x)\) and \(g(x)\) which are differentiable in an open interval \(I\) except
 possibly at \(x=c\), if
@@ -309,30 +309,30 @@ if such limit exists.
 
 \pagebreak
 
-\section{Intermediate value Theorem} % intermediate-value-theorem
+\section{Intermediate value Theorem}
 
 A function \(f\) continuous on an interval \([a;b]\) will take
 every value in the interval \([f(a);f(b)]\).
 
-\section{Bolzano's Theorem} % bolzano-theorem
+\section{Bolzano's Theorem}
 
 If \(f(x)\) is continuous on \([a;b]\) and \(f(a)\cdot f(b) <0\) then there is a root.
 \[
     f(a)\cdot f(b) <0 \implies \exists c \in [a;b] \mid f(c) = 0
 \]
 
-\section{Weierstrass Theorem} % weierstrass-theorem
+\section{Weierstrass Theorem}
 
 If \(f(x)\) is continuous in \([a;b]\) then the function will have a maxima and a minima.
 
-\section{Rolle's Theorem} % rolle-theorem
+\section{Rolle's Theorem}
 Suppose that \(f(x)\) is continuous on \([a;b]\) and differentiable on \((a;b)\).
 \[
     f(a)=f(b) \implies \exists \,c \,|\, f'(c) = 0, \quad
     a < c < b
 \]
 
-\section{Mean Value Theorem} % mean-value-theorem
+\section{Mean Value Theorem}
 
 Suppose \(f(x)\) is a function continuous on \([a;b]\) and
 differentiable on \((a;b)\), there there exist a number \(c\) such that
@@ -379,9 +379,9 @@ differentiable on \((a;b)\), there there exist a number \(c\) such that
 
 \pagebreak
 
-\section{Chain Rule} % chain-rule
+\section{Chain Rule}
 
-\subsection{Definition} % definition
+\subsection{Definition}
 
 If \(z\) depends on \(y\), and \(y\) depends on \(x\), then \(z\) also depends on \(x\).
 \[
@@ -392,7 +392,7 @@ which is equivalent to
     \frac{d}{dx}(f(g(x)))=f'(g(x))\cdot g'(x)
 \]
 
-\subsection{Proof} % proof
+\subsection{Proof}
 
 Assuming that \(z\) and \(y\) are differentiable in \(x\)
 
@@ -425,7 +425,7 @@ As \(\Delta x \to 0\) also \(\Delta y \to 0\), so we can replace \(\Delta x\) wi
     &= \frac{dz}{dy} \cdot \frac{dy}{dx}
 \end{align*}
 
-\section{Differentials} % differentials
+\section{Differentials}
 
 Given a function \(y = f(x)\) we call \(dy\) and \(dx\) differentials and their relationship is
 \[
