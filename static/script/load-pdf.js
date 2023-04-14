@@ -11,7 +11,7 @@ function loadPDF(url, canvasId, textLayerId, postRender = function () {}) {
     loadingTask.promise.then(function(pdf) {
         // Fetch the first page
         let pageNumber = 1;
-        let scale = 2.5;
+        let scale = 2.75;
 
         pdf.getPage(pageNumber).then(function(page) {
             document.querySelector(':root').style.setProperty('--scale-factor', scale);

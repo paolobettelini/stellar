@@ -2,6 +2,11 @@ body {
     background-color: #161923;
 }
 
+:root {
+    --sidebar-width: 400px;
+}
+  
+
 h1, h2, h3, h4, h5, h6 {
     color: #c8c9db;
 }
@@ -14,7 +19,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 #content {
     display: flex;
     justify-content: center;
-    margin-left: 10vw; /* Set the initial margin for the sidebar width */
+    margin-left: var(--sidebar-width);
     transition: margin-left 0.3s ease-in-out; /* Add a transition for smooth animation */
 }
 
@@ -28,7 +33,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     position: fixed;
     top: 0;
     left: 0;
-    width: 400px;
+    width: var(--sidebar-width);
     height: 100%;
     background-color: #2c2d41;
     padding: 20px;
@@ -39,8 +44,8 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 }
 
 #navbar-toggle {
-    position: fixed;
-    left: 350px;
+    position: relative;
+    right: 30px;
     top: 10px;
     width: 40px;
     height: 40px;
@@ -73,18 +78,6 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 /* Navbar Animation */
 #navbar.retracted {
     transform: translateX(-100%);
-}
-
-#navbar-toggle.retracted span:first-child {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-#navbar-toggle.retracted span:nth-child(2) {
-    opacity: 0;
-}
-
-#navbar-toggle.retracted span:last-child {
-    transform: rotate(-45deg) translate(5px, -5px);
 }
 
 .nav-title {
