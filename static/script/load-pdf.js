@@ -5,12 +5,14 @@ var pdfjsLib = window['pdfjs-dist/build/pdf'];
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
 // Asynchronous download of PDF
-function loadPDF(url, canvasId, textLayerId) {
+function loadPDF(url, canvasId, textLayerId, postRender = function () {}) {
     let loadingTask = pdfjsLib.getDocument(url);
+
     loadingTask.promise.then(function(pdf) {
         // Fetch the first page
         let pageNumber = 1;
         let scale = 2.5;
+
         pdf.getPage(pageNumber).then(function(page) {
             document.querySelector(':root').style.setProperty('--scale-factor', scale);
 
@@ -29,7 +31,8 @@ function loadPDF(url, canvasId, textLayerId) {
                 viewport: viewport
             };
             var renderTask = page.render(renderContext);
-            renderTask.promise.then(function () {});
+
+            renderTask.promise.then(postRender);
 
             // Render text
             page.getTextContent().then(function(textContent) {
@@ -56,4 +59,6 @@ function loadPDF(url, canvasId, textLayerId) {
         // PDF loading error
         console.error(reason);
     });
+
+    return loadingTask;
 }

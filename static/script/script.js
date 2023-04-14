@@ -58,7 +58,6 @@ function renderPiece(note) {
 
     container.appendChild(title);
 
-    console.log(note.file)
     if (note.file != undefined) {
         let canvas = document.createElement('canvas');
         
@@ -78,7 +77,12 @@ function renderPiece(note) {
         wrapper.appendChild(canvas);
         wrapper.appendChild(textLayer);
         container.appendChild(wrapper);
-        loadPDF(`/note/${note.file}`, canvasId, textLayerId);
+        loadPDF(`/note/${note.file}`, canvasId, textLayerId,
+            () => {
+                // Apply filter
+                applyFilter(canvas, "#161923");
+            });
+
     }
 }
 
