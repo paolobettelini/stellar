@@ -61,8 +61,6 @@ function renderPage(pageName) {
                     `<div id="wrapper${index}"></div>`);
             });
 
-            console.log(content)
-
             // parse everything
             container.innerHTML = content;
             

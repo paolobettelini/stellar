@@ -1,40 +1,5 @@
-Per creare animazioni: <br>
-avere latex installato <br>
-installare dart <br>
-sudo pacman -S dart <br>
-dart pub global activate manim_web <br>
-# Se non c'è già <br>
-export PATH="$PATH":"$HOME/.pub-cache/bin" <br>
-# Siccome non trova il comando pub fai a mano dart pub <br>
-dart pub global activate webdev <br>
- <br>
-manim_web init --directory manim_dart <br>
-cd manim_dart <br>
-# In pubspec.yaml mettere X altrimenti non va la "non-nullable" language feature <br>
-  sdk: ">=2.12.0 <3.0.0"> <br>
-dart pub upgrade manim_web <br>
+# A modular website for education and notes
+Very early stage
 
-# Mettere il codice in example.dart  <br>
-manimweb dev --file src/example.dart --html src/example.html <br>
-# Per buildare staticamente <br>
-webdev build -o web:build <br>
-# Buildando l'animazione può essere fatta servendo build/  <br>
-Serve solamente example.dart.js<br>
-
-# Per farlo funzionare dato il file example.dart.js <br>
-Nel file sostituire "canvas-container" con un nome univoco "canvas-container-1" <br>
-Nel file html mettere <br>
-
-<div id="canvas-container-1"></div> <br>
-<script src="example.dart.js"></script> <br>
-
-
-# Per settare il colore
-    camera.backgroundColor = Color(r: 0.0862745, g: 0.09804, b: 0.1372549, a: 1);
-
-# Per usare il mio programma
-```bash
-cargo run -- -i ../data/source/Differentiation.tex -o ../data/snippets/
-cd ../data/snippets/
-find . -type f -name "*.tex" -exec tectonic {} \;
-```
+# Progress so far
+![preview](https://cdn.discordapp.com/attachments/834802337381744660/1096902948681953350/page.mp4)
