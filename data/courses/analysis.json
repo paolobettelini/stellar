@@ -1,95 +1,23 @@
 {
     "pages": [
-        {
-            "level": 1,
-            "title": "<b>1.</b> Limits"
-        },
-        {
-            "level": 2,
-            "title": "<b>1.1</b> Definition",
-            "file": "limits-definition"
-        },
-        {
-            "level": 2,
-            "title": "<b>1.2</b> Infinite limits",
-            "file": "limits-infinite-limits-and-limits-at-infinity"
-        },
-        {
-            "level": 2,
-            "title": "<b>1.3</b> Squeeze Theorem",
-            "file": "limits-squeeze-theorem"
-        },
-        {
-            "level": 1,
-            "title": "<b>2.</b> Differentiation"
-        },
-        {
-            "level": 2,
-            "title": "<b>2.1</b> Definition",
-            "file": "differentiation-definition"
-        },
-        {
-            "level": 2,
-            "title": "<b>2.2</b> Interpretation",
-            "file": "differentiation-interpretation"
-        },
-        {
-            "level": 1,
-            "title": "<b>3.</b> Indefinite Integrals"
-        },
-        {
-            "level": 2,
-            "title": "<b>3.1</b> Definition",
-            "file": "integration-indefinite-integrals-definition"
-        },
-        {
-            "level": 2,
-            "title": "<b>3.2</b> Properties",
-            "file": "integration-indefinite-integrals-properties"
-        },
-        {
-            "level": 2,
-            "title": "<b>3.3</b> Substitution Rule",
-            "file": "integration-indefinite-integrals-substitution-rule"
-        },
-        {
-            "level": 2,
-            "title": "<b>3.4</b> Integration By Parts",
-            "file": "integration-indefinite-integrals-integration-by-parts"
-        },
-        {
-            "level": 1,
-            "title": "<b>4.</b> Definite Integrals"
-          },
-          {
-            "level": 2,
-            "title": "<b>4.1</b> Area Problem",
-            "file": "integration-definite-integrals-area-problem"
-          },
-          {
-            "level": 2,
-            "title": "<b>4.2</b> Definition",
-            "file": "integration-definite-integrals-definition"
-          },
-          {
-            "level": 2,
-            "title": "<b>4.3</b> Properties",
-            "file": "integration-definite-integrals-properties"
-          },
-          {
-            "level": 2,
-            "title": "<b>4.4</b> Fundamental Theorem of Calculus",
-            "file": "integration-definite-integrals-fundamental-theorem-of-calculus"
-          },
-          {
-            "level": 2,
-            "title": "<b>4.5</b> Functions",
-            "file": "integration-definite-integrals-functions"
-          },
-          {
-            "level": 2,
-            "title": "<b>4.6</b> Volume of solid revolutions",
-            "file": "integration-volume-of-solid-revolutions"
-          }
+        [1, "<b>1.</b> Limits"],
+        [2, "<b>1.</b> Limits", "limits-definition"],
+        [2, "<b>1.2</b> Infinite limits Limits", "limits-infinite-limits-and-limits-at-infinity"],
+        [2, "<b>1.3</b> Squeeze Theorem", "limits-squeeze-theorem"],
+        [1, "<b>2.</b> Differentiation"],
+        [2, "<b>2.1</b> Definition", "differentiation-definition"],
+        [2, "<b>2.2</b> Interpretation", "differentiation-interpretation"],
+        [1, "<b>3.</b> Indefinite Integrals"],
+        [2, "<b>3.1</b> Definition", "integration-indefinite-integrals-definition"],
+        [2, "<b>3.2</b> Properties", "integration-indefinite-integrals-properties"],
+        [2, "<b>3.3</b> Substitution Rule", "integration-indefinite-integrals-substitution-rule"],
+        [2, "<b>3.4</b> Integration By Parts", "integration-indefinite-integrals-integration-by-parts"],
+        [1, "<b>4.</b> Definite Integrals"],
+        [2, "<b>4.1</b> Area Problem", "integration-definite-integrals-area-problem"],
+        [2, "<b>4.2</b> Definition", "integration-definite-integrals-definition"],
+        [2, "<b>4.3</b> Properties", "integration-definite-integrals-properties"],
+        [2, "<b>4.4</b> Fundamental Theorem of Calculus", "integration-definite-integrals-fundamental-theorem-of-calculus"],
+        [2, "<b>4.5</b> Functions", "integration-definite-integrals-functions"],
+        [2, "<b>4.6</b> Volume of solid revolutions", "integration-volume-of-solid-revolutions"]
     ]
 }

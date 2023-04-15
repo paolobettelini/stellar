@@ -52,14 +52,14 @@ pub fn get_routes(
         warp::path!("page" / String)
             .and(warp::post())
             .then(move |page: String| async move {
-                let file_name = format!("{page}.json");
+                let file_name = format!("{page}.html");
                 println!("Reading file: {file_name:?}");
                 let file = &pages_path.join(file_name);
                 let content = std::fs::read_to_string(file).unwrap();
 
                 Response::builder()
                     .status(StatusCode::OK)
-                    .header("Content-Type", "application/json")
+                    .header("Content-Type", "text/html; charset=utf-8")
                     .body(content)
                     .unwrap()
             });
