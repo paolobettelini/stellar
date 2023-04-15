@@ -19,6 +19,7 @@ function loadPDF(url, canvasId, textLayerId, postRender = function () {}) {
             // This line breaks interactivity on the animation canvas
             let viewport = page.getViewport({scale: scale});
             // Prepare canvas using PDF page dimensions
+
             let canvas = document.getElementById(canvasId);
             let context = canvas.getContext('2d');
             

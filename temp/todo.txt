@@ -1,3 +1,5 @@
 Controllare che i pdf generati siano UGUALI ai pdf grandi (sembrano diversi)
 
 CHange "note" to "snippet"
+
+ma se c'è un \pagebreak nel mezzo di una section?

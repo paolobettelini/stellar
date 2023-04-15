@@ -43,16 +43,23 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     max-height: 100vh;
 }
 
+/* Navbar Animation */
+#navbar.retracted {
+    transform: translateX(-10%);
+}
+
 #navbar-toggle {
-    position: relative;
-    right: 30px;
+    position: fixed;
+    left: calc(var(--sidebar-width) + 50px);
     top: 10px;
     width: 40px;
     height: 40px;
-    display: flex;
     cursor: pointer;
     z-index: 200;
-    transition: transform 0.3s ease-in-out;
+}
+
+#navbar-toggle.retracted {
+    transform: translateX(-100%);
 }
 
 #navbar-content {
@@ -74,11 +81,6 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     cursor: ew-resize;
     z-index: 200;
 }*/
-
-/* Navbar Animation */
-#navbar.retracted {
-    transform: translateX(-100%);
-}
 
 .nav-title {
     color: #c8c9db;

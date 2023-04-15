@@ -17,11 +17,16 @@ function applyFilter(canvas, hexColor) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-        const alpha = data[i + 3];
 
-        data[i] = r < diffR ? 255 - v1 * r : r - diffR;
-        data[i+1] = g < diffG ? 255 - v2 * g : g - diffG;
-        data[i+2] = b < diffB ? 255 - v3 * b : b - diffB;
+        if (r == g && g == b && b != 255) {
+            data[i] = 255 - r;
+            data[i+1] = 255 - g;
+            data[i+2] = 255 - b;
+        } else {
+            data[i] = r < diffR ? 255 - v1 * r : r - diffR;
+            data[i+1] = g < diffG ? 255 - v2 * g : g - diffG;
+            data[i+2] = b < diffB ? 255 - v3 * b : b - diffB;
+        }
     }
 
     // Put the modified image data back onto the canvas
