@@ -1,5 +1,7 @@
-let navbarWidth = 200;
+let navbarWidth = 400;
 let navbar = document.getElementById('navbar');
+let content = document.getElementById('content');
+
 /*let isResizing = false;
 const navbarToggle = document.getElementById('navbar-toggle');
 const resizeHandle = document.getElementById('resize-handle');
@@ -21,6 +23,5 @@ document.addEventListener('mouseup', function() {
 
 document.getElementById('navbar-toggle').addEventListener('click', function() {
     navbar.classList.toggle('retracted');
-    document.getElementById('navbar-toggle').classList.toggle('retracted');
-    document.getElementById('content').classList.toggle('retracted');
+    content.classList.toggle('retracted');
 });

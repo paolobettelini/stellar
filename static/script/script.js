@@ -1,7 +1,9 @@
 "use strict";
 
 const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
+
 let navbarContent = document.getElementById('navbar-content');
+let currentPage = undefined;
 
 async function postData(url = '', data = {}) {
     url = API_URL + url;
@@ -39,6 +41,13 @@ function renderCourse(courseName, pageToRender = undefined) {
 function renderPage(pageName) {
     //container.innerHTML = ''; // only for the JSON version
     console.log("Rendering page: " + pageName);
+
+    // Toggle active class (color)
+    if (currentPage != undefined) {
+        currentPage.classList.remove('active')
+    }
+    currentPage = document.getElementById(`nav-title-${pageName}`);
+    currentPage.classList.add('active')
 
     postData(`/page/${pageName}`)
         .then(v => v.text())
@@ -105,16 +114,18 @@ function extractSnippetNames(content) {
     return values;
 }
 
-function addPageToNavbar(level, title, file) {
+function addPageToNavbar(level, title, page) {
     let el = document.createElement(`span`);
     el.classList.add('nav-title')
     el.classList.add(`nav-title-level-${level}`);
+    el.id = `nav-title-${page}`;
+
     el.innerHTML = title; // Allow HTML tags
     navbarContent.appendChild(el);
 
-    if (file != undefined) {
+    if (page != undefined) {
         el.onclick = _ => {
-            renderPage(file);
+            renderPage(page);
         }
     }
 }
