@@ -2,4 +2,4 @@
 Very early stage
 
 # Progress so far
-![preview](https://imgur.com/a/6DWNeGf)
+![preview](https://i.imgur.com/m1UK7ZY.gif)
