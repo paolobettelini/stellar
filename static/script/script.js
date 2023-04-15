@@ -112,7 +112,9 @@ function addPageToNavbar(level, title, file) {
     el.innerHTML = title; // Allow HTML tags
     navbarContent.appendChild(el);
 
-    el.onclick = _ => {
-        renderPage(file);
+    if (file != undefined) {
+        el.onclick = _ => {
+            renderPage(file);
+        }
     }
 }
