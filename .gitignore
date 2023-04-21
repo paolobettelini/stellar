@@ -29,5 +29,4 @@ tmp*.pdf
 # Rust
 target
 
-source
-snippets
+data
