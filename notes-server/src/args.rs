@@ -16,30 +16,14 @@ pub struct Args {
     pub port: u16,
 
     /// WWW static files folder
-    #[arg(short = 'w', long)]
+    #[arg(short, long)]
     pub www: PathBuf,
 
-    /// Courses folder
-    #[arg(short = 'c', long)]
-    pub courses: PathBuf,
-
-    /// Pages folder
-    #[arg(short = 'p', long)]
-    pub pages: PathBuf,
-
-    /// Snippets folder
-    #[arg(short = 's', long)]
-    pub snippets: PathBuf,
+    /// Data folder
+    #[arg(short, long)]
+    pub data: PathBuf,
 }
 
 fn default_address() -> IpAddr {
     IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0))
 }
-
-macro_rules! path_str {
-    ($v:expr) => {
-        String::from($v.to_string_lossy())
-    };
-}
-
-pub(crate) use path_str;

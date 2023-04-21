@@ -12,12 +12,7 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
-    let routes = handler::get_routes(
-        &CONFIG.www,
-        &CONFIG.snippets,
-        &CONFIG.pages,
-        &CONFIG.courses,
-    );
+    let routes = handler::get_routes(&CONFIG.www, &CONFIG.data);
 
     warp::serve(routes).run((CONFIG.address, CONFIG.port)).await;
 }
