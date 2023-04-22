@@ -2,6 +2,9 @@
 
 const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
 
+// Hardcoded action
+renderCourse('analysis', 'limits-definition');
+
 let navbarContent = document.getElementById('navbar-content');
 let currentPage = undefined;
 
@@ -22,9 +25,6 @@ async function postData(url = '', data = {}) {
 
 let container = document.getElementById('inner-content');
 
-// Hardcoded action
-renderCourse('analysis', 'limits-definition');
-
 function renderCourse(courseName, pageToRender = undefined) {
     postData(`/course/${courseName}`)
         .then(v => v.json())
@@ -39,7 +39,6 @@ function renderCourse(courseName, pageToRender = undefined) {
 }
 
 function renderPage(pageName) {
-    //container.innerHTML = ''; // only for the JSON version
     console.log("Rendering page: " + pageName);
 
     // Toggle active class (color)
@@ -63,6 +62,10 @@ function renderPage(pageName) {
 
             // parse everything
             container.innerHTML = content;
+
+            // Does not work
+            //let col2 = document.querySelector(':root').style.getPropertyValue('--col2');
+            //console.log(col2);
             
             // Retrieve the snippet wrapper via getElementById
             snippets.forEach((snippetName, index) => {                
@@ -85,7 +88,9 @@ function renderPage(pageName) {
                 loadPDF(`/note/${snippetName}`, canvasId, textLayerId,
                     () => {
                         // Apply filter
-                        applyFilter(canvas, "#161923");
+                        //if (col2 != "#FFFFFF") {
+                            applyFilter(canvas, "#161923");
+                        //}
                     });
             });
         });

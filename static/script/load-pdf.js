@@ -4,6 +4,9 @@ var pdfjsLib = window['pdfjs-dist/build/pdf'];
 // The workerSrc property shall be specified.
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
+//console.log(PDFViewerApplication);
+//pdfjsLib.preferences.set('enableWebGL', true)
+
 // Asynchronous download of PDF
 function loadPDF(url, canvasId, textLayerId, postRender = function () {}) {
     let loadingTask = pdfjsLib.getDocument(url);
