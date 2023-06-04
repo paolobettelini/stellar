@@ -1,5 +1,6 @@
 # Progress so far
-![preview](https://i.imgur.com/m1UK7ZY.gif)
+
+https://github.com/paolobettelini/notes-v2/assets/59686810/4fd20827-c80c-477b-b0d3-f3f16391a0ff
 
 # How to use
 Compile everything
