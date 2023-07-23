@@ -29,4 +29,11 @@ tmp*.pdf
 # Rust
 target
 
+# WASM
+dist
+pkg
+
+# npm
+node_modules
+
 data
