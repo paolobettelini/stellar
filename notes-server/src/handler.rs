@@ -49,12 +49,12 @@ pub fn get_routes(
             });
 
     let snippet_api =
-        warp::path!("note" / String)
+        warp::path!("snippet" / String)
             .and(warp::get())
             .then(move |snippet: String| async move {
                 let file_name = format!("{snippet}.pdf");
                 println!("Reading file: {file_name:?}");
-                let file = &snippets_path.join("snippets").join(file_name);
+                let file = &snippets_path.join("snippets").join(&snippet).join(file_name);
                 let content = std::fs::read(file).unwrap();
 
                 Response::builder()

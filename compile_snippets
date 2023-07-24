@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Change directory to "data/snippets"
+cd data/snippets || exit 1
+
+# Loop through each subdirectory and compile
+for folder in */; do
+    if [ -d "$folder" ]; then
+        cd "$folder" || continue
+        tectonic *.tex -Z search-path=../../../packages/
+        cd ..
+    fi
+done

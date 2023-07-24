@@ -85,7 +85,7 @@ function renderPage(pageName) {
             
                 wrapper.appendChild(canvas);
                 wrapper.appendChild(textLayer);
-                loadPDF(`/note/${snippetName}`, canvasId, textLayerId,
+                loadPDF(`/snippet/${snippetName}`, canvasId, textLayerId,
                     () => {
                         // Apply filter
                         //if (col2 != "#FFFFFF") {

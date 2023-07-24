@@ -38,15 +38,16 @@ fn draw_circle(draw: &Draw, x: f32, y: f32, r: f32) {
     }
 }
 
-pub async fn run_app(model: Model) {
+pub async fn run_app(container_id: String) {
     // Since ModelFn is not a closure we need this workaround to pass the calculated model
     thread_local!(static MODEL: RefCell<Option<Model>> = Default::default());
 
+    let model = Model {};
     MODEL.with(|m| m.borrow_mut().replace(model));
 
-    app::Builder::new_async(|app| {
+    app::Builder::new_async(move |app| {
         Box::new(async move {
-            create_window(app).await;
+            create_window(app, &container_id).await;
             MODEL.with(|m| m.borrow_mut().take().unwrap())
         })
     })
@@ -56,7 +57,7 @@ pub async fn run_app(model: Model) {
         .await;
 }
 
-async fn create_window(app: &App) {
+async fn create_window(app: &App, container_id: &str) {
     let device_desc = DeviceDescriptor {
         limits: Limits {
             max_texture_dimension_2d: 8192,
@@ -78,7 +79,7 @@ async fn create_window(app: &App) {
         // .mouse_wheel(mouse_wheel)
         // .touch(touch)
         .view(view)
-        .build_async()
+        .build_async(Some(container_id))
         //.event(event)
         .await
         .unwrap();

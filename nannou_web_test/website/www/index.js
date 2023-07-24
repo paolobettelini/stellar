@@ -1,3 +1,7 @@
 import { main_web } from 'frontend'
 
-main_web(500, 500);
+setTimeout(() => {
+    main_web("container1");
+    console.log("lesgo");
+   // main_web("container2");
+}, 2000);

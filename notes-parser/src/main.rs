@@ -45,7 +45,9 @@ fn main() {
         if let Some(tex) = snippet.tex {
             let filename = format!("{}.tex", snippet.id);
     
-            fs::write(snippets_dir.join(filename), tex)
+            let dir = snippets_dir.join(snippet.id);
+            create_if_necessary(&dir);
+            fs::write(dir.join(filename), tex)
                 .expect("Couldn't write to file");
         }
     }
