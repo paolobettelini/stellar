@@ -7,7 +7,7 @@
 
     --col1: black; /* Text */
     --col2: white; /* Background */
-    --col3: rgb(193, 193, 193); /* Nav Background */
+    --col3: rgb(225, 225, 225); /* Nav Background */
     --col4: blue; /* Colored Text */
 }
 
@@ -110,13 +110,31 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     width: calc(90% - var(--sidebar-width));
     background-color: var(--col2);
     transition: width 0.3s ease-in-out;
+    border-bottom: 2px solid var(--col1);
+    /**/
+    display: flex;
+    justify-content: space-between;
+  }
+  
+#top-bar-icons {
+    flex: 1;
+    display: flex; align-items: center;
 }
+  
+#top-bar-title {
+    flex: 50;
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+    opacity: 0.5;
+}
+  
 
 #top-bar.retracted {
     width: 80%;
 }
 
-#navbar-toggle {
+#top-bar-icons i {
     opacity: 70%;
     transition: opacity 0.1s ease;
     width: 40px;

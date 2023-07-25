@@ -3,7 +3,7 @@
 const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
 
 // Hardcoded action
-renderCourse('analysis', 'limits-definition');
+renderCourse('Analysis', 'differentiation-definition-tangent');
 
 let navbarContent = document.getElementById('navbar-content');
 let currentPage = undefined;
@@ -24,6 +24,7 @@ async function postData(url = '', data = {}) {
 }
 
 let container = document.getElementById('inner-content');
+let topBarTitle = document.getElementById('top-bar-title');
 
 function renderCourse(courseName, pageToRender = undefined) {
     postData(`/course/${courseName}`)
@@ -32,6 +33,8 @@ function renderCourse(courseName, pageToRender = undefined) {
             course.pages.forEach(page => {
                 addPageToNavbar(page[0], page[1], page[2]);
             });
+
+            topBarTitle.innerText = course.title;
 
             let page = pageToRender || course.pages[0].file;
             renderPage(page);
@@ -108,18 +111,18 @@ function renderPage(pageName) {
                             } else if (contentType == 'text/html') {
                                 const decoder = new TextDecoder();
                                 let content = decoder.decode(buffer);
+
                                 wrapper.innerHTML = content;
+                                // TODO
+                                // Typeset with MathJax
+                                // https://stackoverflow.com/questions/36224691/typeset-render-dynamic-content-with-mathjax
                             }
                         });
                     });
 
-                // TODO
-                // Typeset with MathJax
-                // https://stackoverflow.com/questions/36224691/typeset-render-dynamic-content-with-mathjax
-                /*wrapper.onload = () => {
-                    MathJax.typeset();
-                }*/
             });
+
+
         });
 }
 
