@@ -112,6 +112,13 @@ function renderPage(pageName) {
                             }
                         });
                     });
+
+                // TODO
+                // Typeset with MathJax
+                // https://stackoverflow.com/questions/36224691/typeset-render-dynamic-content-with-mathjax
+                /*wrapper.onload = () => {
+                    MathJax.typeset();
+                }*/
             });
         });
 }

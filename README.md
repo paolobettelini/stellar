@@ -68,3 +68,6 @@ The primary file has one of the following forms:
 - `<id>.png`
 The snippet folder may contain other files that will be requested by the main file.
 These files can be accessed using the route `/snippet/<id>/<file>`.
+
+## static
+The route `/<file>` retrieves a static file.
