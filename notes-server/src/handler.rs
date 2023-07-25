@@ -53,25 +53,12 @@ pub fn get_routes(
             .and(warp::get())
             .then(move |snippet: String| async move {
                 let dir = &snippets_path.join("snippets").join(&snippet);
-                
-                let (file_name, content_type) = {
-                    // Check if PDF file exists
-                    let file = dir.join(format!("{snippet}.pdf"));
-                    if file.exists() {
-                        (file, "application/pdf")
-                    } else {
-                        // Check if HTML file exists
-                        let file = dir.join(format!("{snippet}.html"));
-                        if file.exists() {
-                            (file, "text/html")
-                        } else {
-                            panic!("Not found :(");
-                        }
-                    }
-                };
 
-                println!("Reading file: {file_name:?}");
-                let content = std::fs::read(file_name).unwrap();
+                let (file, content_type) =
+                    get_snippet_file_and_content_type(&dir, &snippet).unwrap();
+
+                println!("Reading file: {file:?}");
+                let content = std::fs::read(file).unwrap();
 
                 Response::builder()
                     .status(StatusCode::OK)
@@ -80,7 +67,43 @@ pub fn get_routes(
                     .unwrap()
             });
 
-    let routes = snippet_api.or(page_api).or(course_api).or(static_files);
+    let snippet_complementary_file_api = warp::path!("snippet" / String / String)
+        .and(warp::get())
+        .then(move |snippet: String, file_name: String| async move {
+            let file = &snippets_path
+                .join("snippets")
+                .join(&snippet)
+                .join(&file_name);
+
+            let content = std::fs::read(file).unwrap();
+
+            Response::builder()
+                .status(StatusCode::OK)
+                .header("Content-Type", "TODOTODO")
+                .body(content)
+                .unwrap()
+        });
+
+    let routes = snippet_api
+        .or(snippet_complementary_file_api)
+        .or(page_api)
+        .or(course_api)
+        .or(static_files);
 
     routes
+}
+
+/// Returns path of the main file and its content type
+fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathBuf, &'static str)> {
+    let types = [("pdf", "application/pdf"), ("html", "text/html")];
+
+    for &(ext, content_type) in &types {
+        // Check if (e.g. snippet.pdf) exists
+        let file = dir.join(format!("{}.{}", snippet, ext));
+        if file.exists() {
+            return Some((file, content_type));
+        }
+    }
+
+    None
 }
