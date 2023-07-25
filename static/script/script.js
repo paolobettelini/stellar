@@ -3,7 +3,7 @@
 const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
 
 // Hardcoded action
-renderCourse('Analysis', 'differentiation-definition-tangent');
+renderCourse('Analysis');
 
 let navbarContent = document.getElementById('navbar-content');
 let currentPage = undefined;
@@ -36,7 +36,7 @@ function renderCourse(courseName, pageToRender = undefined) {
 
             topBarTitle.innerText = course.title;
 
-            let page = pageToRender || course.pages[0].file;
+            let page = pageToRender || course.pages[0][2];
             renderPage(page);
         });
 }
@@ -160,5 +160,7 @@ function addPageToNavbar(level, title, page) {
         el.onclick = _ => {
             renderPage(page);
         }
+    } else {
+        el.classList.add('empty-nav-title');
     }
 }
