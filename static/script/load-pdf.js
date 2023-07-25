@@ -8,8 +8,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 //pdfjsLib.preferences.set('enableWebGL', true)
 
 // Asynchronous download of PDF
-function loadPDF(url, canvasId, textLayerId, postRender = function () {}) {
-    let loadingTask = pdfjsLib.getDocument(url);
+function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
+    let loadingTask = pdfjsLib.getDocument(buffer);
 
     loadingTask.promise.then(function(pdf) {
         // Fetch the first page

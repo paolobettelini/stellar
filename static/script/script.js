@@ -73,24 +73,40 @@ function renderPage(pageName) {
                 wrapper.classList.add('wrapper');
                 wrapper.style.position = 'relative';
     
-                let canvas = document.createElement('canvas');
-                
-                let textLayer = document.createElement('div');
-                textLayer.classList.add('textLayer');
+                fetch(`/snippet/${snippetName}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Request failed with status: ' + response.status);
+                        }
 
-                let canvasId = `pdf${index}`;
-                let textLayerId = `tl${index}`;
-                canvas.id = canvasId;
-                textLayer.id = textLayerId;
-            
-                wrapper.appendChild(canvas);
-                wrapper.appendChild(textLayer);
-                loadPDF(`/snippet/${snippetName}`, canvasId, textLayerId,
-                    () => {
-                        // Apply filter
-                        //if (col2 != "#FFFFFF") {
-                            applyFilter(canvas, "#161923");
-                        //}
+                        let arrayBuffer = response.arrayBuffer();
+                        arrayBuffer.then(buffer => {
+                            //let buffer = new Uint8Array(arrayBuffer);
+                            let contentType = response.headers.get('content-type');
+                    
+                            if (contentType == 'application/pdf') {
+                                // Load PDF
+                                let canvas = document.createElement('canvas');
+                    
+                                let textLayer = document.createElement('div');
+                                textLayer.classList.add('textLayer');
+                
+                                let canvasId = `pdf${index}`;
+                                let textLayerId = `tl${index}`;
+                                canvas.id = canvasId;
+                                textLayer.id = textLayerId;
+                            
+                                wrapper.appendChild(canvas);
+                                wrapper.appendChild(textLayer);
+                                loadPDF(buffer, canvasId, textLayerId,
+                                    () => {
+                                        // Apply filter
+                                        //if (col2 != "#FFFFFF") {
+                                            applyFilter(canvas, "#161923");
+                                        //}
+                                    });
+                            }
+                        });
                     });
             });
         });
