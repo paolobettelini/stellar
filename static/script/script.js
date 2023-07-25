@@ -105,6 +105,10 @@ function renderPage(pageName) {
                                             applyFilter(canvas, "#161923");
                                         //}
                                     });
+                            } else if (contentType == 'text/html') {
+                                const decoder = new TextDecoder();
+                                let content = decoder.decode(buffer);
+                                wrapper.innerHTML = content;
                             }
                         });
                     });

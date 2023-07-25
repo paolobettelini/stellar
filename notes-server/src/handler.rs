@@ -52,14 +52,30 @@ pub fn get_routes(
         warp::path!("snippet" / String)
             .and(warp::get())
             .then(move |snippet: String| async move {
-                let file_name = format!("{snippet}.pdf");
+                let dir = &snippets_path.join("snippets").join(&snippet);
+                
+                let (file_name, content_type) = {
+                    // Check if PDF file exists
+                    let file = dir.join(format!("{snippet}.pdf"));
+                    if file.exists() {
+                        (file, "application/pdf")
+                    } else {
+                        // Check if HTML file exists
+                        let file = dir.join(format!("{snippet}.html"));
+                        if file.exists() {
+                            (file, "text/html")
+                        } else {
+                            panic!("Not found :(");
+                        }
+                    }
+                };
+
                 println!("Reading file: {file_name:?}");
-                let file = &snippets_path.join("snippets").join(&snippet).join(file_name);
-                let content = std::fs::read(file).unwrap();
+                let content = std::fs::read(file_name).unwrap();
 
                 Response::builder()
                     .status(StatusCode::OK)
-                    .header("Content-Type", "application/pdf")
+                    .header("Content-Type", content_type)
                     .body(content)
                     .unwrap()
             });
