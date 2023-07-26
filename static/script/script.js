@@ -111,11 +111,10 @@ function renderPage(pageName) {
                             } else if (contentType == 'text/html') {
                                 const decoder = new TextDecoder();
                                 let content = decoder.decode(buffer);
-
                                 wrapper.innerHTML = content;
-                                // TODO
-                                // Typeset with MathJax
-                                // https://stackoverflow.com/questions/36224691/typeset-render-dynamic-content-with-mathjax
+
+                                // Typeset with MathJax3
+                                MathJax.typesetPromise([wrapper]);
                             }
                         });
                     });
