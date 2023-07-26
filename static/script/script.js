@@ -1,16 +1,17 @@
 "use strict";
 
-const API_URL = window.location.href.substring(0, 8 + window.location.href.substring(8).indexOf('/'));
-
-// Hardcoded action
-renderCourse('Analysis');
+// This is the entry point of the course page.
+// Read the course from the URL and load it using AJAX
+// E.g. "http://localhost:8080/?course=analysis";
+let href = window.location.href;
+let value = "course=";
+let courseName = href.substring(value.length + href.indexOf(value));
+renderCourse(courseName);
 
 let navbarContent = document.getElementById('navbar-content');
 let currentPage = undefined;
 
 async function postData(url = '', data = {}) {
-    url = API_URL + url;
-
     const response = await fetch(url, {
         method: 'POST',
         cache: 'no-cache',
