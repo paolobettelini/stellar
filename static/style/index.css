@@ -12,6 +12,11 @@
     --col4: blue; /* Colored Text */
 }
 
+.MathJax {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
 body {
     background-color: var(--col2);
 }
@@ -31,7 +36,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     display: flex;
     justify-content: center;
     font-family: "Computer Modern Serif", serif;
-    font-size: 1.75em;
+    font-size: 1.7em;
 }
 
 /* Navbar Styles */
