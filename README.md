@@ -69,5 +69,9 @@ The primary file has one of the following forms:
 The snippet folder may contain other files that will be requested by the main file.
 These files can be accessed using the route `/snippet/<id>/<file>`.
 
+Note that only the primary file needs to use `/snippet/<id>/<file>` for complementary files,
+the complementary files themselves can just use `<file>` to retrieve other complementary files
+in the same snippet.
+
 ## static
 The route `/<file>` retrieves a static file.

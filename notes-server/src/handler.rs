@@ -75,11 +75,23 @@ pub fn get_routes(
                 .join(&snippet)
                 .join(&file_name);
 
+            println!("Reading complementary: {:?}", file);
             let content = std::fs::read(file).unwrap();
+
+            // TODO this is temporary
+            let content_type = if file_name.ends_with("html") {
+                "text/html"
+            } else if file_name.ends_with("wasm") {
+                "application/wasm"
+            } else if file_name.ends_with("js") {
+                "text/javascript"
+            } else {
+                "*"
+            };
 
             Response::builder()
                 .status(StatusCode::OK)
-                .header("Content-Type", "TODOTODO")
+                .header("Content-Type", content_type)
                 .body(content)
                 .unwrap()
         });
