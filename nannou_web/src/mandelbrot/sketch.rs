@@ -24,13 +24,13 @@ struct Vertex {
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]
+// Data size must be at least UNIFORM_BLOCK_DATA_SIZE (32 bytes)
 pub struct Uniforms {
     scale: f32,
     center_x: f32,
     center_y: f32,
     width: f32,
     height: f32,
-    // ensure correct size i guess??
     dummy1: f32,
     dummy2: f32,
     dummy3: f32,
@@ -124,7 +124,7 @@ async fn model(app: &App) -> Model {
     });
 
     let uniforms = Uniforms {
-        scale: 0.003,
+        scale: 0.005,
         center_x: 0.0,
         center_y: 0.0,
         width: width as f32,
@@ -187,14 +187,19 @@ fn event(_app: &App, model: &mut Model, event: Event) {
                     WindowEvent::MouseWheel(delta, touch_phase) => {
                         if let MouseScrollDelta::PixelDelta(phyiscal_pos) = delta {
                             // Change scale
-
                             let old_scale = model.uniforms.scale; 
-                            let scale_mul = if phyiscal_pos.y > 0.0 { 0.9 } else { 1.1 };
-                            model.uniforms.scale *= scale_mul;
+                            model.uniforms.scale *= if phyiscal_pos.y > 0.0 { 0.9 } else { 1.1 };
 
-                            // Change center position according to where the cursor is
-                            model.uniforms.center_x -= model.last_cursor_pos.0 * 0.5 * (old_scale - model.uniforms.scale);
-                            model.uniforms.center_y -= model.last_cursor_pos.1 * 0.5 * (old_scale - model.uniforms.scale);
+                            // Move the center such that the zoom approaches the cursor.
+                            // Note that y is inverted
+                            let old_point_x =  model.last_cursor_pos.0 * old_scale + model.uniforms.center_x;
+                            let old_point_y = -model.last_cursor_pos.1 * old_scale + model.uniforms.center_y;
+                            let new_point_x =  model.last_cursor_pos.0 * model.uniforms.scale + model.uniforms.center_x;
+                            let new_point_y = -model.last_cursor_pos.1 * model.uniforms.scale + model.uniforms.center_y;
+
+                            // Update the center position based on the zoom and cursor position
+                            model.uniforms.center_x -= new_point_x - old_point_x;
+                            model.uniforms.center_y -= new_point_y - old_point_y;
                         }
                     }
                     // Mouse moved event (coordinate)
