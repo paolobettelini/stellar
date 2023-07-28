@@ -1,6 +1,7 @@
 use async_std::task::block_on;
 use wasm_bindgen::prelude::wasm_bindgen;
-mod mandelbrot;
+
+pub(crate) mod data;
 mod teapot;
 
 // web app entry_point
@@ -10,6 +11,6 @@ pub async fn main_web() {
     console_error_panic_hook::set_once();
 
     block_on(async {
-        mandelbrot::sketch::run_app().await;
+        teapot::run_app().await;
     });
 }

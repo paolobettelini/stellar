@@ -1,4 +1,4 @@
-use crate::teapot::data;
+use crate::data;
 use nannou::prelude::*;
 use nannou::wgpu::{Backends, DeviceDescriptor, Limits};
 use nannou::winit;

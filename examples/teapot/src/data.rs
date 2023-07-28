@@ -1,4 +1,4 @@
-use crate::teapot::sketch::{Normal, Vertex};
+use crate::teapot::{Normal, Vertex};
 
 pub const VERTICES: [Vertex; 531] = [
     Vertex {

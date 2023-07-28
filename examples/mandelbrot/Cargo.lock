@@ -1365,7 +1365,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nannou_web_test"
+name = "nannou_wasm_examples"
 version = "0.1.0"
 dependencies = [
  "async-std",

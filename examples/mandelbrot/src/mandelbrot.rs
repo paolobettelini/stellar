@@ -2,7 +2,6 @@ use nannou::prelude::*;
 use nannou::wgpu::{Backends, DeviceDescriptor, Limits};
 use nannou::winit;
 use std::cell::RefCell;
-use std::marker::PhantomData;
 
 struct Model {
     bind_group: wgpu::BindGroup,
