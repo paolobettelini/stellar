@@ -203,10 +203,11 @@ fn event(_app: &App, model: &mut Model, event: Event) {
                     }
                     // Mouse moved event (coordinate)
                     WindowEvent::MouseMoved(point) => {
-                        use web_sys::console;
-                        let v = format!("{:#?} {:#?}", point.x, point.y);
-                        console::log_1(&v.into());
                         model.last_cursor_pos = (point.x, point.y);
+                    }
+                    // Windows resize (e.g. scale)
+                    WindowEvent::Resized(size) => {
+                        // TODO fix zoom in this case
                     }
                     _ => {}
                 }
