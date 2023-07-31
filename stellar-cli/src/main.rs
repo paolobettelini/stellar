@@ -1,12 +1,13 @@
-mod args;
-mod latex;
-
-use std::{path::Path, fs};
+use std::{path::{Path, PathBuf}, fs};
+use serde_json::{json, Value};
 use args::*;
 
-use serde_json::{json, Value};
+mod args;
+mod latex;
+mod import;
 
-fn main() {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     // Initialize logging
     env_logger::init();
 
@@ -14,9 +15,47 @@ fn main() {
 
     if let Some(input) = &args.latex_input {
         if let Some(output) = &args.data_output {
-            latex::generate_from_latex(input, output);
-            // TOOD check result
-            log::info!("Remember to compile the snippets");
+            generate_from_latex(input, output);
         }
     }
+
+    if let Some(url) = &args.connection_url {
+        if let Some(folder) = &args.import_data {
+            import_data(url, folder).await;
+        } else if let Some(folder) = &args.import_courses {
+            import_snippets(url, folder).await;
+        } else if let Some(folder) = &args.import_pages {
+            import_pages(url, folder).await;
+        } else if let Some(folder) = &args.import_snippets {
+            import_courses(url, folder).await;
+        }
+    }
+
+    Ok(())
+}
+
+fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
+    latex::generate_from_latex(input, output);
+    // TOOD check result
+    log::info!("Remember to compile the snippets");
+}
+
+async fn import_data(connection_url: &str, folder: &PathBuf) {
+    // TODO check error
+    let res = import::import_data(connection_url, folder).await;
+}
+
+async fn import_snippets(connection_url: &str, folder: &PathBuf) {
+    // TODO check error
+    let res = import::import_snippets(connection_url, folder).await;
+}
+
+async fn import_pages(connection_url: &str, folder: &PathBuf) {
+    // TODO check error
+    let res = import::import_pages(connection_url, folder).await;
+}
+
+async fn import_courses(connection_url: &str, folder: &PathBuf) {
+    // TODO check error
+    let res = import::import_courses(connection_url, folder).await;
 }

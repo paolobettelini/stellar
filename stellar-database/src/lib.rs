@@ -1,4 +1,4 @@
-use mongodb::{IndexModel, Database, Client, options::{IndexOptions, ClientOptions}};
+use mongodb::{IndexModel, Database, Client, options::{IndexOptions, ClientOptions, InsertOneOptions}};
 use mongodb::bson::{doc, Document};
 use anyhow::Result;
 
@@ -46,6 +46,36 @@ impl ClientHandler {
             .collection::<T>(collection)
             .create_index(model, None)
             .await?;
+
+        Ok(())
+    }
+
+    pub async fn insert_snippet(&self, snippet: &Snippet, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+        let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
+        let filter = doc! { "id": &snippet.id }; 
+        if collection.find_one(filter.clone(), None).await?.is_none() {
+            collection.insert_one(snippet, options).await?;
+        }
+
+        Ok(())
+    }
+
+    pub async fn insert_page(&self, page: &Page, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+        let collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
+        let filter = doc! { "id": &page.id }; 
+        if collection.find_one(filter.clone(), None).await?.is_none() {
+            collection.insert_one(page, options).await?;
+        }
+
+        Ok(())
+    }
+
+    pub async fn insert_course(&self, course: &Course, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+        let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+        let filter = doc! { "id": &course.id }; 
+        if collection.find_one(filter.clone(), None).await?.is_none() {
+            collection.insert_one(course, options).await?;
+        }
 
         Ok(())
     }
