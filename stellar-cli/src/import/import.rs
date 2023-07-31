@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf};
-use stellar_database::{*, model::*};
+use stellar_database::{model::*, *};
 
 pub async fn import_data(connection_url: &str, folder: &PathBuf) -> anyhow::Result<()> {
     let client = get_client(connection_url).await?;
@@ -35,7 +35,10 @@ pub async fn import_courses(connection_url: &str, folder: &PathBuf) -> anyhow::R
     Ok(())
 }
 
-async fn import_snippets_with_client(client: &ClientHandler, folder: &PathBuf) -> anyhow::Result<()> {
+async fn import_snippets_with_client(
+    client: &ClientHandler,
+    folder: &PathBuf,
+) -> anyhow::Result<()> {
     let folder = folder.join("snippets");
 
     if let Ok(entries) = fs::read_dir(folder) {
@@ -44,26 +47,30 @@ async fn import_snippets_with_client(client: &ClientHandler, folder: &PathBuf) -
                 if let Some(file_name) = entry.file_name().to_str() {
                     let file_name = remove_extension(file_name);
                     log::info!("Importing snippet: {file_name}");
-                    let snippet = Snippet { id: file_name.to_string() };
+                    let snippet = Snippet {
+                        id: file_name.to_string(),
+                    };
                     client.insert_snippet(&snippet, None).await?;
                 }
             }
         }
     }
-    
+
     Ok(())
 }
 
 async fn import_pages_with_client(client: &ClientHandler, folder: &PathBuf) -> anyhow::Result<()> {
     let folder = folder.join("pages");
-    
+
     if let Ok(entries) = fs::read_dir(folder) {
         for entry in entries {
             if let Ok(entry) = entry {
                 if let Some(file_name) = entry.file_name().to_str() {
                     let file_name = remove_extension(file_name);
                     log::info!("Importing page: {file_name}");
-                    let page = Page { id: file_name.to_string() };
+                    let page = Page {
+                        id: file_name.to_string(),
+                    };
                     let res = client.insert_page(&page, None).await;
                     println!("{:?}", res);
                 }
@@ -74,9 +81,12 @@ async fn import_pages_with_client(client: &ClientHandler, folder: &PathBuf) -> a
     Ok(())
 }
 
-async fn import_courses_with_client(client: &ClientHandler, folder: &PathBuf) -> anyhow::Result<()> {
+async fn import_courses_with_client(
+    client: &ClientHandler,
+    folder: &PathBuf,
+) -> anyhow::Result<()> {
     let folder = folder.join("courses");
-    
+
     if let Ok(entries) = fs::read_dir(folder) {
         for entry in entries {
             if let Ok(entry) = entry {
@@ -85,7 +95,9 @@ async fn import_courses_with_client(client: &ClientHandler, folder: &PathBuf) ->
                     // since they should be folders.
                     let file_name = remove_extension(file_name);
                     log::info!("Importing course: {file_name}");
-                    let course = Course { id: file_name.to_string() };
+                    let course = Course {
+                        id: file_name.to_string(),
+                    };
                     client.insert_course(&course, None).await?;
                 }
             }

@@ -1,4 +1,4 @@
-pub(crate) mod parser;
 mod generator;
+pub(crate) mod parser;
 
 pub use generator::*;

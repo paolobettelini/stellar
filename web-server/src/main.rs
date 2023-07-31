@@ -1,8 +1,8 @@
 use actix_files::Files;
-use actix_web::{get, post, web, App, HttpServer, Responder, HttpResponse};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use anyhow::Result;
 use env_logger;
 use std::path::{Path, PathBuf};
-use anyhow::Result;
 
 use stellar_database::*;
 
@@ -26,7 +26,7 @@ async fn main() -> anyhow::Result<()> {
     let client = ClientHandler::new(uri).await?;
 
     client.create_indexes();
-    
+
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(client.clone()))
@@ -58,7 +58,6 @@ async fn course_service(course: web::Path<String>) -> impl Responder {
     // HttpResponse::NotFound().body("Course not found")
 }
 
-
 #[post("/page/{page}")]
 async fn page_service(page: web::Path<String>) -> impl Responder {
     let file_name = format!("{page}.html");
@@ -77,16 +76,13 @@ async fn snippet_service(snippet: web::Path<String>) -> impl Responder {
     let snippet = snippet.to_string();
     // TODO pre-create path
     let dir = &Path::new(&CONFIG.data).join("snippets").join(&snippet);
-    
-    let (file, content_type) =
-        get_snippet_file_and_content_type(&dir, &snippet).unwrap();
+
+    let (file, content_type) = get_snippet_file_and_content_type(&dir, &snippet).unwrap();
 
     log::debug!("Reading file: {file:?}");
     let content = std::fs::read(file).unwrap();
 
-    HttpResponse::Ok()
-        .content_type(content_type)
-        .body(content)
+    HttpResponse::Ok().content_type(content_type).body(content)
 }
 
 #[get("/snippet/{snippet}/{file_name}")]
@@ -112,9 +108,7 @@ async fn snippet_complementary_service(data: web::Path<(String, String)>) -> imp
         "*"
     };
 
-    HttpResponse::Ok()
-        .content_type(content_type)
-        .body(content)
+    HttpResponse::Ok().content_type(content_type).body(content)
 }
 
 /// Returns path of the main file and its content type

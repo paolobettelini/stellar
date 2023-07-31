@@ -30,9 +30,7 @@ pub fn parse(content: &str, filename: &str) -> TeXPage {
     let filename = strip_filename(filename);
     let file_id = name_to_id(&filename);
 
-    let mut content = content
-        .replace(PAGEBREAK, "")
-        .replace(NEWPAGE, "");
+    let mut content = content.replace(PAGEBREAK, "").replace(NEWPAGE, "");
 
     let mut begin_index_before = content.find(BEGIN_DOCUMENT).unwrap();
     let mut begin_index_after = begin_index_before + BEGIN_DOCUMENT.len();
@@ -79,8 +77,7 @@ pub fn parse(content: &str, filename: &str) -> TeXPage {
                         } else {
                             "".to_string()
                         },
-                        if section_type > SectionType::Subsection && !last_section_id.is_empty()
-                        {
+                        if section_type > SectionType::Subsection && !last_section_id.is_empty() {
                             format!("{last_subsection_id}-")
                         } else {
                             "".to_string()
@@ -99,7 +96,7 @@ pub fn parse(content: &str, filename: &str) -> TeXPage {
                         });
                     } else {
                         let document = make_full_document(preamble, section_content);
-                        
+
                         snippets.push(TeXSnippet {
                             title: section_name.to_owned(),
                             level: section_type as u8,
@@ -143,7 +140,10 @@ pub fn parse(content: &str, filename: &str) -> TeXPage {
         current_index_start = section_index_end + section_separator_length;
     }
 
-    TeXPage { title: filename, snippets }
+    TeXPage {
+        title: filename,
+        snippets,
+    }
 }
 
 /// \subsubsection{Hello} % custom-id

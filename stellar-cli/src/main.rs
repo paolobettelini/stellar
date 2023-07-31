@@ -1,10 +1,13 @@
-use std::{path::{Path, PathBuf}, fs};
-use serde_json::{json, Value};
 use args::*;
+use serde_json::{json, Value};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 mod args;
-mod latex;
 mod import;
+mod latex;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
