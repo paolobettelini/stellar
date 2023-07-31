@@ -6,12 +6,12 @@ use std::path::PathBuf;
 #[command(author, version, about, long_about = None)]
 pub struct Args {
     /// LaTex file
+    #[arg(short, long, requires = "data_output")]
     #[arg(short = 'i', long)]
-    #[arg(short, long, requires = "output")]
-    pub input: Option<PathBuf>,
+    pub latex_input: Option<PathBuf>,
 
     /// Output director for .tex files
+    #[arg(short, long, requires = "latex_input")]
     #[arg(short = 'o', long)]
-    #[arg(short, long, requires = "input")]
-    pub output: Option<PathBuf>,
+    pub data_output: Option<PathBuf>,
 }
