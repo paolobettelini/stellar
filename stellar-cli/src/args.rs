@@ -7,9 +7,11 @@ use std::path::PathBuf;
 pub struct Args {
     /// LaTex file
     #[arg(short = 'i', long)]
-    pub input: PathBuf,
+    #[arg(short, long, requires = "output")]
+    pub input: Option<PathBuf>,
 
     /// Output director for .tex files
     #[arg(short = 'o', long)]
-    pub output: PathBuf,
+    #[arg(short, long, requires = "input")]
+    pub output: Option<PathBuf>,
 }

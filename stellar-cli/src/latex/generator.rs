@@ -1,19 +1,14 @@
-mod args;
-mod parser;
-
+use std::path::PathBuf;
 use std::{path::Path, fs};
-use args::*;
-use parser::*;
+use crate::latex::parser::*;
 
 use serde_json::{json, Value};
 
-fn main() {
-    let args = Args::parse();
-
-    let content = fs::read_to_string(&args.input).unwrap();
-    let filename = String::from(args.input.to_string_lossy());
+pub fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
+    let content = fs::read_to_string(input).unwrap();
+    let filename = String::from(input.to_string_lossy());
     
-    let out_folder = Path::new(&args.output);
+    let out_folder = Path::new(output);
     create_if_necessary(&out_folder);
 
     let snippets_dir = out_folder.join("snippets");
@@ -24,7 +19,7 @@ fn main() {
     create_if_necessary(&pages_dir);
     create_if_necessary(&courses_dir);
 
-    let texdoc = parser::parse(&content, &filename);
+    let texdoc = parse(&content, &filename);
     
     let json = tex_page_to_json_course(&texdoc);
     let json = serde_json::to_string_pretty(&json).unwrap();
