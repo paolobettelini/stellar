@@ -2,6 +2,9 @@ use actix_files::Files;
 use actix_web::{get, post, web, App, HttpServer, Responder, HttpResponse};
 use env_logger;
 use std::path::{Path, PathBuf};
+use anyhow::Result;
+
+use stellar_database::*;
 
 mod args;
 use args::*;
@@ -15,12 +18,18 @@ lazy_static! {
 
 // &CONFIG.www, &CONFIG.data
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> anyhow::Result<()> {
     // Initialize logging
     env_logger::init();
 
-    HttpServer::new(|| {
+    let uri = "mongodb://192.168.1.111:11223";
+    let client = ClientHandler::new(uri).await?;
+
+    client.create_indexes();
+    
+    HttpServer::new(move || {
         App::new()
+            .app_data(web::Data::new(client.clone()))
             .service(course_service)
             .service(page_service)
             .service(snippet_complementary_service)
@@ -30,7 +39,9 @@ async fn main() -> std::io::Result<()> {
     })
     .bind((CONFIG.address, CONFIG.port))?
     .run()
-    .await
+    .await?;
+
+    Ok(())
 }
 
 #[post("/course/{course}")]

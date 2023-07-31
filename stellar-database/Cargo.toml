@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.72"
 mongodb = "2.6.0"
+serde = "1.0.179"
