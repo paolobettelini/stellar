@@ -23,6 +23,10 @@ The content is put in the following folder structure
             + `complementary_file.js`
         + ...
 
+A MongoDB server needs to be initialized with this data using the `stellar-cli` tool.
+The webserver can then connect to the database and use it for various queries.
+The tool `stellar-cli` can be used to initialize data dynamically.
+
 # Compile everything
 ```bash
 cd notes-parser
