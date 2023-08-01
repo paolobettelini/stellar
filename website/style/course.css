@@ -113,14 +113,14 @@
 }
 
 #top-bar-icons i {
-    opacity: 70%;
+    opacity: 50%;
     transition: opacity 0.1s ease;
     width: 40px;
     height: 40px;
     cursor: pointer;
 }
 
-#navbar-toggle:hover {
+#top-bar-icons i:hover {
     opacity: 100%;
 }
 

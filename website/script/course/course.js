@@ -165,3 +165,8 @@ function addPageToNavbar(level, title, page) {
         el.classList.add('empty-nav-title');
     }
 }
+
+// Go to /search when pressing the search button
+document.getElementById('topbar-search').onclick = () => {
+    window.location = '/search';
+}

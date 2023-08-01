@@ -15,12 +15,6 @@ extern crate lazy_static;
 
 lazy_static! {
     pub static ref CONFIG: Args = Args::parse();
-
-    // Cache static HTML pages
-    pub static ref COURSE_HTML: String = read_private_html("course.html");
-    pub static ref PAGE_HTML: String = read_private_html("page.html");
-    pub static ref SNIPPET_HTML: String = read_private_html("snippet.html");
-    pub static ref SEARCH_HTML: String = read_private_html("search.html");
 }
 
 // &CONFIG.www, &CONFIG.data
@@ -29,9 +23,7 @@ async fn main() -> anyhow::Result<()> {
     // Initialize logging
     env_logger::init();
 
-    // TODO move to args
-    let uri = "mongodb://192.168.1.111:11223";
-    let client = ClientHandler::new(uri).await?;
+    let client = ClientHandler::new(&CONFIG.connection_url).await?;
 
     client.create_indexes();
 
@@ -135,16 +127,22 @@ async fn private_folder() -> impl Responder {
 
 #[get("/search")]
 async fn search_html() -> impl Responder {
+    let file = Path::new(&CONFIG.www).join("private").join("search.html");
+    let html = fs::read_to_string(file).unwrap();
+
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(&**SEARCH_HTML) // TODO: umh... ?
+        .body(html)
 }
 
 #[get("/course/{course}")]
 async fn course_html() -> impl Responder {
+    let file = Path::new(&CONFIG.www).join("private").join("course.html");
+    let html = fs::read_to_string(file).unwrap();
+
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(&**COURSE_HTML) // TODO: umh... ?
+        .body(html)
 }
 
 #[post("/query/snippet/{keyword}")]
@@ -205,10 +203,4 @@ fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathB
     }
 
     None
-}
-
-fn read_private_html(document: &str) -> String {
-    let dir = Path::new(&CONFIG.www);
-    let file = dir.join("private").join(document);
-    fs::read_to_string(file).unwrap()
 }

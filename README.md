@@ -91,5 +91,8 @@ Returns `/private/page.html`.
 ## (TODO) GET `/snippet/<id>`
 Returns `/private/snippet.html`.
 
+## GET `/search`
+Returns `/private/search.html`.
+
 ## GET `/<file>`
 Returns a static file.

@@ -12,13 +12,13 @@
     --col4: blue; /* Colored Text */
 }
 
+body {
+    background-color: var(--col2);
+}
+
 .MathJax {
     font-style: italic;
     font-size: 0.9em;
-}
-
-body {
-    background-color: var(--col2);
 }
   
 #content, h1, h2, h3, h4, h5, h6 {

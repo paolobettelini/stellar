@@ -22,6 +22,10 @@ pub struct Args {
     /// Data folder
     #[arg(short, long)]
     pub data: PathBuf,
+
+    /// MongoDB Connection URL
+    #[arg(short, long)]
+    pub connection_url: String,
 }
 
 fn default_address() -> IpAddr {
