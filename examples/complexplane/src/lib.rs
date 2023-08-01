@@ -1,6 +1,9 @@
 use async_std::task::block_on;
 use wasm_bindgen::prelude::wasm_bindgen;
 
+#[macro_use]
+extern crate lazy_static;
+
 mod complexplane;
 
 // web app entry_point

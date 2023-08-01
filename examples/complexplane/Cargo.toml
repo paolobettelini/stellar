@@ -20,6 +20,7 @@ wasm-bindgen = "0.2.83"
 wasm-bindgen-futures = "0.4.32"
 async-std = { version = "1.10.0", features = ["unstable"] }
 nannou = { version="0.18.1", git ="https://github.com/nannou-org/nannou.git", features =["wasm-experimental"]}
+lazy_static = "1.4.0"
 
 
 # The `web-sys` crate allows you to interact with the various browser APIs,

@@ -1,7 +1,17 @@
 use nannou::prelude::*;
 use nannou::wgpu::{Backends, DeviceDescriptor, Limits};
 use nannou::winit;
+use nannou::text::Font;
 use std::cell::RefCell;
+use std::sync::Arc;
+
+/*
+lazy_static! {
+    pub static ref CMFONT: Arc<Font> = {
+        let font_data: &[u8] = include_bytes!("cmunbmr.ttf");
+        Arc::new(Font::from_bytes(font_data).unwrap())
+    };
+}*/
 
 struct Model {
     dragging: bool,
@@ -117,6 +127,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
         draw.text(&format!("{y}i"))
             .xy(pt2(20.0, y_pos))
             .color(BLACK)
+            //.font(CMFONT.as_ref().clone())
             .font_size(12);
     }
 
