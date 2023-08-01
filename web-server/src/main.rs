@@ -164,14 +164,32 @@ async fn snippet_query(client: web::Data<ClientHandler>, keyword: web::Path<Stri
 
 #[post("/query/page/{keyword}")]
 async fn page_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
-    todo!();
-    HttpResponse::Ok().content_type("").body("")
+    let mut cursor = client.query_pages(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(json)
 }
 
 #[post("/query/course/{keyword}")]
 async fn course_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
-    todo!();
-    HttpResponse::Ok().content_type("").body("")
+    let mut cursor = client.query_courses(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(json)
 }
 
 /// Returns path of the main file and its content type
