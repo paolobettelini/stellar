@@ -18,3 +18,4 @@ log = "0.4.19"
 env_logger = "0.6.0"
 
 stellar-database = { path = "../stellar-database" }
+futures = "0.3.28"

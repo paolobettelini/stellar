@@ -4,7 +4,7 @@ use anyhow::Result;
 use env_logger;
 use std::path::{Path, PathBuf};
 use std::fs;
-
+use futures::TryStreamExt;
 use stellar_database::*;
 
 mod args;
@@ -17,10 +17,10 @@ lazy_static! {
     pub static ref CONFIG: Args = Args::parse();
 
     // Cache static HTML pages
-    pub static ref COURSE_PAGE: String = {
-        let dir = Path::new(&CONFIG.www);
-        fs::read_to_string(dir.join("private").join("course.html")).unwrap()
-    };
+    pub static ref COURSE_HTML: String = read_private_html("course.html");
+    pub static ref PAGE_HTML: String = read_private_html("page.html");
+    pub static ref SNIPPET_HTML: String = read_private_html("snippet.html");
+    pub static ref SEARCH_HTML: String = read_private_html("search.html");
 }
 
 // &CONFIG.www, &CONFIG.data
@@ -41,11 +41,15 @@ async fn main() -> anyhow::Result<()> {
             .service(page_service)
             .service(snippet_complementary_service)
             .service(snippet_service)
+            .service(snippet_query)
+            .service(page_query)
+            .service(course_query)
             // Static files
             .service(private_folder)
-            .service(course_page)
-            //.service(page_page)
-            //.service(snippet_page)
+            .service(search_html)
+            .service(course_html)
+            //.service(page_html)
+            //.service(snippet_html)
             .service(Files::new("/", &CONFIG.www).index_file("index.html"))
             // Data
             .app_data(web::Data::new(client.clone()))
@@ -118,7 +122,7 @@ async fn snippet_complementary_service(data: web::Path<(String, String)>) -> imp
     } else if file_name.ends_with("js") {
         "text/javascript"
     } else {
-        "*"
+        panic!("Content type not implemented");
     };
 
     HttpResponse::Ok().content_type(content_type).body(content)
@@ -129,11 +133,45 @@ async fn private_folder() -> impl Responder {
     HttpResponse::NotFound().body("404 not found")
 }
 
-#[get("/course/{course}")]
-async fn course_page() -> impl Responder {
+#[get("/search")]
+async fn search_html() -> impl Responder {
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(&**COURSE_PAGE) // TODO: umh... ?
+        .body(&**SEARCH_HTML) // TODO: umh... ?
+}
+
+#[get("/course/{course}")]
+async fn course_html() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(&**COURSE_HTML) // TODO: umh... ?
+}
+
+#[post("/query/snippet/{keyword}")]
+async fn snippet_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
+    let mut cursor = client.query_snippets(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(json)
+}
+
+#[post("/query/page/{keyword}")]
+async fn page_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
+    todo!();
+    HttpResponse::Ok().content_type("").body("")
+}
+
+#[post("/query/course/{keyword}")]
+async fn course_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
+    todo!();
+    HttpResponse::Ok().content_type("").body("")
 }
 
 /// Returns path of the main file and its content type
@@ -151,10 +189,8 @@ fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathB
     None
 }
 
-/*
-    use futures::stream::TryStreamExt;
-    let mut cursor = client.query_snippets("ma").await?;
-    while let Some(document) = cursor.try_next().await? {
-        println!("{:?}", document);
-    }
-*/
+fn read_private_html(document: &str) -> String {
+    let dir = Path::new(&CONFIG.www);
+    let file = dir.join("private").join(document);
+    fs::read_to_string(file).unwrap()
+}
