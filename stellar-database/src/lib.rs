@@ -1,5 +1,5 @@
-use mongodb::{Cursor, IndexModel, Database, Client, options::{IndexOptions, ClientOptions, InsertOneOptions}};
-use mongodb::bson::{doc, Document};
+use mongodb::{Cursor, IndexModel, Client, options::{IndexOptions, ClientOptions, InsertOneOptions}};
+use mongodb::bson::{doc};
 use anyhow::Result;
 
 pub mod model;

@@ -1,6 +1,6 @@
 use actix_files::Files;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use anyhow::Result;
+
 use env_logger;
 use std::path::{Path, PathBuf};
 use std::fs;

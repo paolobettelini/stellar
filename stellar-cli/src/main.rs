@@ -1,8 +1,7 @@
 use args::*;
-use serde_json::{json, Value};
+
 use std::{
-    fs,
-    path::{Path, PathBuf},
+    path::{PathBuf},
 };
 
 mod args;
@@ -45,20 +44,20 @@ fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
 
 async fn import_data(connection_url: &str, folder: &PathBuf) {
     // TODO check error
-    let res = import::import_data(connection_url, folder).await;
+    let _res = import::import_data(connection_url, folder).await;
 }
 
 async fn import_snippets(connection_url: &str, folder: &PathBuf) {
     // TODO check error
-    let res = import::import_snippets(connection_url, folder).await;
+    let _res = import::import_snippets(connection_url, folder).await;
 }
 
 async fn import_pages(connection_url: &str, folder: &PathBuf) {
     // TODO check error
-    let res = import::import_pages(connection_url, folder).await;
+    let _res = import::import_pages(connection_url, folder).await;
 }
 
 async fn import_courses(connection_url: &str, folder: &PathBuf) {
     // TODO check error
-    let res = import::import_courses(connection_url, folder).await;
+    let _res = import::import_courses(connection_url, folder).await;
 }
