@@ -2,10 +2,11 @@
 
 // This is the entry point of the course page.
 // Read the course from the URL and load it using AJAX
-// E.g. "http://localhost:8080/?course=analysis";
+// E.g. "http://localhost:8080/course/calculus";
 let href = window.location.href;
-let value = "course=";
+let value = "/course/";
 let courseName = href.substring(value.length + href.indexOf(value));
+console.log(courseName)
 renderCourse(courseName);
 
 let navbarContent = document.getElementById('navbar-content');
@@ -77,7 +78,7 @@ function renderPage(pageName) {
                 wrapper.classList.add('wrapper');
                 wrapper.style.position = 'relative';
     
-                fetch(`/snippet/${snippetName}`)
+                postData(`/snippet/${snippetName}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Request failed with status: ' + response.status);
@@ -106,7 +107,7 @@ function renderPage(pageName) {
                                     () => {
                                         // Apply filter
                                         //if (col2 != "#FFFFFF") {
-                                            applyFilter(canvas, "#161923");
+                                            //applyFilter(canvas, "#161923");
                                         //}
                                     });
                             } else if (contentType == 'text/html') {

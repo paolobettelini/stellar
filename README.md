@@ -58,24 +58,38 @@ Visit `localhost:8080`
 
 # API
 
-## course
-The route `/course/<id>` returns the course `JSON` file.
+## POST `/course/<id>`
+Returns the course `JSON` file.
 
-## page
-The route `/page/<id>` returns the course `HTML` file.
+## POST `/page/<id>`
+Returns the course `HTML` file.
 
-## snippet
-The route `/snippet/<id>` returns the primary file in the snippet folder, which is `data/snippets/<id>`. <br>
+## POST `/snippet/<id>`
+Returns the primary file in the snippet folder, which is in `data/snippets/<id>`. <br>
 The primary file has one of the following forms:
 - `<id>.pdf`
 - `<id>.html`
 - `<id>.png`
+
+## GET `/snippet/<id>/<file>`
 The snippet folder may contain other files that will be requested by the main file.
-These files can be accessed using the route `/snippet/<id>/<file>`.
+These files can be accessed using this route.
 
 Note that only the primary file needs to use `/snippet/<id>/<file>` for complementary files,
 the complementary files themselves can just use `<file>` to retrieve other complementary files
 in the same snippet.
 
-## static
-The route `/<file>` retrieves a static file.
+## GET `/private/{.*}`
+Returns 404.
+
+## GET `/course/<id>`
+Returns `/private/course.html`.
+
+## (TODO) GET `/page/<id>`
+Returns `/private/page.html`.
+
+## (TODO) GET `/snippet/<id>`
+Returns `/private/snippet.html`.
+
+## GET `/<file>`
+Returns a static file.

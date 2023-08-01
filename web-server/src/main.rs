@@ -3,6 +3,7 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use anyhow::Result;
 use env_logger;
 use std::path::{Path, PathBuf};
+use std::fs;
 
 use stellar_database::*;
 
@@ -14,6 +15,12 @@ extern crate lazy_static;
 
 lazy_static! {
     pub static ref CONFIG: Args = Args::parse();
+
+    // Cache static HTML pages
+    pub static ref COURSE_PAGE: String = {
+        let dir = Path::new(&CONFIG.www);
+        fs::read_to_string(dir.join("private").join("course.html")).unwrap()
+    };
 }
 
 // &CONFIG.www, &CONFIG.data
@@ -22,6 +29,7 @@ async fn main() -> anyhow::Result<()> {
     // Initialize logging
     env_logger::init();
 
+    // TODO move to args
     let uri = "mongodb://192.168.1.111:11223";
     let client = ClientHandler::new(uri).await?;
 
@@ -29,13 +37,18 @@ async fn main() -> anyhow::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .app_data(web::Data::new(client.clone()))
             .service(course_service)
             .service(page_service)
             .service(snippet_complementary_service)
             .service(snippet_service)
             // Static files
+            .service(private_folder)
+            .service(course_page)
+            //.service(page_page)
+            //.service(snippet_page)
             .service(Files::new("/", &CONFIG.www).index_file("index.html"))
+            // Data
+            .app_data(web::Data::new(client.clone()))
     })
     .bind((CONFIG.address, CONFIG.port))?
     .run()
@@ -71,7 +84,7 @@ async fn page_service(page: web::Path<String>) -> impl Responder {
         .body(content)
 }
 
-#[get("/snippet/{snippet}")]
+#[post("/snippet/{snippet}")]
 async fn snippet_service(snippet: web::Path<String>) -> impl Responder {
     let snippet = snippet.to_string();
     // TODO pre-create path
@@ -109,6 +122,18 @@ async fn snippet_complementary_service(data: web::Path<(String, String)>) -> imp
     };
 
     HttpResponse::Ok().content_type(content_type).body(content)
+}
+
+#[get("/private/{a:.*}")]
+async fn private_folder() -> impl Responder {
+    HttpResponse::NotFound().body("404 not found")
+}
+
+#[get("/course/{course}")]
+async fn course_page() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(&**COURSE_PAGE) // TODO: umh... ?
 }
 
 /// Returns path of the main file and its content type
