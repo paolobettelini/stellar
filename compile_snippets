@@ -7,7 +7,7 @@ cd data/snippets || exit 1
 for folder in */; do
     if [ -d "$folder" ]; then
         cd "$folder" || continue
-        tectonic *.tex -Z search-path=../../../packages/
+        tectonic *.tex -Z search-path=../../../latex-packages/
         cd ..
     fi
 done
