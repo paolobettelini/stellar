@@ -24,8 +24,7 @@ async fn main() -> anyhow::Result<()> {
     env_logger::init();
 
     let client = ClientHandler::new(&CONFIG.connection_url).await?;
-
-    client.create_indexes();
+    let _ = client.create_indexes().await;
 
     HttpServer::new(move || {
         App::new()
