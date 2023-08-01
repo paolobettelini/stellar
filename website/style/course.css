@@ -21,7 +21,6 @@
     width: var(--sidebar-width);
     height: 100%;
     background-color: var(--col3);
-    padding: 20px;
     z-index: 100;
     transition: transform 0.3s ease-in-out;
     overflow-y: auto; /* Add overflow-y property with value auto */
@@ -36,6 +35,8 @@
 #navbar-content {
     display: flex;
     flex-direction: column;
+    padding: 20px;
+
 }
 
 #navbar a {
