@@ -71,8 +71,7 @@ async fn import_pages_with_client(client: &ClientHandler, folder: &PathBuf) -> a
                     let page = Page {
                         id: file_name.to_string(),
                     };
-                    let res = client.insert_page(&page, None).await;
-                    println!("{:?}", res);
+                    client.insert_page(&page, None).await?;
                 }
             }
         }

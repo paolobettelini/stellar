@@ -1,4 +1,4 @@
-use mongodb::{IndexModel, Database, Client, options::{IndexOptions, ClientOptions, InsertOneOptions}};
+use mongodb::{Cursor, IndexModel, Database, Client, options::{IndexOptions, ClientOptions, InsertOneOptions}};
 use mongodb::bson::{doc, Document};
 use anyhow::Result;
 
@@ -53,7 +53,7 @@ impl ClientHandler {
     pub async fn insert_snippet(&self, snippet: &Snippet, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
         let filter = doc! { "id": &snippet.id }; 
-        if collection.find_one(filter.clone(), None).await?.is_none() {
+        if collection.find_one(filter, None).await?.is_none() {
             collection.insert_one(snippet, options).await?;
         }
 
@@ -63,7 +63,7 @@ impl ClientHandler {
     pub async fn insert_page(&self, page: &Page, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
         let filter = doc! { "id": &page.id }; 
-        if collection.find_one(filter.clone(), None).await?.is_none() {
+        if collection.find_one(filter, None).await?.is_none() {
             collection.insert_one(page, options).await?;
         }
 
@@ -73,10 +73,31 @@ impl ClientHandler {
     pub async fn insert_course(&self, course: &Course, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
         let filter = doc! { "id": &course.id }; 
-        if collection.find_one(filter.clone(), None).await?.is_none() {
+        if collection.find_one(filter, None).await?.is_none() {
             collection.insert_one(course, options).await?;
         }
 
         Ok(())
+    }
+
+    pub async fn query_snippets(&self, keyword: &str) -> anyhow::Result<Cursor<Snippet>> {
+        let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
+        let filter = doc! { "id": {"$regex": keyword} };
+
+        Ok(collection.find(filter, None).await?)
+    }
+
+    pub async fn query_pages(&self, keyword: &str) -> anyhow::Result<Cursor<Page>> {
+        let collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
+        let filter = doc! { "id": {"$regex": keyword} };
+
+        Ok(collection.find(filter, None).await?)
+    }
+
+    pub async fn query_courses(&self, keyword: &str) -> anyhow::Result<Cursor<Course>> {
+        let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+        let filter = doc! { "id": {"$regex": keyword} };
+
+        Ok(collection.find(filter, None).await?)
     }
 }

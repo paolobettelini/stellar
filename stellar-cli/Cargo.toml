@@ -16,3 +16,4 @@ anyhow = "1.0.72"
 
 stellar-database = { path = "../stellar-database" }
 tokio = "1.29.1"
+futures = "0.3.28"

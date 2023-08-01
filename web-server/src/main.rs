@@ -125,3 +125,11 @@ fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathB
 
     None
 }
+
+/*
+    use futures::stream::TryStreamExt;
+    let mut cursor = client.query_snippets("ma").await?;
+    while let Some(document) = cursor.try_next().await? {
+        println!("{:?}", document);
+    }
+*/
