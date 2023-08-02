@@ -11,9 +11,18 @@ async function postData(url = '', data = {}) {
 let searchbox = document.getElementById('searchbox');
 let results = document.getElementById('results');
 
-searchbox.oninput = () => {
+document.getElementById('coursetype').oninput = query;
+document.getElementById('pagetype').oninput = query;
+document.getElementById('snippettype').oninput = query;
+searchbox.oninput = query;
+
+function query() {
     let keyword = searchbox.value;
-    // TODO: run this function is the search type changes
+
+    if (keyword == '') {
+        return;
+    }
+
     let selectedOption = document.querySelector('input[name="searchtype"]:checked');
     let type = selectedOption.value;;
 
