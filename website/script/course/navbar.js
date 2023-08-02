@@ -28,3 +28,21 @@ document.getElementById('navbar-toggle').addEventListener('click', function() {
     content.classList.toggle('retracted');
     topbar.classList.toggle('retracted');
 });
+
+function addPageToNavbar(navbarContent, level, title, page) {
+    let el = document.createElement(`span`);
+    el.classList.add('nav-title')
+    el.classList.add(`nav-title-level-${level}`);
+    el.id = `nav-title-${page}`;
+
+    el.innerHTML = title; // Allow HTML tags
+    navbarContent.appendChild(el);
+
+    if (page != undefined) {
+        el.onclick = _ => {
+            renderPage(innerContent, page);
+        }
+    } else {
+        el.classList.add('empty-nav-title');
+    }
+}

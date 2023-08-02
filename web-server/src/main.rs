@@ -39,8 +39,8 @@ async fn main() -> anyhow::Result<()> {
             .service(private_folder)
             .service(search_html)
             .service(course_html)
-            //.service(page_html)
-            //.service(snippet_html)
+            .service(page_html)
+            .service(snippet_html)
             .service(Files::new("/", &CONFIG.www).index_file("index.html"))
             // Data
             .app_data(web::Data::new(client.clone()))
@@ -137,6 +137,26 @@ async fn search_html() -> impl Responder {
 #[get("/course/{course}")]
 async fn course_html() -> impl Responder {
     let file = Path::new(&CONFIG.www).join("private").join("course.html");
+    let html = fs::read_to_string(file).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(html)
+}
+
+#[get("/page/{page}")]
+async fn page_html() -> impl Responder {
+    let file = Path::new(&CONFIG.www).join("private").join("page.html");
+    let html = fs::read_to_string(file).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(html)
+}
+
+#[get("/snippet/{snippet}")]
+async fn snippet_html() -> impl Responder {
+    let file = Path::new(&CONFIG.www).join("private").join("snippet.html");
     let html = fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()

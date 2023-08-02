@@ -1,11 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html class="js sidebar-visible">
+    <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
     <title>Stellar</title>
+
+    <!-- Generic styling -->
+    <link rel="stylesheet" href="../style/index.css">
+    <!-- pdfjs lib css styling -->
+    <link rel="stylesheet" href="../style/pdf_viewer.css">
+    <!-- Computer Modern (LaTeX) font-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css">
+
+    <!-- MathJax -->
+    <!-- https://docs.mathjax.org/en/latest/web/configuration.html#configuration-using-an-in-line-script -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
 </head>
 <body>
-    Page viewer
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="../script/load-pdf.js"></script>
+
+    <div id="content">
+        <div id="inner-content">
+            <!-- Content -->
+            
+        <div>
+    </div>
+
+    <script src="../script/filter.js"></script>
+    <script src="../script/renderer.js"></script>
+    <script src="../script/page/page.js"></script>
 </body>
 </html>
