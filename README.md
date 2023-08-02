@@ -64,7 +64,7 @@ stellar-cli --connection-url ... --import course1.json --import course2.json
 
 # Start the server
 ```bash
-notes-server --www static/ --data data/
+web-server --www static/ --data data/
 ```
 Visit `localhost:8080`
 
