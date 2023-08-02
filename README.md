@@ -31,10 +31,10 @@ The tool `stellar-cli` can be used to initialize data dynamically.
 ```bash
 cd notes-parser
 cargo b --release
-sudo mv target/release/notes-parser /usr/local/bin
+sudo mv target/release/stellar-cli /usr/local/bin
 cd ../notes-server
 cargo b --release
-sudo mv target/release/notes-server /usr/local/bin
+sudo mv target/release/web-server /usr/local/bin
 cd ..
 ```
 
@@ -48,6 +48,18 @@ Compile the snippets
 cd data/snippets
 find . -type f -name "*.tex" -exec tectonic {} \;
 cd ../..
+```
+
+# Import snippets to MongoDB
+
+```bash
+stellar-cli --connection-url ... --import ./data
+stellar-cli --connection-url ... --import ./data/snippets
+stellar-cli --connection-url ... --import ./data/pages
+stellar-cli --connection-url ... --import ./data/courses
+stellar-cli --connection-url ... --import ./data/snippets/snippet1
+stellar-cli --connection-url ... --import ./data/pages/page1.html
+stellar-cli --connection-url ... --import course1.json --import course2.json
 ```
 
 # Start the server

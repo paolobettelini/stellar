@@ -22,14 +22,11 @@ async fn main() -> anyhow::Result<()> {
     }
 
     if let Some(url) = &args.connection_url {
-        if let Some(folder) = &args.import_data {
-            import_data(url, folder).await;
-        } else if let Some(folder) = &args.import_courses {
-            import_snippets(url, folder).await;
-        } else if let Some(folder) = &args.import_pages {
-            import_pages(url, folder).await;
-        } else if let Some(folder) = &args.import_snippets {
-            import_courses(url, folder).await;
+        if let Some(paths) = &args.import {
+            for path in paths {
+                // TODO check error
+                import::import(url, path).await?;
+            }
         }
     }
 
@@ -40,24 +37,4 @@ fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
     latex::generate_from_latex(input, output);
     // TOOD check result
     log::info!("Remember to compile the snippets");
-}
-
-async fn import_data(connection_url: &str, folder: &PathBuf) {
-    // TODO check error
-    let _res = import::import_data(connection_url, folder).await;
-}
-
-async fn import_snippets(connection_url: &str, folder: &PathBuf) {
-    // TODO check error
-    let _res = import::import_snippets(connection_url, folder).await;
-}
-
-async fn import_pages(connection_url: &str, folder: &PathBuf) {
-    // TODO check error
-    let _res = import::import_pages(connection_url, folder).await;
-}
-
-async fn import_courses(connection_url: &str, folder: &PathBuf) {
-    // TODO check error
-    let _res = import::import_courses(connection_url, folder).await;
 }
