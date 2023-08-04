@@ -8,7 +8,7 @@ async function postData(url = '', data = {}) {
     return response;
 }
 
-let currentPage = undefined;
+var currentPage = undefined;
 function renderCourse(container, navbarContent, topBarTitle, courseName, pageToRender = undefined) {
     postData(`/course/${courseName}`)
         .then(v => v.json())
@@ -22,10 +22,7 @@ function renderCourse(container, navbarContent, topBarTitle, courseName, pageToR
 
             let page = pageToRender || course.pages[0][2];
             
-            // Toggle active class (color)
-            if (currentPage != undefined) {
-                currentPage.classList.remove('active')
-            }
+            // Set active class (color)
             currentPage = document.getElementById(`nav-title-${page}`);
             currentPage.classList.add('active')
 

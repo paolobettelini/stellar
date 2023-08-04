@@ -40,6 +40,14 @@ function addPageToNavbar(navbarContent, level, title, page) {
 
     if (page != undefined) {
         el.onclick = _ => {
+            // Toggle active class (color)
+            if (currentPage != undefined) {
+                console.log("removing active");
+                currentPage.classList.remove('active')
+            }
+            currentPage = document.getElementById(`nav-title-${page}`);
+            currentPage.classList.add('active')
+
             renderPage(innerContent, page);
         }
     } else {
