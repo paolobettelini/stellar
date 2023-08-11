@@ -9,7 +9,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
     let filename = String::from(input.to_string_lossy());
 
     let out_folder = Path::new(output);
-    create_if_necessary(&out_folder);
+    create_if_necessary(out_folder);
 
     let snippets_dir = out_folder.join("snippets");
     let pages_dir = out_folder.join("pages");

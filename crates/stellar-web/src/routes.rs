@@ -37,7 +37,7 @@ async fn snippet_service(data: web::Data<Data>, snippet: web::Path<String>) -> i
     // TODO pre-create path
     let dir = &Path::new(&data.data_folder).join("snippets").join(&snippet);
 
-    let (file, content_type) = get_snippet_file_and_content_type(&dir, &snippet).unwrap();
+    let (file, content_type) = get_snippet_file_and_content_type(dir, &snippet).unwrap();
 
     log::debug!("Reading file: {file:?}");
     let content = std::fs::read(file).unwrap();
@@ -52,8 +52,8 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
     // TODO pre-create path
     let file = &Path::new(&data.data_folder)
         .join("snippets")
-        .join(&snippet.to_string())
-        .join(&file_name.to_string());
+        .join(snippet)
+        .join(file_name);
     log::debug!("Reading file: {file:?}");
 
     let content = std::fs::read(file).unwrap();

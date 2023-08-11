@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 #[derive(Debug)]
 pub enum PathBufType {
@@ -37,19 +37,17 @@ pub fn get_path_type(path: &Path) -> PathBufType {
         } else {
             PathBufType::Other
         }
-    } else {
-        if let Some(parent) = path.parent() {
-            let path_str = parent.to_string_lossy();
+    } else if let Some(parent) = path.parent() {
+        let path_str = parent.to_string_lossy();
 
-            if path_str.ends_with("/data/pages") {
-                PathBufType::PagesFile
-            } else if path_str.ends_with("/data/courses") {
-                PathBufType::CoursesFile
-            } else {
-                PathBufType::Other
-            }
+        if path_str.ends_with("/data/pages") {
+            PathBufType::PagesFile
+        } else if path_str.ends_with("/data/courses") {
+            PathBufType::CoursesFile
         } else {
             PathBufType::Other
         }
+    } else {
+        PathBufType::Other
     }
 }

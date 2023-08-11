@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::{fs, path::{Path, PathBuf}};
 use stellar_database::{model::*, *};
 use crate::{PathBufType, get_path_type};
 
@@ -19,7 +19,7 @@ pub async fn import(url: &str, path: &PathBuf) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub async fn import_data(connection_url: &str, folder: &PathBuf) -> anyhow::Result<()> {
+pub async fn import_data(connection_url: &str, folder: &Path) -> anyhow::Result<()> {
     let client = get_client(connection_url).await?;
 
     log::info!("Importing data");
@@ -61,7 +61,7 @@ pub async fn import_courses(connection_url: &str, folder: &PathBuf) -> anyhow::R
     Ok(())
 }
 
-pub async fn import_snippet(connection_url: &str, file: &PathBuf) -> anyhow::Result<()> {
+pub async fn import_snippet(connection_url: &str, file: &Path) -> anyhow::Result<()> {
     let client = get_client(connection_url).await?;
 
     import_snippet_with_client(&client, file).await?;
@@ -69,7 +69,7 @@ pub async fn import_snippet(connection_url: &str, file: &PathBuf) -> anyhow::Res
     Ok(())
 }
 
-pub async fn import_page(connection_url: &str, file: &PathBuf) -> anyhow::Result<()> {
+pub async fn import_page(connection_url: &str, file: &Path) -> anyhow::Result<()> {
     let client = get_client(connection_url).await?;
 
     import_page_with_client(&client, file).await?;
@@ -77,7 +77,7 @@ pub async fn import_page(connection_url: &str, file: &PathBuf) -> anyhow::Result
     Ok(())
 }
 
-pub async fn import_course(connection_url: &str, file: &PathBuf) -> anyhow::Result<()> {
+pub async fn import_course(connection_url: &str, file: &Path) -> anyhow::Result<()> {
     let client = get_client(connection_url).await?;
 
     import_course_with_client(&client, file).await?;
@@ -90,10 +90,8 @@ async fn import_snippets_with_client(
     folder: &PathBuf,
 ) -> anyhow::Result<()> {
     if let Ok(entries) = fs::read_dir(folder) {
-        for entry in entries {
-            if let Ok(file) = entry {
-                import_snippet_with_client(client, &file.path()).await?;
-            }
+        for file in entries.flatten() {
+            import_snippet_with_client(client, &file.path()).await?;
         }
     }
 
@@ -102,10 +100,8 @@ async fn import_snippets_with_client(
 
 async fn import_pages_with_client(client: &ClientHandler, folder: &PathBuf) -> anyhow::Result<()> {
     if let Ok(entries) = fs::read_dir(folder) {
-        for entry in entries {
-            if let Ok(file) = entry {
-                import_page_with_client(client, &file.path()).await?;
-            }
+        for file in entries.flatten() {
+            import_page_with_client(client, &file.path()).await?;
         }
     }
 
@@ -117,10 +113,8 @@ async fn import_courses_with_client(
     folder: &PathBuf,
 ) -> anyhow::Result<()> {
     if let Ok(entries) = fs::read_dir(folder) {
-        for entry in entries {
-            if let Ok(file) = entry {
-                import_course_with_client(client, &file.path()).await?;
-            }
+        for file in entries.flatten() {
+            import_course_with_client(client, &file.path()).await?;
         }
     }
 
@@ -129,7 +123,7 @@ async fn import_courses_with_client(
 
 async fn import_snippet_with_client(
     client: &ClientHandler,
-    file: &PathBuf,
+    file: &Path,
 ) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
@@ -147,7 +141,7 @@ async fn import_snippet_with_client(
 
 async fn import_page_with_client(
     client: &ClientHandler,
-    file: &PathBuf,
+    file: &Path,
 ) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
@@ -165,7 +159,7 @@ async fn import_page_with_client(
 
 async fn import_course_with_client(
     client: &ClientHandler,
-    file: &PathBuf,
+    file: &Path,
 ) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
