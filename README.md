@@ -97,10 +97,10 @@ Returns 404.
 ## GET `/course/<id>`
 Returns `/private/course.html`.
 
-## (TODO) GET `/page/<id>`
+## GET `/page/<id>`
 Returns `/private/page.html`.
 
-## (TODO) GET `/snippet/<id>`
+## GET `/snippet/<id>`
 Returns `/private/snippet.html`.
 
 ## GET `/search`

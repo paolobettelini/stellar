@@ -1,0 +1,42 @@
+<h1>API</h1>
+
+<h2>POST /course/&lt;id&gt;</h2>
+
+Returns the course JSON file.
+
+<h2>POST /page/&lt;id&gt;</h2>
+
+Returns the course HTML file.
+
+<h2>POST /snippet/&lt;id&gt;</h2>
+
+Returns the primary file in the snippet folder, which is in <b>data/snippets/&lt;id&gt;</b>.
+
+<h2>GET /snippet/&lt;id&gt;/&lt;file&gt;</h2>
+
+The snippet folder may contain other files that will be requested by the main file.
+These files can be accessed using this route.
+
+<h2>GET /private/{.*}</h2>
+
+Returns 404.
+
+<h2>GET /course/&lt;id&gt;</h2>
+
+Returns <b>/private/course.html</b>.
+
+<h2>GET /page/&lt;id&gt;</h2>
+
+Returns <b>/private/page.html</b>.
+
+<h2>GET /snippet/&lt;id&gt;</h2>
+
+Returns <b>/private/snippet.html</b>.
+
+<h2>GET /search</h2>
+
+Returns <b>/private/search.html</b>.
+
+<h2>GET /&lt;file&gt;</h2>
+
+Returns a static file.

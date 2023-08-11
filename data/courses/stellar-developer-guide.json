@@ -5,6 +5,11 @@
             1,
             "Introduction",
             "stellar-developer-introduction"
+        ],
+        [
+            1,
+            "API Routes",
+            "stellar-developer-routes"
         ]
     ]
 }
