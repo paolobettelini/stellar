@@ -29,7 +29,7 @@ pub struct ImportArgs {
     pub connection_url: String,
 
     /// Import data/snippets/pages/courses folder or single snippet/page/course
-    #[arg(long)]
+    #[arg(short, long, value_delimiter = ' ', num_args = 1..)]
     pub import: Option<Vec<PathBuf>>,
 }
 
@@ -63,7 +63,7 @@ pub struct WebArgs {
     pub data: PathBuf,
 
     /// MongoDB Connection URL
-    #[arg(short, long)]
+    #[arg(short = 'u', short, long)]
     pub connection_url: String,
 }
 
