@@ -30,6 +30,26 @@
             1,
             "MathJax Support",
             "stellar-technical-mathjax"
+        ],
+        [
+            1,
+            "MongoDB",
+            "stellar-technical-mongodb"
+        ],
+        [
+            1,
+            "Stellar CLI",
+            "stellar-technical-cli.html"
+        ],
+        [
+            2,
+            "Importing data",
+            "stellar-technical-cli-import"
+        ],
+        [
+            2,
+            "Parsing LaTeX",
+            "stellar-technical-cli-latex"
         ]
     ]
 }

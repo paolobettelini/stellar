@@ -29,10 +29,10 @@ The tool `stellar-cli` can be used to initialize data dynamically.
 
 # Compile everything
 ```bash
-cd notes-parser
+cd stellar-cli
 cargo b --release
 sudo mv target/release/stellar-cli /usr/local/bin
-cd ../notes-server
+cd ../web-server
 cargo b --release
 sudo mv target/release/web-server /usr/local/bin
 cd ..
@@ -40,7 +40,7 @@ cd ..
 
 # Generate PDF snippets from a LaTeX document
 ```bash
-notes-parser -i SomeDocument.tex -o data/
+stellar-cli -i SomeDocument.tex -o data/
 ```
 This will also generate the `data` folder with the required subdirectories.
 Compile the snippets
