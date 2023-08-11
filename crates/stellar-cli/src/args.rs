@@ -15,7 +15,7 @@ pub struct App {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Help message for generator.
-    Generator(GeneratorArgs),
+    Generate(GenerateArgs),
     /// Help message for import.
     Import(ImportArgs),
     /// Help message for web.
@@ -25,7 +25,7 @@ pub enum Command {
 #[derive(Debug, Args)]
 pub struct ImportArgs {
     /// MongoDB connection URL
-    #[arg(short = 'u', long)]
+    #[arg(short, long)]
     pub connection_url: String,
 
     /// Import data/snippets/pages/courses folder or single snippet/page/course
@@ -34,7 +34,7 @@ pub struct ImportArgs {
 }
 
 #[derive(Debug, Args)]
-pub struct GeneratorArgs {
+pub struct GenerateArgs {
     /// Generate data from a LaTex file
     #[arg(short = 'i', long)]
     pub latex_input: PathBuf,
@@ -63,7 +63,7 @@ pub struct WebArgs {
     pub data: PathBuf,
 
     /// MongoDB Connection URL
-    #[arg(short = 'u', short, long)]
+    #[arg(short, short, long)]
     pub connection_url: String,
 }
 

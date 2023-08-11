@@ -22,7 +22,7 @@ async fn main() -> anyhow::Result<()> {
     let args = App::parse();
 
     match args.command {
-        Command::Generator(args) => parse_generator_args(&args),
+        Command::Generate(args) => parse_generate_args(&args),
         Command::Import(args) => parse_import_args(&args).await?,
         Command::Web(args) => parse_web_args(&args).await?,
     }
@@ -30,7 +30,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn parse_generator_args(args: &GeneratorArgs) {
+pub fn parse_generate_args(args: &GenerateArgs) {
     let input = &args.latex_input;
     let output = &args.data_output;
     generator::generate_from_latex(input, output);
