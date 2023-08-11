@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 use stellar_database::{model::*, *};
-use crate::import::{PathBufType, get_path_type};
+use crate::{PathBufType, get_path_type};
 
 pub async fn import(url: &str, path: &PathBuf) -> anyhow::Result<()> {
     let data_type = get_path_type(path);

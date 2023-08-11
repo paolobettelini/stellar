@@ -1,4 +1,4 @@
-use crate::generator::parser::*;
+use crate::parser::*;
 use std::path::PathBuf;
 use std::{fs, path::Path};
 

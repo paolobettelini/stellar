@@ -1401,9 +1401,8 @@ dependencies = [
  "env_logger",
  "futures",
  "log",
- "serde",
- "serde_json",
- "stellar-database",
+ "stellar-generator",
+ "stellar-import",
  "tokio",
 ]
 
@@ -1414,6 +1413,25 @@ dependencies = [
  "anyhow",
  "mongodb",
  "serde",
+]
+
+[[package]]
+name = "stellar-generator"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "log",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "stellar-import"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "log",
+ "stellar-database",
 ]
 
 [[package]]

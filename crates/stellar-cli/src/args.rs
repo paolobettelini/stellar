@@ -12,11 +12,11 @@ pub struct App {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     Generator(GeneratorArgs),
-    Database(DatabaseArgs),
+    Import(ImportArgs),
 }
 
 #[derive(Debug, Args)]
-pub struct DatabaseArgs {
+pub struct ImportArgs {
     /// MongoDB connection URL
     #[arg(short = 'u', long)]
     pub connection_url: String,

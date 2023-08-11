@@ -4,9 +4,10 @@ use std::{
     path::{PathBuf},
 };
 
+use stellar_import as import;
+use stellar_generator as generator;
+
 mod args;
-mod import;
-mod generator;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -17,7 +18,7 @@ async fn main() -> anyhow::Result<()> {
 
     match args.command {
         Command::Generator(args) => parse_generator_args(&args),
-        Command::Database(args) => parse_database_args(&args).await?,
+        Command::Import(args) => parse_import_args(&args).await?,
     }
 
     Ok(())
@@ -29,7 +30,7 @@ pub fn parse_generator_args(args: &GeneratorArgs) {
     generator::generate_from_latex(input, output);
 }
 
-pub async fn parse_database_args(args: &DatabaseArgs) -> anyhow::Result<()> {
+pub async fn parse_import_args(args: &ImportArgs) -> anyhow::Result<()> {
     if let Some(paths) = &args.import {
         for path in paths {
             // TODO check error
