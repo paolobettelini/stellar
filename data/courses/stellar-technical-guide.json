@@ -25,6 +25,11 @@
             2,
             "Courses",
             "stellar-technical-courses"
+        ],
+        [
+            1,
+            "MathJax Support",
+            "stellar-technical-mathjax"
         ]
     ]
 }
