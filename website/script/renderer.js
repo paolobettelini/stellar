@@ -52,9 +52,12 @@ function renderPage(container, pageName) {
             snippets.forEach((snippetName, index) => {                
                 // Retrieve the snippet wrapper via getElementById
                 let wrapper = document.getElementById(`wrapper${index}`);
-    
+
                 renderSnippet(wrapper, snippetName, index);
             });
+
+            // Typeset with MathJax3
+            MathJax.typesetPromise([container]);
         });
 }
 
