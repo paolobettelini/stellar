@@ -1,0 +1,62 @@
+<h1>Snippets</h1>
+
+Snippets are the most basic units of contents.
+A snippet may be just an image, some text, a mathematical expression,
+a mathematical theorem or proof, an animation or an interactive animation.
+
+<h2>Snippet structure</h2>
+
+Any snippet is a folder, named as the identifier of the snippet,
+containing the content to display.
+The main snippet file is also named as its identifier and has one of the supported
+extensions.
+<br>
+<br>
+Supported extensions are: <b>html</b>, <b>pdf</b>, <b>png (TODO)</b>.
+<br>
+Examples:
+<ul>
+    <li>
+        <b>snippets/</b>
+        <ul>
+            <li>
+                <b>some-snippet-id-1</b>
+                <ul>
+                    <li><b>some-snippet-id-1.html</b></li>
+                </ul>
+            </li>
+            <li>
+                <b>some-snippet-id-2</b>
+                <ul>
+                    <li><b>some-snippet-id-2.pdf</b></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+<h2>Complementary files</h2>
+
+A folder for a snippet may multiple multiple files.
+The main file may request the contents of the complementary files.
+
+<ul>
+    <li>
+        <b>snippets/</b>
+        <ul>
+            <li>
+                <b>some-snippet/</b>
+                <ul>
+                    <li><b>some-snippet.html</b></li>
+                    <li><b>complementary1.html</b></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+The main file <b>some-snippet.html</b> can request
+the file <b>complementary1.html</b> by the the following uri:
+<b><pre>/snippet/some-snippet/complementary1<id></pre></b>
+If a complementary file wants to request another complementary file (E.g. <b>complementary2</b>),
+it is sufficient to request the URI <b><pre>./complementary2</pre></b>.

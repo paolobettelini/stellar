@@ -10,6 +10,21 @@
             1,
             "Content structure",
             "stellar-technical-content-structure"
+        ],
+        [
+            2,
+            "Snippets",
+            "stellar-technical-snippets"
+        ],
+        [
+            2,
+            "Pages",
+            "stellar-technical-pages"
+        ],
+        [
+            2,
+            "Courses",
+            "stellar-technical-courses"
         ]
     ]
 }
