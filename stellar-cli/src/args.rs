@@ -1,7 +1,7 @@
 pub use clap::{ArgGroup, Parser};
 use std::path::PathBuf;
 
-/// Notes parser CLI
+/// Stellar CLI
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
