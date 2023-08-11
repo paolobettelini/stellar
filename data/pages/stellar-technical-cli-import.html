@@ -4,14 +4,14 @@ The stellar CLI tool can be used to initialize data to the MongoDB database.
 
 <code>
 <pre>
-    stellar-cli --connection-url ... --import ./data
-    stellar-cli --connection-url ... --import ./data/snippets
-    stellar-cli --connection-url ... --import ./data/pages
-    stellar-cli --connection-url ... --import ./data/courses
-    stellar-cli --connection-url ... --import ./data/snippets/snippet1
-    stellar-cli --connection-url ... --import ./data/pages/page1.html
-    stellar-cli --connection-url ... --import ./data/courses/course1.json
-    stellar-cli --connection-url ... --import course1.json --import course2.json
+    stellar-cli import -c "..." --import ./data
+    stellar-cli import -c "..." --import ./data/snippets
+    stellar-cli import -c "..." --import ./data/pages
+    stellar-cli import -c "..." --import ./data/courses
+    stellar-cli import -c "..." --import ./data/snippets/snippet1
+    stellar-cli import -c "..." --import ./data/pages/page1.html
+    stellar-cli import -c "..." --import ./data/courses/course1.json
+    stellar-cli import -c "..." --import course1.json course2.json
 </pre>
 </code>
 

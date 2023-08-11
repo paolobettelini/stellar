@@ -50,6 +50,11 @@
             2,
             "Parsing LaTeX",
             "stellar-technical-cli-latex"
+        ],
+        [
+            2,
+            "Web Server",
+            "stellar-technical-cli-web"
         ]
     ]
 }
