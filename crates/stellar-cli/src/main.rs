@@ -8,9 +8,15 @@ use stellar_web as web;
 
 mod args;
 
+const LOG_ENV: &str = "RUST_LOG";
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Initialize logging
+    if std::env::var(LOG_ENV).is_err() {
+        std::env::set_var(LOG_ENV, "info");
+    }
+
     env_logger::init();
 
     let args = App::parse();
