@@ -1,4 +1,4 @@
-use crate::latex::parser::*;
+use crate::generator::parser::*;
 use std::path::PathBuf;
 use std::{fs, path::Path};
 
@@ -19,7 +19,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
     create_if_necessary(&pages_dir);
     create_if_necessary(&courses_dir);
 
-    let texdoc = parse(&content, &filename);
+    let texdoc = parse_latex(&content, &filename);
 
     let json = tex_page_to_json_course(&texdoc);
     let json = serde_json::to_string_pretty(&json).unwrap();
@@ -43,6 +43,8 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf) {
             fs::write(dir.join(filename), tex).expect("Couldn't write to file");
         }
     }
+
+    log::info!("Remember to compile the snippets");
 }
 
 fn create_if_necessary(path: &Path) {

@@ -17,7 +17,6 @@ lazy_static! {
     pub static ref CONFIG: Args = Args::parse();
 }
 
-// &CONFIG.www, &CONFIG.data
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Initialize logging

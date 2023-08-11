@@ -3,7 +3,9 @@ name = "stellar-cli"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "stellar-cli"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.0.29", features = ["derive"] }
@@ -13,7 +15,7 @@ serde = { version = "1.0.152", features = [ "derive" ] }
 log = "0.4.19"
 env_logger = "0.6.0"
 anyhow = "1.0.72"
-
-stellar-database = { path = "../stellar-database" }
 tokio = "1.29.1"
 futures = "0.3.28" # TODO remove?
+
+stellar-database = { path = "../stellar-database" }

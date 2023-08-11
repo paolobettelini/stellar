@@ -26,7 +26,7 @@ enum SectionType {
     Subsubsection = 3,
 }
 
-pub fn parse(content: &str, filename: &str) -> TeXPage {
+pub fn parse_latex(content: &str, filename: &str) -> TeXPage {
     let filename = strip_filename(filename);
     let file_id = name_to_id(&filename);
 

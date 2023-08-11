@@ -1,0 +1,16 @@
+[package]
+name = "stellar"
+version = "0.1.0"
+edition = "2021"
+description = "CLI tool for the Stellar project"
+readme = "README.md"
+repository = "https://github.com/paolobettelini/stellar"
+
+[workspace]
+members = [
+  "crates/*",
+]
+
+[[bin]]
+name = "stellar-cli"
+path = "src/main.rs"
