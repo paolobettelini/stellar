@@ -2,6 +2,7 @@
 #content {
     margin-left: var(--sidebar-width);
     padding-left: 5%;
+    padding-right: 5%;
     transition: margin-left 0.3s ease-in-out; /* Add a transition for smooth animation */
     display: flex;
     justify-content: center;
