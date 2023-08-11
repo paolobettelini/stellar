@@ -36,5 +36,5 @@ pkg
 # npm
 node_modules
 
-data
 temp
+testdata
