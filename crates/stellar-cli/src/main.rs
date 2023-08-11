@@ -1,11 +1,10 @@
 use args::*;
 use clap::Parser;
-use std::{
-    path::{PathBuf},
-};
+use std::path::PathBuf;
 
-use stellar_import as import;
 use stellar_generator as generator;
+use stellar_import as import;
+use stellar_web as web;
 
 mod args;
 
@@ -19,6 +18,7 @@ async fn main() -> anyhow::Result<()> {
     match args.command {
         Command::Generator(args) => parse_generator_args(&args),
         Command::Import(args) => parse_import_args(&args).await?,
+        Command::Web(args) => parse_web_args(&args).await?,
     }
 
     Ok(())
@@ -38,6 +38,19 @@ pub async fn parse_import_args(args: &ImportArgs) -> anyhow::Result<()> {
             import::import(url, path).await?;
         }
     }
+
+    Ok(())
+}
+
+pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
+    web::start_server(
+        args.address,
+        args.port,
+        &args.connection_url,
+        args.data.clone(),
+        args.www.clone(),
+    )
+    .await?;
 
     Ok(())
 }

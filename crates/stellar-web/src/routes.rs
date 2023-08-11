@@ -1,62 +1,15 @@
-use actix_files::Files;
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-
-use env_logger;
-use std::path::{Path, PathBuf};
+use actix_web::{get, post, web, HttpResponse, Responder};
 use std::fs;
+use std::path::{PathBuf, Path};
+use crate::Data;
 use futures::TryStreamExt;
-use stellar_database::*;
-
-mod args;
-use args::*;
-
-#[macro_use]
-extern crate lazy_static;
-
-lazy_static! {
-    pub static ref CONFIG: Args = Args::parse();
-}
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Initialize logging
-    env_logger::init();
-
-    let client = ClientHandler::new(&CONFIG.connection_url).await?;
-    let _ = client.create_indexes().await;
-
-    HttpServer::new(move || {
-        App::new()
-            .service(course_service)
-            .service(page_service)
-            .service(snippet_complementary_service)
-            .service(snippet_service)
-            .service(snippet_query)
-            .service(page_query)
-            .service(course_query)
-            // Static files
-            .service(private_folder)
-            .service(search_html)
-            .service(course_html)
-            .service(page_html)
-            .service(snippet_html)
-            .service(Files::new("/", &CONFIG.www).index_file("index.html"))
-            // Data
-            .app_data(web::Data::new(client.clone()))
-    })
-    .bind((CONFIG.address, CONFIG.port))?
-    .run()
-    .await?;
-
-    Ok(())
-}
 
 #[post("/course/{course}")]
-async fn course_service(course: web::Path<String>) -> impl Responder {
+async fn course_service(data: web::Data<Data>, course: web::Path<String>) -> impl Responder {
     let file_name = format!("{course}.json");
     log::debug!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &Path::new(&CONFIG.data).join("courses").join(file_name);
+    let file = &Path::new(&data.data_folder).join("courses").join(file_name);
     let content = std::fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()
@@ -66,11 +19,11 @@ async fn course_service(course: web::Path<String>) -> impl Responder {
 }
 
 #[post("/page/{page}")]
-async fn page_service(page: web::Path<String>) -> impl Responder {
+async fn page_service(data: web::Data<Data>, page: web::Path<String>) -> impl Responder {
     let file_name = format!("{page}.html");
     log::debug!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &Path::new(&CONFIG.data).join("pages").join(file_name);
+    let file = &Path::new(&data.data_folder).join("pages").join(file_name);
     let content = std::fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()
@@ -79,10 +32,10 @@ async fn page_service(page: web::Path<String>) -> impl Responder {
 }
 
 #[post("/snippet/{snippet}")]
-async fn snippet_service(snippet: web::Path<String>) -> impl Responder {
+async fn snippet_service(data: web::Data<Data>, snippet: web::Path<String>) -> impl Responder {
     let snippet = snippet.to_string();
     // TODO pre-create path
-    let dir = &Path::new(&CONFIG.data).join("snippets").join(&snippet);
+    let dir = &Path::new(&data.data_folder).join("snippets").join(&snippet);
 
     let (file, content_type) = get_snippet_file_and_content_type(&dir, &snippet).unwrap();
 
@@ -93,11 +46,11 @@ async fn snippet_service(snippet: web::Path<String>) -> impl Responder {
 }
 
 #[get("/snippet/{snippet}/{file_name}")]
-async fn snippet_complementary_service(data: web::Path<(String, String)>) -> impl Responder {
-    let snippet = &data.0;
-    let file_name = &data.1;
+async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<(String, String)>) -> impl Responder {
+    let snippet = &params.0;
+    let file_name = &params.1;
     // TODO pre-create path
-    let file = &Path::new(&CONFIG.data)
+    let file = &Path::new(&data.data_folder)
         .join("snippets")
         .join(&snippet.to_string())
         .join(&file_name.to_string());
@@ -124,8 +77,8 @@ async fn private_folder() -> impl Responder {
 }
 
 #[get("/search")]
-async fn search_html() -> impl Responder {
-    let file = Path::new(&CONFIG.www).join("private").join("search.html");
+async fn search_html(data: web::Data<Data>) -> impl Responder {
+    let file = Path::new(&data.www_folder).join("private").join("search.html");
     let html = fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()
@@ -134,8 +87,8 @@ async fn search_html() -> impl Responder {
 }
 
 #[get("/course/{course}")]
-async fn course_html() -> impl Responder {
-    let file = Path::new(&CONFIG.www).join("private").join("course.html");
+async fn course_html(data: web::Data<Data>) -> impl Responder {
+    let file = Path::new(&data.www_folder).join("private").join("course.html");
     let html = fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()
@@ -144,8 +97,8 @@ async fn course_html() -> impl Responder {
 }
 
 #[get("/page/{page}")]
-async fn page_html() -> impl Responder {
-    let file = Path::new(&CONFIG.www).join("private").join("page.html");
+async fn page_html(data: web::Data<Data>) -> impl Responder {
+    let file = Path::new(&data.www_folder).join("private").join("page.html");
     let html = fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()
@@ -154,8 +107,8 @@ async fn page_html() -> impl Responder {
 }
 
 #[get("/snippet/{snippet}")]
-async fn snippet_html() -> impl Responder {
-    let file = Path::new(&CONFIG.www).join("private").join("snippet.html");
+async fn snippet_html(data: web::Data<Data>) -> impl Responder {
+    let file = Path::new(&data.www_folder).join("private").join("snippet.html");
     let html = fs::read_to_string(file).unwrap();
 
     HttpResponse::Ok()
@@ -164,8 +117,8 @@ async fn snippet_html() -> impl Responder {
 }
 
 #[post("/query/snippet/{keyword}")]
-async fn snippet_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
-    let mut cursor = client.query_snippets(&keyword).await.unwrap();
+async fn snippet_query(data: web::Data<Data>, keyword: web::Path<String>) -> impl Responder {
+    let mut cursor = data.client.query_snippets(&keyword).await.unwrap();
 
     let mut vec = Vec::new();
     while let Some(document) = cursor.try_next().await.unwrap() {
@@ -179,8 +132,8 @@ async fn snippet_query(client: web::Data<ClientHandler>, keyword: web::Path<Stri
 }
 
 #[post("/query/page/{keyword}")]
-async fn page_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
-    let mut cursor = client.query_pages(&keyword).await.unwrap();
+async fn page_query(data: web::Data<Data>, keyword: web::Path<String>) -> impl Responder {
+    let mut cursor = data.client.query_pages(&keyword).await.unwrap();
 
     let mut vec = Vec::new();
     while let Some(document) = cursor.try_next().await.unwrap() {
@@ -194,8 +147,8 @@ async fn page_query(client: web::Data<ClientHandler>, keyword: web::Path<String>
 }
 
 #[post("/query/course/{keyword}")]
-async fn course_query(client: web::Data<ClientHandler>, keyword: web::Path<String>) -> impl Responder {
-    let mut cursor = client.query_courses(&keyword).await.unwrap();
+async fn course_query(data: web::Data<Data>, keyword: web::Path<String>) -> impl Responder {
+    let mut cursor = data.client.query_courses(&keyword).await.unwrap();
 
     let mut vec = Vec::new();
     while let Some(document) = cursor.try_next().await.unwrap() {

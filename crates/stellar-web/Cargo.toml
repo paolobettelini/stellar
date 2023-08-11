@@ -1,21 +1,18 @@
 [package]
-name = "web-server"
+name = "stellar-web"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.0.29", features = ["derive"] }
 actix-web = "4.3.1"
 tokio = { version = "1", features = ["full"] }
 serde_json = "1.0"
 actix-files = "0.6.2"
-lazy_static = "1.4.0"
 anyhow = "1.0.72"
 
 log = "0.4.19"
-env_logger = "0.6.0"
 
 stellar-database = { path = "../stellar-database" }
 futures = "0.3.28"
