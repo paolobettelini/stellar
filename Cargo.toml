@@ -11,6 +11,8 @@ members = [
   "crates/*",
 ]
 
+default-members = ["crates/stellar-cli"]
+
 [[bin]]
 name = "stellar-cli"
 path = "src/main.rs"
