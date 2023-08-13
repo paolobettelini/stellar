@@ -83,18 +83,23 @@ function renderSnippet(container, snippetName, index) {
                     let textLayer = document.createElement('div');
                     textLayer.classList.add('textLayer');
 
+                    let annotationLayer = document.createElement('div');
+                    annotationLayer.classList.add('annotationLayer');
+
                     let canvasId = `pdf${index}`;
                     let textLayerId = `tl${index}`;
+                    let annotationLayerId = `al${index}`;
                     canvas.id = canvasId;
                     textLayer.id = textLayerId;
-                
+                    annotationLayer.id = annotationLayerId;
+
                     // Does not work
                     //let col2 = document.querySelector(':root').style.getPropertyValue('--col2');
                     //console.log(col2);
 
                     container.appendChild(canvas);
                     container.appendChild(textLayer);
-                    loadPDF(buffer, canvasId, textLayerId,
+                    loadPDF(buffer, canvasId, textLayerId, annotationLayerId,
                         () => {
                             // Apply filter
                             //if (col2 != "#FFFFFF") {

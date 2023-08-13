@@ -8,7 +8,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 //pdfjsLib.preferences.set('enableWebGL', true)
 
 // Asynchronous download of PDF
-function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
+function loadPDF(buffer, canvasId, textLayerId, annotationLayerId, postRender = function () {}) {
     let loadingTask = pdfjsLib.getDocument(buffer);
 
     loadingTask.promise.then(function(pdf) {
@@ -36,7 +36,10 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
             };
             var renderTask = page.render(renderContext);
 
-            renderTask.promise.then(postRender);
+            let annotationLayerDiv = document.getElementById(annotationLayerId);
+            renderTask.promise
+                .then(_ => setupAnnotations(page, viewport, canvas, annotationLayerDiv))
+                .then(postRender);
 
             // Render text
             page.getTextContent().then(function(textContent) {
@@ -65,4 +68,54 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
     });
 
     return loadingTask;
+}
+
+
+function setupAnnotations(page, viewport, canvas, annotationLayerDiv) {
+    // TODO
+    /*
+    let canvasOffsetLeft = canvas.offsetLeft;
+    let canvasOffsetTop = canvas.offsetTop;
+
+    let promise = page.getAnnotations().then(function (annotationsData) {
+        viewport = viewport.clone({ dontFlip: true });
+
+        console.log(annotationsData);
+
+        for (let i = 0; i < annotationsData.length; i++) {
+            var data = annotationsData[i];
+            var annotation = pdfjsLib.Annotation.fromData(data);
+            if (!(annotation & annotation.hasHtml())) {
+                continue;
+            }
+
+            let element = annotation.getHtmlElement(page.commonObjs);
+            data = annotation.getData();
+            let rect = data.rect;
+            let view = page.view;
+            rect = pdfjsLib.Util.normalizeRect([
+                rect[0],
+                view[3] - rect[1] + view[1],
+                rect[2],
+                view[3] - rect[3] + view[1]]);
+            element.style.left = (canvasOffsetLeft + rect[0]) + 'px';
+            element.style.top = (canvasOffsetTop + rect[1]) + 'px';
+            element.style.position = 'absolute';
+
+            let transform = viewport.transform;
+            let transformStr = 'matrix(' + transform.join(',') + ')';
+            CustomStyle.setProp('transform', element, transformStr);
+            let transformOriginStr = -rect[0] + 'px ' + -rect[1] + 'px';
+            CustomStyle.setProp('transformOrigin', element, transformOriginStr);
+
+            if (data.subtype == 'Link' && !data.url) {
+                // In this example,  I do not handle the `Link` annotations without url.
+                // If you want to handle those annotations, see `web/page_view.js`.
+                continue;
+            }
+            annotationLayerDiv.append(element);
+        }
+    });
+    return promise;
+    */
 }
