@@ -56,8 +56,17 @@ function renderPage(container, pageName) {
                 renderSnippet(wrapper, snippetName, index);
             });
 
-            // Typeset with MathJax3
-            MathJax.typesetPromise([container]);
+            let action = () => {
+                console.log("executing action");
+                // Create floating snippets
+                createFloatingSnippets(container);
+
+                // Typeset with MathJax3
+                MathJax.typesetPromise([container]);
+            }
+
+            // Execute action() when ready
+            waitReadyStateComplete(action);   
         });
 }
 
@@ -111,19 +120,10 @@ function renderSnippet(container, snippetName, index) {
                     let content = decoder.decode(buffer);
                     container.innerHTML = content;
 
-                    // Typeset with MathJax3
-                    MathJax.typesetPromise([container]);
+                    // Typeset with MathJax3 and floating snippets
                 }
             });
         });
-
-    // TODO: don't use a timeout, do it when it is rendered
-    setTimeout(() => {
-        let elements = container.getElementsByClassName('floating-snippet');
-        for (let i = 0; i < elements.length; i++) {
-            createFloatingSnippet(elements[i]);
-        };
-    }, 1000);
 }
 
 function extractSnippetNames(content) {
@@ -145,6 +145,34 @@ function extractSnippetNames(content) {
     }
 
     return values;
+}
+
+function waitReadyStateComplete(action) {
+    setTimeout(action, 1000); // :/
+    /*if (document.readyState == "complete") {
+        action();
+    } else {
+        document.addEventListener('load', () => {
+            action();
+        }, { once: true });
+    }
+
+
+    if (document.readyState != "complete") {
+        document.addEventListener("readystatechange", _ => {
+            waitReadyStateComplete(action);
+        }, { once: true });
+    } else {
+        action();
+    }*/
+}
+
+function createFloatingSnippets(container) {
+    let elements = container.getElementsByClassName('floating-snippet');
+    console.log(document.readyState + " " + elements.length);
+    for (let i = 0; i < elements.length; i++) {
+        createFloatingSnippet(elements[i]);
+    };
 }
 
 var floatingSnippetCounter = 0;
