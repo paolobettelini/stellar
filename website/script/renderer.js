@@ -116,6 +116,14 @@ function renderSnippet(container, snippetName, index) {
                 }
             });
         });
+
+    // TODO: don't use a timeout, do it when it is rendered
+    setTimeout(() => {
+        let elements = container.getElementsByClassName('floating-snippet');
+        for (let i = 0; i < elements.length; i++) {
+            createFloatingSnippet(elements[i]);
+        };
+    }, 1000);
 }
 
 function extractSnippetNames(content) {
@@ -137,4 +145,37 @@ function extractSnippetNames(content) {
     }
 
     return values;
+}
+
+var floatingSnippetCounter = 0;
+function createFloatingSnippet(element) {
+    element.uniqueId = `float-${floatingSnippetCounter}`;
+    floatingSnippetCounter++;
+
+    element.onmouseover = _ => {
+        let href = element.href;
+        
+        let container = document.createElement('div');
+        container.id = element.uniqueId;
+        let snippetName = href.split('/').pop();
+
+        const rect = element.getBoundingClientRect();
+        container.style.position = 'absolute';
+        container.style.top = '0px';
+        container.style.left = rect.left + 'px';
+        container.style.display = 'inline-block';
+        container.style.zIndex = '100';
+        container.style.border = 'solid 2px black';
+
+        console.log(rect.top);
+        console.log(container.style.top);
+        renderSnippet(container, snippetName, container.id);
+        
+        document.body.append(container);                
+    }
+    
+    element.onmouseout = _ => {
+        let container = document.getElementById(element.uniqueId)
+        document.body.removeChild(container);
+    }
 }
