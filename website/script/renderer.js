@@ -92,15 +92,10 @@ function renderSnippet(container, snippetName, index) {
                     let textLayer = document.createElement('div');
                     textLayer.classList.add('textLayer');
 
-                    let annotationLayer = document.createElement('div');
-                    annotationLayer.classList.add('annotationLayer');
-
                     let canvasId = `pdf${index}`;
                     let textLayerId = `tl${index}`;
-                    let annotationLayerId = `al${index}`;
                     canvas.id = canvasId;
                     textLayer.id = textLayerId;
-                    annotationLayer.id = annotationLayerId;
 
                     // Does not work
                     //let col2 = document.querySelector(':root').style.getPropertyValue('--col2');
@@ -108,7 +103,7 @@ function renderSnippet(container, snippetName, index) {
 
                     container.appendChild(canvas);
                     container.appendChild(textLayer);
-                    loadPDF(buffer, canvasId, textLayerId, annotationLayerId,
+                    loadPDF(buffer, canvasId, textLayerId,
                         () => {
                             // Apply filter
                             //if (col2 != "#FFFFFF") {
@@ -120,7 +115,9 @@ function renderSnippet(container, snippetName, index) {
                     let content = decoder.decode(buffer);
                     container.innerHTML = content;
 
+                    // TODO:
                     // Typeset with MathJax3 and floating snippets
+                    // only for snippet page
                 }
             });
         });
@@ -149,6 +146,9 @@ function extractSnippetNames(content) {
 
 function waitReadyStateComplete(action) {
     setTimeout(action, 1000); // :/
+
+    // also try with event DOMContentLoaded
+
     /*if (document.readyState == "complete") {
         action();
     } else {
@@ -169,7 +169,6 @@ function waitReadyStateComplete(action) {
 
 function createFloatingSnippets(container) {
     let elements = container.getElementsByClassName('floating-snippet');
-    console.log(document.readyState + " " + elements.length);
     for (let i = 0; i < elements.length; i++) {
         createFloatingSnippet(elements[i]);
     };
