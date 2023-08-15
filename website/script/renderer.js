@@ -187,18 +187,20 @@ function createFloatingSnippet(element) {
         let snippetName = href.split('/').pop();
 
         const rect = element.getBoundingClientRect();
-        container.style.position = 'absolute';
-        container.style.top = '0px';
+        
+        container.style.top = rect.top + rect.height +  'px';
         container.style.left = rect.left + 'px';
         container.style.display = 'inline-block';
-        container.style.zIndex = '100';
         container.style.border = 'solid 2px black';
+        container.style.backgroundColor = 'white';
+        // TODO remove the space. Set to red to see it
 
-        console.log(rect.top);
-        console.log(container.style.top);
         renderSnippet(container, snippetName, container.id);
+
+        // override the 'relative' set by renderSnippet
+        container.style.position = 'absolute';
         
-        document.body.append(container);                
+        document.body.appendChild(container);
     }
     
     element.onmouseout = _ => {

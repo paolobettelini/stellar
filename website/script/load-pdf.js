@@ -41,7 +41,6 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
             //let annotationLayerDiv = document.getElementById(annotationLayerId);
             renderTask.promise
                 // Render annotations
-                .then(_ => setupAnnotations(page, viewport, canvas, textLayerDiv))
                 .then(postRender);
 
             // Render text
@@ -62,6 +61,9 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
                     textDivs: []
                 });
             })
+
+            // Render annotations on textLayer
+            setupAnnotations(page, viewport, textLayerDiv)
         });
     }, function (reason) {
         // PDF loading error
@@ -72,13 +74,12 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
 }
 
 
-function setupAnnotations(page, viewport, canvas, container) {
+function setupAnnotations(page, viewport, container) {
     let promise = page.getAnnotations().then(function (annotationsData) {
         viewport = viewport.clone({ dontFlip: true });
 
         for (let i = 0; i < annotationsData.length; i++) {
             var data = annotationsData[i];
-
 
             let rect = data.rect; // [x1, y1, x2, y2]
             //    (x1, y1) is the lower-left corner of the rectangle.
@@ -91,7 +92,7 @@ function setupAnnotations(page, viewport, canvas, container) {
                 view[3] - rect[3] + view[1]]);
 
             let element = document.createElement('a');
-            element.style.position = "absolute";
+            element.style.position = 'absolute';
             element.style.left = rect[0] * scale + "px";
             element.style.top = rect[1] * scale + "px";
             element.style.width = (rect[2] - rect[0]) * scale + "px";
