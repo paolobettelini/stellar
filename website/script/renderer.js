@@ -187,12 +187,16 @@ function createFloatingSnippet(element) {
         let snippetName = href.split('/').pop();
 
         const rect = element.getBoundingClientRect();
-        
+        // shift the snippet left to center it with respect to element
+        let leftShift = rect.width * 0.5;
+
         container.style.top = rect.top + rect.height +  'px';
-        container.style.left = rect.left + 'px';
+        container.style.left = rect.left + leftShift + 'px';
+        container.style.transform = 'translateX(-50%)';
         container.style.display = 'inline-block';
         container.style.border = 'solid 2px black';
         container.style.backgroundColor = 'white';
+        container.style.zIndex = '50';
         // TODO remove the space. Set to red to see it
 
         renderSnippet(container, snippetName, container.id);

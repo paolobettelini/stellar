@@ -23,7 +23,7 @@
     width: var(--sidebar-width);
     height: 100%;
     background-color: var(--col3);
-    z-index: 100;
+    z-index: 10;
     transition: transform 0.3s ease-in-out;
     overflow-y: auto; /* Add overflow-y property with value auto */
     max-height: 100vh;
@@ -83,7 +83,7 @@
 
 #top-bar {
     position: fixed;
-    z-index: 100;
+    z-index: 10;
     padding: 5px;
     padding-top: 15px;
     color: var(--col1);
