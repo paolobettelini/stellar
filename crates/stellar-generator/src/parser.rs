@@ -1,5 +1,5 @@
 const BEGIN_DOCUMENT: &str = r"\begin{document}";
-const NOTEPIECE_PACKAGE: &str = r"\usepackage{notepiece}";
+const NOTEPIECE_PACKAGE: &str = r"\usepackage{snippetformat}";
 const END_DOCUMENT: &str = r"\end{document}";
 const SECTION: &str = r"\section{";
 const SUBSECTION: &str = r"\subsection{";
