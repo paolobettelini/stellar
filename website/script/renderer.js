@@ -46,6 +46,11 @@ function renderPage(container, pageName) {
                     `<div id="wrapper${index}"></div>`);
             });
 
+            // <ref snippet="text1">text2</ref>
+            // ->
+            // <a href="/snippet/text1" class="floating-snippet">text2</a>
+            content = desugarFloatingSnippets(content);
+
             // Parse everything
             container.innerHTML = content;
             
@@ -57,7 +62,6 @@ function renderPage(container, pageName) {
             });
 
             let action = () => {
-                console.log("executing action");
                 // Create floating snippets
                 createFloatingSnippets(container);
 
@@ -116,7 +120,9 @@ function renderSnippet(container, snippetName, index) {
                     container.innerHTML = content;
 
                     // TODO:
-                    // Typeset with MathJax3 and floating snippets
+                    // Typeset with MathJax3
+                    // desugarFloatingSnippets
+                    // Setup floating snippets
                     // only for snippet page
                 }
             });
@@ -165,6 +171,16 @@ function waitReadyStateComplete(action) {
     } else {
         action();
     }*/
+}
+
+function desugarFloatingSnippets(inputString) {
+    const pattern = /<ref snippet="([^"]+)">([^<]+)<\/ref>/g;
+
+    const replacedString = inputString.replace(pattern, (match, snippetName, text) => {
+        return `<a href="/snippet/${snippetName}" class="floating-snippet">${text}</a>`;
+    });
+
+    return replacedString;
 }
 
 function createFloatingSnippets(container) {
