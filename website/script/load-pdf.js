@@ -97,12 +97,15 @@ function setupAnnotations(page, viewport, container) {
             element.style.top = rect[1] * scale + "px";
             element.style.width = (rect[2] - rect[0]) * scale + "px";
             element.style.height = (rect[3] - rect[1]) * scale + "px";
-            /* */ data.url = "/snippet/mandelbrot";
-            element.href = data.url;
+            
+            if (data.url == undefined && data.unsafeUrl.includes("/snippet/")) {
+                let url = data.unsafeUrl.split('.pdf')[0];
+                data.url = url;
 
-            if (data.url.startsWith("/snippet/")) {
                 element.classList.add("floating-snippet")
             }
+
+            element.href = data.url;
 
             // Debug:
             // element.style.border = "1px solid black";
