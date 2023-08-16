@@ -1,8 +1,12 @@
-\NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{stellar}[2023/01/01 Stellar LaTeX functions]
 
 \RequirePackage{hyperref}
+\RequirePackage{xparse}
 
-\newcommand{\snippetref}[1]{%
-    \href{/snippet/#1}{#1}%
+\ExplSyntaxOn
+\DeclareDocumentCommand{\snippetref}{d[] d[]}{%
+    \IfNoValueTF { #2 }
+    { \href{/snippet/#1}{#1} }
+    { \href{/snippet/#1}{#2} }
 }
+\ExplSyntaxOff
