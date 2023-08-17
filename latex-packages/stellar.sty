@@ -2,6 +2,8 @@
 
 \RequirePackage{hyperref}
 \RequirePackage{xparse}
+\RequirePackage{xcolor}
+\RequirePackage[most]{tcolorbox}
 
 \ExplSyntaxOn
 \DeclareDocumentCommand{\snippetref}{d[] d[]}{%
@@ -10,3 +12,104 @@
     { \href{/snippet/#1}{#2} }
 }
 \ExplSyntaxOff
+
+%%%%%%%%%%%%%%%% Taken from
+% https://github.com/SeniorMars/dotfiles/blob/master/latex_template/preamble.tex
+
+
+\definecolor{myg}{RGB}{56, 140, 70}
+\definecolor{myb}{RGB}{45, 111, 177}
+\definecolor{myr}{RGB}{199, 68, 64}
+\definecolor{mytheorembg}{HTML}{F2F2F9}
+\definecolor{mytheoremfr}{HTML}{00007B}
+\definecolor{mylemmabg}{HTML}{FFFAF8}
+\definecolor{mylemmafr}{HTML}{983b0f}
+\definecolor{mypropbg}{HTML}{f2fbfc}
+\definecolor{mypropfr}{HTML}{191971}
+\definecolor{myp}{RGB}{197, 92, 212}
+
+%\tcbuselibrary{theorems,skins,hooks}
+\newtcbtheorem{Theorem}{Theorem}
+{%
+    theorem name,%this removes the number
+	enhanced,
+	breakable,
+	colback = mytheorembg,
+	frame hidden,
+	boxrule = 0sp,
+	borderline west = {2pt}{0pt}{mytheoremfr},
+	sharp corners,
+	detach title,
+	before upper = \tcbtitle\par\smallskip,
+	coltitle = mytheoremfr,
+	fonttitle = \bfseries\sffamily,
+	description font = \mdseries,
+	separator sign none,
+	segmentation style={solid, mytheoremfr},
+}
+{th}
+
+\newtcbtheorem{Corollary}{Corollary}
+{%
+    theorem name,%this removes the number
+	enhanced
+	,breakable
+	,colback = myp!10
+	,frame hidden
+	,boxrule = 0sp
+	,borderline west = {2pt}{0pt}{myp!85!black}
+	,sharp corners
+	,detach title
+	,before upper = \tcbtitle\par\smallskip
+	,coltitle = myp!85!black
+	,fonttitle = \bfseries\sffamily
+	,description font = \mdseries
+	,separator sign none
+	,segmentation style={solid, myp!85!black}
+}
+{th}
+
+\newtcbtheorem{Lemma}{Lemma}
+{%
+    theorem name,%this removes the number
+	enhanced,
+	breakable,
+	colback = mylemmabg,
+	frame hidden,
+	boxrule = 0sp,
+	borderline west = {2pt}{0pt}{mylemmafr},
+	sharp corners,
+	detach title,
+	before upper = \tcbtitle\par\smallskip,
+	coltitle = mylemmafr,
+	fonttitle = \bfseries\sffamily,
+	description font = \mdseries,
+	separator sign none,
+	segmentation style={solid, mylemmafr},
+}
+{th}
+
+\newtcbtheorem{Prop}{Proposition}
+{%
+    theorem name,%this removes the number
+	enhanced,
+	breakable,
+	colback = mypropbg,
+	frame hidden,
+	boxrule = 0sp,
+	borderline west = {2pt}{0pt}{mypropfr},
+	sharp corners,
+	detach title,
+	before upper = \tcbtitle\par\smallskip,
+	coltitle = mypropfr,
+	fonttitle = \bfseries\sffamily,
+	description font = \mdseries,
+	separator sign none,
+	segmentation style={solid, mypropfr},
+}
+{th}
+
+\newcommand{\thm}[2]{\begin{Theorem}{#1}{}#2\end{Theorem}}
+\newcommand{\cor}[2]{\begin{Corollary}{#1}{}#2\end{Corollary}}
+\newcommand{\mlemma}[2]{\begin{Lemma}{#1}{}#2\end{Lemma}}
+\newcommand{\mprop}[2]{\begin{Prop}{#1}{}#2\end{Prop}}
