@@ -98,6 +98,7 @@ function setupAnnotations(page, viewport, container) {
             element.style.width = (rect[2] - rect[0]) * scale + "px";
             element.style.height = (rect[3] - rect[1]) * scale + "px";
             
+            // floating snippet on hover
             if (data.url == undefined && data.unsafeUrl.includes("/snippet/")) {
                 let url = data.unsafeUrl.split('.pdf')[0];
                 data.url = url;
