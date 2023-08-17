@@ -1,0 +1,11 @@
+{
+    "courses": [
+        { "name": "Developer Guide", "id": "stellar-developer-guide", "x": 0.45, "y": 0.3 },
+        { "name": "Technical Guide", "id": "stellar-technical-guide", "x": 0.15, "y": 0.15 },
+        { "name": "Introduction", "id": "stellar-introduction", "x": 0.30, "y": 0.45 }
+    ],
+    "dependencies": [
+        { "from": "stellar-technical-guide", "to": "stellar-introduction" },
+        { "from": "stellar-introduction", "to": "stellar-developer-guide" }
+    ]
+}

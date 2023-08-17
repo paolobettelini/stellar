@@ -10,9 +10,11 @@ pub async fn import(url: &str, path: &PathBuf) -> anyhow::Result<()> {
         PathBufType::SnippetsFolder => import_snippets(url, path).await?,
         PathBufType::PagesFolder => import_pages(url, path).await?,
         PathBufType::CoursesFolder => import_courses(url, path).await?,
+        PathBufType::UniversesFolder => import_universes(url, path).await?,
         PathBufType::SnippetsFile => import_snippet(url, path).await?,
         PathBufType::PagesFile => import_page(url, path).await?,
         PathBufType::CoursesFile => import_course(url, path).await?,
+        PathBufType::UniversesFile => import_universe(url, path).await?,
         PathBufType::Other => log::error!("Path does not point to valid data"),
     }
 
@@ -27,6 +29,7 @@ pub async fn import_data(connection_url: &str, folder: &Path) -> anyhow::Result<
     import_snippets_with_client(&client, &folder.join("snippets")).await?;
     import_pages_with_client(&client, &folder.join("pages")).await?;
     import_courses_with_client(&client, &folder.join("courses")).await?;
+    import_universes_with_client(&client, &folder.join("universes")).await?;
 
     Ok(())
 }
@@ -61,6 +64,16 @@ pub async fn import_courses(connection_url: &str, folder: &PathBuf) -> anyhow::R
     Ok(())
 }
 
+pub async fn import_universes(connection_url: &str, folder: &PathBuf) -> anyhow::Result<()> {
+    let client = get_client(connection_url).await?;
+
+    log::info!("Importing universes");
+
+    import_universes_with_client(&client, folder).await?;
+
+    Ok(())
+}
+
 pub async fn import_snippet(connection_url: &str, file: &Path) -> anyhow::Result<()> {
     let client = get_client(connection_url).await?;
 
@@ -81,6 +94,14 @@ pub async fn import_course(connection_url: &str, file: &Path) -> anyhow::Result<
     let client = get_client(connection_url).await?;
 
     import_course_with_client(&client, file).await?;
+
+    Ok(())
+}
+
+pub async fn import_universe(connection_url: &str, file: &Path) -> anyhow::Result<()> {
+    let client = get_client(connection_url).await?;
+
+    import_universe_with_client(&client, file).await?;
 
     Ok(())
 }
@@ -115,6 +136,19 @@ async fn import_courses_with_client(
     if let Ok(entries) = fs::read_dir(folder) {
         for file in entries.flatten() {
             import_course_with_client(client, &file.path()).await?;
+        }
+    }
+
+    Ok(())
+}
+
+async fn import_universes_with_client(
+    client: &ClientHandler,
+    folder: &PathBuf,
+) -> anyhow::Result<()> {
+    if let Ok(entries) = fs::read_dir(folder) {
+        for file in entries.flatten() {
+            import_universe_with_client(client, &file.path()).await?;
         }
     }
 
@@ -169,6 +203,24 @@ async fn import_course_with_client(
                 id: file_name.to_string(),
             };
             client.insert_course(&course, None).await?;
+        }
+    }
+
+    Ok(())
+}
+
+async fn import_universe_with_client(
+    client: &ClientHandler,
+    file: &Path,
+) -> anyhow::Result<()> {
+    if let Some(file_name) = file.file_name() {
+        if let Some(file_name) = file_name.to_str() {
+            let file_name = remove_extension(file_name);
+            log::info!("Importing universe: {file_name}");
+            let universe = Universe {
+                id: file_name.to_string(),
+            };
+            client.insert_universe(&universe, None).await?;
         }
     }
 

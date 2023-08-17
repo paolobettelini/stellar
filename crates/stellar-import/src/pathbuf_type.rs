@@ -6,9 +6,11 @@ pub enum PathBufType {
     SnippetsFolder,
     PagesFolder,
     CoursesFolder,
+    UniversesFolder,
     SnippetsFile,
     PagesFile,
     CoursesFile,
+    UniversesFile,
     Other,
 }
 
@@ -25,6 +27,8 @@ pub fn get_path_type(path: &Path) -> PathBufType {
             PathBufType::PagesFolder
         } else if path_str.ends_with("/data/courses") {
             PathBufType::CoursesFolder
+        } else if path_str.ends_with("/data/universes") {
+            PathBufType::UniversesFolder
         } else if let Some(parent) = path.parent() {
             // Single snippets are folders
             let path_str = parent.to_string_lossy();
@@ -44,6 +48,8 @@ pub fn get_path_type(path: &Path) -> PathBufType {
             PathBufType::PagesFile
         } else if path_str.ends_with("/data/courses") {
             PathBufType::CoursesFile
+        } else if path_str.ends_with("/data/universes") {
+            PathBufType::UniversesFile
         } else {
             PathBufType::Other
         }

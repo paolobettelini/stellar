@@ -14,3 +14,8 @@ pub struct Page {
 pub struct Course {
     pub id: String,
 }
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+pub struct Universe {
+    pub id: String,
+}

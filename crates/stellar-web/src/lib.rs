@@ -33,16 +33,19 @@ pub async fn start_server(
 
     HttpServer::new(move || {
         App::new()
+            .service(universe_query)
+            .service(course_query)
+            .service(page_query)
+            .service(snippet_query)
+            .service(universe_service)
             .service(course_service)
             .service(page_service)
-            .service(snippet_complementary_service)
             .service(snippet_service)
-            .service(snippet_query)
-            .service(page_query)
-            .service(course_query)
+            .service(snippet_complementary_service)
             // Static files
             .service(private_folder)
             .service(search_html)
+            .service(universe_html)
             .service(course_html)
             .service(page_html)
             .service(snippet_html)

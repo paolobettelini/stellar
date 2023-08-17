@@ -18,6 +18,20 @@ async fn course_service(data: web::Data<Data>, course: web::Path<String>) -> imp
     // HttpResponse::NotFound().body("Course not found")
 }
 
+#[post("/universe/{universe}")]
+async fn universe_service(data: web::Data<Data>, universe: web::Path<String>) -> impl Responder {
+    let file_name = format!("{universe}.json");
+    log::debug!("Reading file: {file_name:?}");
+    // TODO pre-create path
+    let file = &Path::new(&data.data_folder).join("universes").join(file_name);
+    let content = std::fs::read_to_string(file).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(content)
+    // HttpResponse::NotFound().body("Course not found")
+}
+
 #[post("/page/{page}")]
 async fn page_service(data: web::Data<Data>, page: web::Path<String>) -> impl Responder {
     let file_name = format!("{page}.html");
@@ -86,6 +100,16 @@ async fn search_html(data: web::Data<Data>) -> impl Responder {
         .body(html)
 }
 
+#[get("/universe/{universe}")]
+async fn universe_html(data: web::Data<Data>) -> impl Responder {
+    let file = Path::new(&data.www_folder).join("private").join("universe.html");
+    let html = fs::read_to_string(file).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(html)
+}
+
 #[get("/course/{course}")]
 async fn course_html(data: web::Data<Data>) -> impl Responder {
     let file = Path::new(&data.www_folder).join("private").join("course.html");
@@ -134,6 +158,21 @@ async fn snippet_query(data: web::Data<Data>, keyword: web::Path<String>) -> imp
 #[post("/query/page/{keyword}")]
 async fn page_query(data: web::Data<Data>, keyword: web::Path<String>) -> impl Responder {
     let mut cursor = data.client.query_pages(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(json)
+}
+
+#[post("/query/universe/{keyword}")]
+async fn universe_query(data: web::Data<Data>, keyword: web::Path<String>) -> impl Responder {
+    let mut cursor = data.client.query_universes(&keyword).await.unwrap();
 
     let mut vec = Vec::new();
     while let Some(document) = cursor.try_next().await.unwrap() {

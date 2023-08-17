@@ -10,6 +10,7 @@ const DATABASE: &str = "stellar";
 const SNIPPETS_COLLECTION: &str = "snippets";
 const PAGES_COLLECTION: &str = "pages";
 const COURSES_COLLECTION: &str = "courses";
+const UNIVERSES_COLLECTION: &str = "universes";
 
 #[derive(Clone, Debug)]
 pub struct ClientHandler {
@@ -80,6 +81,16 @@ impl ClientHandler {
         Ok(())
     }
 
+    pub async fn insert_universe(&self, universe: &Universe, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+        let collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
+        let filter = doc! { "id": &universe.id }; 
+        if collection.find_one(filter, None).await?.is_none() {
+            collection.insert_one(universe, options).await?;
+        }
+
+        Ok(())
+    }
+
     pub async fn query_snippets(&self, keyword: &str) -> anyhow::Result<Cursor<Snippet>> {
         let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
         let filter = doc! { "id": {"$regex": keyword} };
@@ -96,6 +107,13 @@ impl ClientHandler {
 
     pub async fn query_courses(&self, keyword: &str) -> anyhow::Result<Cursor<Course>> {
         let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+        let filter = doc! { "id": {"$regex": keyword} };
+
+        Ok(collection.find(filter, None).await?)
+    }
+
+    pub async fn query_universes(&self, keyword: &str) -> anyhow::Result<Cursor<Universe>> {
+        let collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
         let filter = doc! { "id": {"$regex": keyword} };
 
         Ok(collection.find(filter, None).await?)

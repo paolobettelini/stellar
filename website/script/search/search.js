@@ -11,6 +11,7 @@ async function postData(url = '', data = {}) {
 let searchbox = document.getElementById('searchbox');
 let results = document.getElementById('results');
 
+document.getElementById('universetype').oninput = query;
 document.getElementById('coursetype').oninput = query;
 document.getElementById('pagetype').oninput = query;
 document.getElementById('snippettype').oninput = query;
