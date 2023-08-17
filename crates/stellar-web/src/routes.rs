@@ -59,6 +59,13 @@ async fn snippet_service(data: web::Data<Data>, snippet: web::Path<String>) -> i
     HttpResponse::Ok().content_type(content_type).body(content)
 }
 
+#[get("/")]
+async fn index() -> impl Responder {
+    HttpResponse::Found()
+        .header("Location", "/universe/stellar")
+        .finish()
+}
+
 #[get("/snippet/{snippet}/{file_name}")]
 async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<(String, String)>) -> impl Responder {
     let snippet = &params.0;

@@ -43,13 +43,14 @@ pub async fn start_server(
             .service(snippet_service)
             .service(snippet_complementary_service)
             // Static files
+            .service(index)
             .service(private_folder)
             .service(search_html)
             .service(universe_html)
             .service(course_html)
             .service(page_html)
             .service(snippet_html)
-            .service(Files::new("/", &www_folder).index_file("index.html"))
+            .service(Files::new("/", &www_folder))
             // Data
             .app_data(web::Data::new(data.clone()))
     })
