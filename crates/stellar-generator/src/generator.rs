@@ -43,11 +43,18 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, generate_course: b
         // Generate only one page
 
         let filename = format!("{}.html", texdoc.title);
+        let file_path = pages_dir.join(&filename);
+
+        // Delete file
+        if fs::metadata(&file_path).is_ok() {
+            let _ = fs::remove_file(&file_path);
+        }
+
         let mut file = fs::OpenOptions::new()
             .write(true)
             .append(true)
             .create(true)
-            .open(pages_dir.join(&filename))
+            .open(&file_path)
             .expect("Couldn't write to file");
 
         log::debug!("Writing file {}", &filename);
