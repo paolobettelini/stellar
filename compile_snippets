@@ -4,18 +4,30 @@
 cd data/snippets || exit 1
 
 # Loop through each subdirectory and compile
+# compile only if there is no PDF, or there is a PDF but its "last modified"
+# is older than the "last modified" of the tex file.
 for folder in */; do
     if [ -d "$folder" ]; then
         cd "$folder" || continue
 
-        # Get the newest PDF file if it exists
-        newest_pdf=$(ls -t *.pdf 2>/dev/null | head -n1)
+        tex_file=""
+        pdf_file=""
+        oldest_pdf=0
 
-        # Check if there's no PDF or if PDF is older than the .tex file
-        if [ ! -f "$newest_pdf" ] || [ "$newest_pdf" -ot "$(ls -t *.tex | head -n1)" ]; then
-            tectonic *.tex -Z search-path=../../../latex-packages/
-        else
-            echo "Skipping compilation in $folder (PDF is up to date)"
+        for file in *; do
+            if [ "${file##*.}" == "tex" ]; then
+                tex_file="$file"
+            elif [ "${file##*.}" == "pdf" ]; then
+                pdf_file="$file"
+                pdf_modification=$(stat -c %Y "$pdf_file")
+                if [ $pdf_modification -gt $oldest_pdf ]; then
+                    oldest_pdf=$pdf_modification
+                fi
+            fi
+        done
+
+        if [ -z "$pdf_file" ] || [ $(stat -c %Y "$tex_file") -gt $oldest_pdf ]; then
+            tectonic "$tex_file" -Z search-path=../../../latex-packages/
         fi
 
         cd ..
