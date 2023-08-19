@@ -44,8 +44,8 @@ pub struct GenerateArgs {
     pub data_output: PathBuf,
 
     /// Generate the page .html file
-    #[arg(short, long, default_value_t = true)]
-    pub gen_page: bool,
+    #[arg(short, long, default_value_t = false)]
+    pub no_gen_page: bool,
 
     /// Generate a .json course with this page
     #[arg(short, long, default_value_t = false)]

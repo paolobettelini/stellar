@@ -33,7 +33,7 @@ async fn main() -> anyhow::Result<()> {
 pub fn parse_generate_args(args: &GenerateArgs) {
     let input = &args.latex_input;
     let output = &args.data_output;
-    let gen_page = args.gen_page;
+    let gen_page = !args.no_gen_page;
     let gen_course = args.gen_course;
     generator::generate_from_latex(input, output, gen_page, gen_course);
 }
