@@ -1,12 +1,16 @@
 use crate::parser::*;
 use std::path::PathBuf;
-use std::{fs, path::Path, io::Write};
+use std::{fs, io::Write, path::Path};
+use crate::parser::{*, TeXElement::*};
 
 use serde_json::{json, Value};
 
-pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, generate_course: bool) {
+//TODO  It seems to always write a file that shouldn't be written
+// but doesn't actually write it in the file system (page)
+
+pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, gen_course: bool) {
     let content = fs::read_to_string(input).unwrap();
-    let filename = String::from(input.to_string_lossy());
+    let filename = String::from(input.file_stem().unwrap().to_string_lossy());
 
     let out_folder = Path::new(output);
     create_if_necessary(out_folder);
@@ -15,81 +19,123 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, generate_course: b
     let pages_dir = out_folder.join("pages");
     let courses_dir = out_folder.join("courses");
 
-    let texdoc = parse_latex(&content, &filename);
-
     create_if_necessary(&snippets_dir);
     create_if_necessary(&pages_dir);
+    create_if_necessary(&courses_dir);
 
-    if generate_course {
-        // Generate a course with multiple pages
-        create_if_necessary(&courses_dir);
+    let tex_page = parse_latex(&content, &filename);
 
-        let json_course = tex_page_to_json_course(&texdoc);
-        let json_course = serde_json::to_string_pretty(&json_course).unwrap();
+    let mut last_section_id = String::from("");
+    let mut last_subsection_id = String::from("");
+    let mut current_snippet_id = String::from("");
 
-        let filename = format!("{}.json", texdoc.title);
-        log::debug!("Writing file {}", &filename);
-        fs::write(courses_dir.join(&filename), json_course).expect("Couldn't write to file");
+    // If you have some content, an include, some content
+    // then two snippets will be saved with the same id
+    let mut same_id_counter = 0;
 
-        // Generate HTML pages
-        for snippet in &texdoc.snippets {
-            let html_page = tex_snippet_to_html_entry(&snippet);
-            let filename = format!("{}.html", snippet.id);
+    let mut html_page = String::from("");
+    
+    for element in &tex_page.elements {
+        match element {
+            Section(section) => {
+                let section_type = &section.section_type;
+                let id = &section.id;
+                
+                current_snippet_id = format!(
+                    "{filename}-{}{}{}",
+                    if section_type > &SectionType::Section && !last_section_id.is_empty() {
+                        format!("{last_section_id}-")
+                    } else {
+                        "".to_string()
+                    },
+                    if section_type > &SectionType::Subsection && !last_section_id.is_empty() {
+                        format!("{last_subsection_id}-")
+                    } else {
+                        "".to_string()
+                    },
+                    id
+                );
+                same_id_counter = 0;
 
-            log::debug!("Writing file {}", &filename);
-            fs::write(pages_dir.join(&filename), html_page).expect("Couldn't write to file");
-        }
-    } else {
-        // Generate only one page
+                // maybe use a match
+                if let &SectionType::Section = section_type {
+                    last_section_id = id.clone();
+                    last_subsection_id = String::from("");
+                } else if let &SectionType::Subsection = section_type {
+                    last_subsection_id = id.clone();
+                }
 
-        let filename = format!("{}.html", texdoc.title);
-        let file_path = pages_dir.join(&filename);
+                // Add heading to html file
+                let title = format!("<h{0}>{1}</h{0}>", section.section_type as u8, section.title);
+                html_page += &(title + "\n");
+            }
+            TeXContent(content) => {
+                if is_empty_tex(&content) || current_snippet_id.is_empty() {
+                    continue;
+                }
 
-        // Delete file
-        if fs::metadata(&file_path).is_ok() {
-            let _ = fs::remove_file(&file_path);
-        }
+                let tex = make_full_document(&tex_page.preamble, &content);
 
-        let mut file = fs::OpenOptions::new()
-            .write(true)
-            .append(true)
-            .create(true)
-            .open(&file_path)
-            .expect("Couldn't write to file");
+                let id = if same_id_counter > 1 {
+                    format!("{current_snippet_id}-{same_id_counter}")
+                } else {
+                    current_snippet_id.clone()
+                };
 
-        log::debug!("Writing file {}", &filename);
-        
-        for snippet in &texdoc.snippets {
-            let html = tex_snippet_to_html_entry(&snippet);
+                same_id_counter += 1;
+                save_snippet(&id, &tex, &snippets_dir);
 
-            file.write_all(html.as_bytes()).expect("Couldn't write to file");
-            file.write_all(b"\n").expect("Couldn't write to file");
-        }
-    }
-
-    // Generate snippets
-    for snippet in &texdoc.snippets {
-        // Write snippet tex to fs
-        if let Some(tex) = &snippet.tex {
-            let filename = format!("{}.tex", &snippet.id);
-            let dir = snippets_dir.join(&snippet.id);
-            let file_path = dir.join(&filename);
-
-            create_if_necessary(&dir);
-
-            let existing_content = fs::read_to_string(&file_path).ok();
-
-            // Write only if there are changes
-            if existing_content != Some(tex.into()) {
-                log::debug!("Writing file {}", &filename);
-                fs::write(&file_path, tex).expect("Couldn't write to file");
-            } else {
-                log::debug!("Skipping file {}", &filename);
+                // Add entry to html page
+                let snippet = format!("<snippet>{}</snippet>", &id);
+                html_page += &(snippet + "\n");
+            }
+            IncludeCmd(id) => {
+                // Add entry to html page
+                let snippet = format!("<snippet>{}</snippet>", &id);
+                html_page += &(snippet + "\n");
             }
         }
     }
 
+    if gen_page {
+        let filename = format!("{}.html", &tex_page.title);
+        log::debug!("Writing file {}", &filename);
+        fs::write(pages_dir.join(&filename), &html_page).expect("Couldn't write to file");
+    }
+
+    if gen_course {
+        let json_course = json!({
+            "title": tex_page.title,
+            "pages": [
+                1, tex_page.title, tex_page.id
+            ],
+        });
+        let json_course = serde_json::to_string_pretty(&json_course).unwrap();
+
+        let filename = format!("{}.json", tex_page.id);
+        log::debug!("Writing file {}", &filename);
+        fs::write(courses_dir.join(&filename), json_course).expect("Couldn't write to file");
+    }
+
     log::info!("Remember to compile the snippets");
+}
+
+fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path) {
+    let filename = format!("{}.tex", &snippet_id);
+    let dir = snippets_dir.join(&snippet_id);
+    let file_path = dir.join(&filename);
+
+    create_if_necessary(&dir);
+
+    let existing_content = fs::read_to_string(&file_path).ok();
+
+    // Write only if there are changes
+    if existing_content != Some(tex.into()) {
+        log::debug!("Writing file {}", &filename);
+        fs::write(&file_path, tex).expect("Couldn't write to file");
+    } else {
+        log::debug!("Skipping file {}", &filename);
+    }
 }
 
 fn create_if_necessary(path: &Path) {
@@ -98,34 +144,21 @@ fn create_if_necessary(path: &Path) {
     }
 }
 
-fn tex_snippet_to_html_entry(snippet: &TeXSnippet) -> String {
-    let title = format!("<h{0}>{1}</h{0}>", snippet.level, snippet.title);
-    let snippet = format!("<snippet>{}</snippet>", snippet.id);
-
-    format!("{title}\n{snippet}")
+fn make_full_document(preamble: &str, tex: &str) -> String {
+    format!(
+        r"{preamble}
+\begin{{document}}
+{tex}
+\end{{document}}"
+    )
 }
 
-fn tex_page_to_json_course(doc: &TeXPage) -> Value {
-    let mut pages = vec![];
-
-    for snippet in &doc.snippets {
-        if snippet.level > 2 {
-            continue;
+fn is_empty_tex(content: &str) -> bool {
+    for line in content.lines() {
+        let trimmed_line = line.trim();
+        if !trimmed_line.is_empty() && !trimmed_line.starts_with('%') {
+            return false;
         }
-
-        let mut properties = vec![];
-
-        properties.push(Value::Number(snippet.level.into()));
-        properties.push(Value::String(snippet.title.clone()));
-        if snippet.tex.is_some() {
-            properties.push(Value::String(snippet.id.clone()));
-        }
-
-        pages.push(properties);
     }
-
-    json!({
-        "title": doc.title,
-        "pages": pages,
-    })
+    true
 }

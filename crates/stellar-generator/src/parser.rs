@@ -4,23 +4,34 @@ const END_DOCUMENT: &str = r"\end{document}";
 const SECTION: &str = r"\section{";
 const SUBSECTION: &str = r"\subsection{";
 const SUBSUBSECTION: &str = r"\subsubsection{";
+const INCLUDE_CMD: &str = r"%!snippet";
 const PAGEBREAK: &str = r"\pagebreak";
 const NEWPAGE: &str = r"\newpage";
 
+#[derive(Debug, PartialEq, PartialOrd)]
 pub struct TeXPage {
     pub title: String,
-    pub snippets: Vec<TeXSnippet>,
-}
-
-pub struct TeXSnippet {
-    pub title: String,
-    pub level: u8,
     pub id: String,
-    pub tex: Option<String>,
+    pub preamble: String,
+    pub elements: Vec<TeXElement>,
 }
 
 #[derive(Debug, PartialEq, PartialOrd)]
-enum SectionType {
+pub enum TeXElement {
+    Section(Section),
+    TeXContent(String),
+    IncludeCmd(String),
+}
+
+#[derive(Debug, PartialEq, PartialOrd)]
+pub struct Section {
+    pub section_type: SectionType,
+    pub title: String,
+    pub id: String,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone, Copy)]
+pub enum SectionType {
     Section = 1,
     Subsection = 2,
     Subsubsection = 3,
@@ -28,8 +39,9 @@ enum SectionType {
 
 pub fn parse_latex(content: &str, filename: &str) -> TeXPage {
     let filename = strip_filename(filename);
-    let file_id = name_to_id(&filename);
+    let file_id = title_to_id(&filename);
 
+    // Remove pagebreaks and newpages.
     let mut content = content.replace(PAGEBREAK, "").replace(NEWPAGE, "");
 
     let mut begin_index_before = content.find(BEGIN_DOCUMENT).unwrap();
@@ -41,81 +53,41 @@ pub fn parse_latex(content: &str, filename: &str) -> TeXPage {
     begin_index_after += NOTEPIECE_PACKAGE.len();
 
     let preamble = &content[..begin_index_before];
+    let document = &content[begin_index_after..];
 
-    let mut snippets = vec![];
+    let elements = parse_elements(document);
 
-    let mut section_id = None;
-    let mut section_type = None;
-    let mut section_name: Option<&str> = None;
+    TeXPage {
+        title: filename,
+        id: file_id,
+        preamble: preamble.to_string(),
+        elements,
+    }
+}
 
-    let mut last_section_id = String::from("");
-    let mut last_subsection_id = String::from("");
+fn parse_elements(content: &str) -> Vec<TeXElement> {
+    let mut elements = vec![];
 
-    let mut current_index_start = begin_index_after;
+    let mut current_index = 0;
     while let Some(section_length) = {
-        let remaining = &content[current_index_start..];
+        let remaining = &content[current_index..];
 
         // find first occurence of one of the following
-        [SECTION, SUBSECTION, SUBSUBSECTION, END_DOCUMENT]
+        [SECTION, SUBSECTION, SUBSUBSECTION, INCLUDE_CMD, END_DOCUMENT]
             .iter()
             .filter_map(|sub| remaining.find(sub)) // filter for found indexes
             .min_by_key(|index| *index) // take minimum value
     } {
-        // index before the next "\section{..." or such
-        let section_index_end = current_index_start + section_length;
-        let section_content = &content[current_index_start..section_index_end].trim();
+        let section_index_end = current_index + section_length;
 
-        if let Some(ref id) = &section_id {
-            if let Some(section_type) = section_type {
-                if let Some(section_name) = section_name {
-                    // Construct filename as "<last_sec>-<last_subsec>-sec"
-                    // Don't put dashed if not needed
-                    let snippet_name = format!(
-                        "{}{}{}",
-                        if section_type > SectionType::Section && !last_section_id.is_empty() {
-                            format!("{last_section_id}-")
-                        } else {
-                            "".to_string()
-                        },
-                        if section_type > SectionType::Subsection && !last_section_id.is_empty() {
-                            format!("{last_subsection_id}-")
-                        } else {
-                            "".to_string()
-                        },
-                        id
-                    );
+        // Extract content
+        let section_content = &content[current_index..section_index_end].trim();
+        let element = TeXElement::TeXContent(section_content.to_string());
+        elements.push(element);
 
-                    let snippet_name = format!("{file_id}-{snippet_name}");
-
-                    if section_content.is_empty() {
-                        snippets.push(TeXSnippet {
-                            title: section_name.to_owned(),
-                            level: section_type as u8,
-                            id: snippet_name,
-                            tex: None,
-                        });
-                    } else {
-                        let document = make_full_document(preamble, section_content);
-
-                        snippets.push(TeXSnippet {
-                            title: section_name.to_owned(),
-                            level: section_type as u8,
-                            id: snippet_name,
-                            tex: Some(document),
-                        });
-                    }
-                }
-            }
-        }
-
+        // Extract next separator
         let remaining = &content[section_index_end..];
 
-        // set next section name
-        section_id = get_section_id(remaining);
-        section_type = get_section_type(remaining);
-        section_name = get_section_name(remaining);
-
-        // length of "\section{...}" and such
         let section_separator_length = remaining.find('\n');
         let section_separator_length = if let Some(v) = section_separator_length {
             v
@@ -123,64 +95,57 @@ pub fn parse_latex(content: &str, filename: &str) -> TeXPage {
             break;
         };
 
-        // set last_section_name and last_subsection_name
-        if let Some(ref section_type) = section_type {
-            if let Some(ref section_id) = section_id {
-                match section_type {
-                    SectionType::Section => {
-                        last_section_id = section_id.to_string();
-                        last_subsection_id = String::from("");
+        let separator_content = &remaining[..section_separator_length];
+
+        if let Some(id) = get_include_cmd_snippet(&separator_content) {
+            // Extract include command
+            let element = TeXElement::IncludeCmd(id);
+            elements.push(element);
+        } else {
+            // Extract heading
+            let section_id = get_section_id(separator_content);
+            let section_type = get_section_type(separator_content);
+            let section_name = get_section_name(separator_content);
+
+            if let Some(section_type) = section_type {
+                if let Some(id) = section_id {
+                    if let Some(name) = section_name {
+                        let section = Section { section_type, title: name.to_string(), id };
+            
+                        let element = TeXElement::Section(section);
+                        elements.push(element);
                     }
-                    SectionType::Subsection => last_subsection_id = section_id.to_string(),
-                    SectionType::Subsubsection => {}
                 }
             }
         }
 
-        current_index_start = section_index_end + section_separator_length;
+        current_index = section_index_end + section_separator_length;
     }
 
-    TeXPage {
-        title: filename,
-        snippets,
-    }
+    elements
 }
 
-/// \subsubsection{Hello} % custom-id
-/// -> "custom-id"
-///
-/// \subsection{World's Hello}
-/// -> "world-hello"
-fn get_section_id(content: &str) -> Option<String> {
-    let next_comment_index = content.find('%');
-    let next_line_index = content.find('\n');
+fn get_include_cmd_snippet(content: &str) -> Option<String> {
+    let id_start = content.find(INCLUDE_CMD)? + INCLUDE_CMD.len();
 
-    // Try reading the comment
-    if let Some(next_comment_index) = next_comment_index {
-        if let Some(next_line_index) = next_line_index {
-            // A comment % is specified
-            if next_line_index > next_comment_index {
-                let name = &content[next_comment_index + 1..next_line_index];
+    let id = content[id_start..].trim().to_string();
 
-                return Some(name.trim().to_owned());
-            }
+    Some(id)
+}
+
+// "/path/to/Document.tex" -> "Document"
+fn strip_filename(path: &str) -> String {
+    let mut components: Vec<&str> = path.split('/').collect();
+    if let Some(last_component) = components.pop() {
+        let mut filename = last_component.to_string();
+        if let Some(dot_idx) = filename.rfind('.') {
+            filename.truncate(dot_idx);
         }
+        return filename;
     }
-
-    // Construct from section name
-    let section_name = get_section_name(content)?;
-
-    Some(name_to_id(section_name))
+    panic!("File name could not be retrieved")
 }
 
-fn name_to_id(value: &str) -> String {
-    value
-        .replace("\'s", "")
-        .replace('\'', "")
-        .replace(' ', "-")
-        .replace('ô', "o") // maybe remove this
-        .to_lowercase()
-}
 
 /// \subsubsection{Hello} % custom-id
 /// -> "Hello"
@@ -208,24 +173,38 @@ fn get_section_type(content: &str) -> Option<SectionType> {
     }
 }
 
-fn make_full_document(preamble: &str, section: &str) -> String {
-    format!(
-        r"{preamble}
-\begin{{document}}
-{section}
-\end{{document}}"
-    )
+/// \subsubsection{Hello} % custom-id
+/// -> "custom-id"
+///
+/// \subsection{World's Hello}
+/// -> "world-hello"
+fn get_section_id(content: &str) -> Option<String> {
+    let next_comment_index = content.find('%');
+    let next_line_index = content.find('\n');
+
+    // Try reading the comment
+    if let Some(next_comment_index) = next_comment_index {
+        if let Some(next_line_index) = next_line_index {
+            // A comment % is specified
+            if next_line_index > next_comment_index {
+                let name = &content[next_comment_index + 1..next_line_index];
+
+                return Some(name.trim().to_owned());
+            }
+        }
+    }
+
+    // Construct from section name
+    let section_name = get_section_name(content)?;
+
+    Some(title_to_id(section_name))
 }
 
-// "/path/to/Document.tex" -> "Document"
-fn strip_filename(path: &str) -> String {
-    let mut components: Vec<&str> = path.split('/').collect();
-    if let Some(last_component) = components.pop() {
-        let mut filename = last_component.to_string();
-        if let Some(dot_idx) = filename.rfind('.') {
-            filename.truncate(dot_idx);
-        }
-        return filename;
-    }
-    panic!("File name could not be retrieved")
+fn title_to_id(value: &str) -> String {
+    value
+        .replace("\'s", "")
+        .replace('\'', "")
+        .replace(' ', "-")
+        .replace('ô', "o") // maybe remove this
+        .to_lowercase()
 }
