@@ -28,14 +28,16 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, generate_course: b
         let json_course = serde_json::to_string_pretty(&json_course).unwrap();
 
         let filename = format!("{}.json", texdoc.title);
-        fs::write(courses_dir.join(filename), json_course).expect("Couldn't write to file");
+        log::debug!("Writing file {}", &filename);
+        fs::write(courses_dir.join(&filename), json_course).expect("Couldn't write to file");
 
         // Generate HTML pages
         for snippet in &texdoc.snippets {
             let html_page = tex_snippet_to_html_entry(&snippet);
             let filename = format!("{}.html", snippet.id);
 
-            fs::write(pages_dir.join(filename), html_page).expect("Couldn't write to file");
+            log::debug!("Writing file {}", &filename);
+            fs::write(pages_dir.join(&filename), html_page).expect("Couldn't write to file");
         }
     } else {
         // Generate only one page
@@ -45,8 +47,10 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, generate_course: b
             .write(true)
             .append(true)
             .create(true)
-            .open(pages_dir.join(filename))
+            .open(pages_dir.join(&filename))
             .expect("Couldn't write to file");
+
+        log::debug!("Writing file {}", &filename);
         
         for snippet in &texdoc.snippets {
             let html = tex_snippet_to_html_entry(&snippet);
@@ -60,11 +64,21 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, generate_course: b
     for snippet in &texdoc.snippets {
         // Write snippet tex to fs
         if let Some(tex) = &snippet.tex {
-            let filename = format!("{}.tex", snippet.id);
+            let filename = format!("{}.tex", &snippet.id);
+            let dir = snippets_dir.join(&snippet.id);
+            let file_path = dir.join(&filename);
 
-            let dir = snippets_dir.join(snippet.id.clone());
             create_if_necessary(&dir);
-            fs::write(dir.join(filename), tex).expect("Couldn't write to file");
+
+            let existing_content = fs::read_to_string(&file_path).ok();
+
+            // Write only if there are changes
+            if existing_content != Some(tex.into()) {
+                log::debug!("Writing file {}", &filename);
+                fs::write(&file_path, tex).expect("Couldn't write to file");
+            } else {
+                log::debug!("Skipping file {}", &filename);
+            }
         }
     }
 

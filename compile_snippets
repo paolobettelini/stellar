@@ -7,7 +7,17 @@ cd data/snippets || exit 1
 for folder in */; do
     if [ -d "$folder" ]; then
         cd "$folder" || continue
-        tectonic *.tex -Z search-path=../../../latex-packages/
+
+        # Get the newest PDF file if it exists
+        newest_pdf=$(ls -t *.pdf 2>/dev/null | head -n1)
+
+        # Check if there's no PDF or if PDF is older than the .tex file
+        if [ ! -f "$newest_pdf" ] || [ "$newest_pdf" -ot "$(ls -t *.tex | head -n1)" ]; then
+            tectonic *.tex -Z search-path=../../../latex-packages/
+        else
+            echo "Skipping compilation in $folder (PDF is up to date)"
+        fi
+
         cd ..
     fi
 done
