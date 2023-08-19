@@ -98,7 +98,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
     }
 
     if gen_page {
-        let filename = format!("{}.html", &tex_page.title);
+        let filename = format!("{}.html", &tex_page.id);
         log::debug!("Writing file {}", &filename);
         fs::write(pages_dir.join(&filename), &html_page).expect("Couldn't write to file");
     }
