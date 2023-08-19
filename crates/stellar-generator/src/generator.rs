@@ -107,7 +107,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
         let json_course = json!({
             "title": tex_page.title,
             "pages": [
-                1, tex_page.title, tex_page.id
+                [1, tex_page.title, tex_page.id]
             ],
         });
         let json_course = serde_json::to_string_pretty(&json_course).unwrap();
