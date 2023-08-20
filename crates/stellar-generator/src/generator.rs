@@ -11,6 +11,7 @@ use serde_json::{json, Value};
 pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, gen_course: bool) {
     let content = fs::read_to_string(input).unwrap();
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
+    let file_id = title_to_id(&filename);
 
     let out_folder = Path::new(output);
     create_if_necessary(out_folder);
@@ -42,7 +43,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
                 let id = &section.id;
                 
                 current_snippet_id = format!(
-                    "{filename}-{}{}{}",
+                    "{file_id}-{}{}{}",
                     if section_type > &SectionType::Section && !last_section_id.is_empty() {
                         format!("{last_section_id}-")
                     } else {
@@ -76,7 +77,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
 
                 let tex = make_full_document(&tex_page.preamble, &content);
 
-                let id = if same_id_counter > 1 {
+                let id = if same_id_counter > 0 {
                     format!("{current_snippet_id}-{same_id_counter}")
                 } else {
                     current_snippet_id.clone()
@@ -161,4 +162,14 @@ fn is_empty_tex(content: &str) -> bool {
         }
     }
     true
+}
+
+// TODO: un-duplicate function
+fn title_to_id(value: &str) -> String {
+    value
+        .replace("\'s", "")
+        .replace('\'', "")
+        .replace(' ', "-")
+        .replace('ô', "o") // maybe remove this
+        .to_lowercase()
 }
