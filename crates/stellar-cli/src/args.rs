@@ -43,7 +43,7 @@ pub struct GenerateArgs {
     #[arg(short = 'o', long)]
     pub data_output: PathBuf,
 
-    /// Generate the page .html file
+    /// Do not generate the page .html file
     #[arg(short, long, default_value_t = false)]
     pub no_gen_page: bool,
 

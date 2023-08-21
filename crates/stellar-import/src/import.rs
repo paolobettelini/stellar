@@ -1,6 +1,9 @@
-use std::{fs, path::{Path, PathBuf}};
+use crate::{get_client, get_path_type, PathBufType};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 use stellar_database::{model::*, *};
-use crate::{PathBufType, get_path_type};
 
 pub async fn import(url: &str, path: &PathBuf) -> anyhow::Result<()> {
     let data_type = get_path_type(path);
@@ -106,6 +109,43 @@ pub async fn import_universe(connection_url: &str, file: &Path) -> anyhow::Resul
     Ok(())
 }
 
+
+pub async fn import_with_client(
+    client: &ClientHandler,
+    path: &PathBuf,
+) -> anyhow::Result<()> {
+    let data_type = get_path_type(path);
+
+    match data_type {
+        PathBufType::DataFolder => import_data_with_client(&client, path).await?,
+        PathBufType::SnippetsFolder => import_snippets_with_client(&client, path).await?,
+        PathBufType::PagesFolder => import_pages_with_client(&client, path).await?,
+        PathBufType::CoursesFolder => import_courses_with_client(&client, path).await?,
+        PathBufType::UniversesFolder => import_universes_with_client(&client, path).await?,
+        PathBufType::SnippetsFile => import_snippet_with_client(&client, path).await?,
+        PathBufType::PagesFile => import_page_with_client(&client, path).await?,
+        PathBufType::CoursesFile => import_course_with_client(&client, path).await?,
+        PathBufType::UniversesFile => import_universe_with_client(&client, path).await?,
+        PathBufType::Other => log::error!("Path does not point to valid data"),
+    }
+
+    Ok(())
+}
+
+pub async fn import_data_with_client(
+    client: &ClientHandler,
+    folder: &Path,
+) -> anyhow::Result<()> {
+    log::info!("Importing data");
+
+    import_snippets_with_client(&client, &folder.join("snippets")).await?;
+    import_pages_with_client(&client, &folder.join("pages")).await?;
+    import_courses_with_client(&client, &folder.join("courses")).await?;
+    import_universes_with_client(&client, &folder.join("universes")).await?;
+
+    Ok(())
+}
+
 async fn import_snippets_with_client(
     client: &ClientHandler,
     folder: &PathBuf,
@@ -155,10 +195,7 @@ async fn import_universes_with_client(
     Ok(())
 }
 
-async fn import_snippet_with_client(
-    client: &ClientHandler,
-    file: &Path,
-) -> anyhow::Result<()> {
+async fn import_snippet_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -173,10 +210,7 @@ async fn import_snippet_with_client(
     Ok(())
 }
 
-async fn import_page_with_client(
-    client: &ClientHandler,
-    file: &Path,
-) -> anyhow::Result<()> {
+async fn import_page_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -191,10 +225,7 @@ async fn import_page_with_client(
     Ok(())
 }
 
-async fn import_course_with_client(
-    client: &ClientHandler,
-    file: &Path,
-) -> anyhow::Result<()> {
+async fn import_course_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -209,10 +240,7 @@ async fn import_course_with_client(
     Ok(())
 }
 
-async fn import_universe_with_client(
-    client: &ClientHandler,
-    file: &Path,
-) -> anyhow::Result<()> {
+async fn import_universe_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -225,12 +253,6 @@ async fn import_universe_with_client(
     }
 
     Ok(())
-}
-
-async fn get_client(connection_url: &str) -> anyhow::Result<ClientHandler> {
-    let client = ClientHandler::new(connection_url).await?;
-    //client.create_indexes();
-    Ok(client)
 }
 
 fn remove_extension(file_name: &str) -> &str {

@@ -40,10 +40,12 @@ pub fn parse_generate_args(args: &GenerateArgs) {
 
 pub async fn parse_import_args(args: &ImportArgs) -> anyhow::Result<()> {
     if let Some(paths) = &args.import {
+        let client = import::get_client(&args.connection_url).await?;
+
         for path in paths {
             // TODO check error
             let url = &args.connection_url;
-            import::import(url, path).await?;
+            import::import_with_client(&client, path).await?;
         }
     }
 
