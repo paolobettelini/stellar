@@ -98,12 +98,7 @@ pub async fn generate_from_latex(
 
                 same_id_counter += 1;
                 saved_snippets_count += 1;
-                let path = save_snippet(&id, &tex, &snippets_dir);
-
-                // import snippet;
-                if let Some(ref client) = client {
-                    let _ = import::import_snippet_with_client(&client, &path).await;
-                }
+                save_snippet(&id, &tex, &snippets_dir, &client).await;
 
                 // Add entry to html page
                 let snippet = format!("<snippet>{}</snippet>", &id);
@@ -119,36 +114,12 @@ pub async fn generate_from_latex(
 
     // Generate HTML page
     if gen_page {
-        let filename = format!("{}.html", &tex_page.id);
-        log::debug!("Writing file {}", &filename);
-        let path = pages_dir.join(&filename);
-        fs::write(&path, &html_page).expect("Couldn't write to file");
-
-        // import page
-        if let Some(ref client) = client {
-            let _ = import::import_page_with_client(&client, &path).await;
-        }
+        save_page(&tex_page.id, &pages_dir, &html_page, &client).await;
     }
 
     // Generate JSON course
     if gen_course {
-        let json_course = json!({
-            "title": tex_page.title,
-            "pages": [
-                [1, tex_page.title, tex_page.id]
-            ],
-        });
-        let json_course = serde_json::to_string_pretty(&json_course).unwrap();
-
-        let filename = format!("{}.json", tex_page.id);
-        log::debug!("Writing file {}", &filename);
-        let path = courses_dir.join(&filename);
-        fs::write(&path, json_course).expect("Couldn't write to file");
-
-        // import course
-        if let Some(ref client) = client {
-            let _ = import::import_course_with_client(&client, &path);
-        }
+        save_course(&tex_page.title, &tex_page.id, &courses_dir, &client).await;
     }
 
     log::info!("Saved {saved_snippets_count} snippets");
@@ -159,24 +130,77 @@ pub async fn generate_from_latex(
     }
 }
 
-fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path) -> PathBuf {
+async fn save_course(title: &str, page_id: &str, courses_dir: &Path, client: &Option<ClientHandler>) {
+    let json_course = json!({
+        "title": title,
+        "pages": [
+            [1, title, page_id]
+        ],
+    });
+    let json_course = serde_json::to_string_pretty(&json_course).unwrap();
+    let filename = format!("{}.json", page_id);
+    let path = courses_dir.join(&filename);
+
+    let saved = save_file(&path, &filename, &json_course);
+
+    // Import page
+    if saved {
+        if let Some(ref client) = client {
+            let _ = import::import_page_with_client(&client, &path).await;
+        }
+    }
+}
+
+async fn save_page(page_id: &str, pages_dir: &Path, content: &str, client: &Option<ClientHandler>) {
+    let filename = format!("{}.html", &page_id);
+    let path = pages_dir.join(&filename);
+
+    let saved = save_file(&path, &filename, &content);
+
+    // Import page
+    if saved {
+        if let Some(ref client) = client {
+            let _ = import::import_page_with_client(&client, &path).await;
+        }
+    }
+}
+
+async fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path, client: &Option<ClientHandler>) {
     let filename = format!("{}.tex", &snippet_id);
     let dir = snippets_dir.join(&snippet_id);
     let file_path = dir.join(&filename);
 
     create_if_necessary(&dir);
 
+    let saved = save_file(&file_path, &filename, &tex);
+
+    if saved {
+        // Import snippet
+        if let Some(ref client) = client {
+            let _ = import::import_snippet_with_client(&client, &file_path).await;
+        }
+    }
+}
+
+fn save_file(file_path: &Path, filename: &str, content: &str) -> bool {
     let existing_content = fs::read_to_string(&file_path).ok();
 
     // Write only if there are changes
-    if existing_content != Some(tex.into()) {
+    if existing_content != Some(content.into()) {
         log::debug!("Writing file {}", &filename);
-        fs::write(&file_path, tex).expect("Couldn't write to file");
-    } else {
-        log::debug!("Skipping file {}", &filename);
-    }
+        let res = fs::write(&file_path, content);
 
-    file_path
+        if res.is_err() {
+            log::error!("Couldn't write file {}", &filename);
+            false
+        } else {
+            true
+        }
+        
+    } else {
+        //log::debug!("Skipping file {}", &filename);
+        false
+    }
 }
 
 fn create_if_necessary(path: &Path) {

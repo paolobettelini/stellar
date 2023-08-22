@@ -1,8 +1,9 @@
-use crate::{get_client, get_path_type, PathBufType};
+use crate::get_client;
 use std::{
     fs,
     path::{Path, PathBuf},
 };
+use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 use stellar_database::{model::*, *};
 
 pub async fn import(url: &str, path: &PathBuf) -> anyhow::Result<()> {

@@ -1874,7 +1874,12 @@ dependencies = [
  "anyhow",
  "log",
  "stellar-database",
+ "stellar-utils",
 ]
+
+[[package]]
+name = "stellar-utils"
+version = "0.1.0"
 
 [[package]]
 name = "stellar-web"

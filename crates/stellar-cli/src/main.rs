@@ -57,7 +57,6 @@ pub async fn parse_import_args(args: &ImportArgs) -> anyhow::Result<()> {
 
         for path in paths {
             // TODO check error
-            let url = &args.connection_url;
             import::import_with_client(&client, path).await?;
         }
     }
