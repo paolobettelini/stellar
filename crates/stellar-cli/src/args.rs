@@ -50,6 +50,14 @@ pub struct GenerateArgs {
     /// Generate a .json course with this page
     #[arg(short, long, default_value_t = false)]
     pub gen_course: bool,
+
+    /// MongoDB connection URL
+    #[arg(short, long)]
+    pub connection_url: Option<String>,
+
+    /// Import the generated snippets
+    #[arg(short, long, default_value_t = false, requires = "connection_url")]
+    pub import: bool,
 }
 
 #[derive(Debug, Args)]

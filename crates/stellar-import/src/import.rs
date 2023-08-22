@@ -109,11 +109,7 @@ pub async fn import_universe(connection_url: &str, file: &Path) -> anyhow::Resul
     Ok(())
 }
 
-
-pub async fn import_with_client(
-    client: &ClientHandler,
-    path: &PathBuf,
-) -> anyhow::Result<()> {
+pub async fn import_with_client(client: &ClientHandler, path: &PathBuf) -> anyhow::Result<()> {
     let data_type = get_path_type(path);
 
     match data_type {
@@ -132,10 +128,7 @@ pub async fn import_with_client(
     Ok(())
 }
 
-pub async fn import_data_with_client(
-    client: &ClientHandler,
-    folder: &Path,
-) -> anyhow::Result<()> {
+pub async fn import_data_with_client(client: &ClientHandler, folder: &Path) -> anyhow::Result<()> {
     log::info!("Importing data");
 
     import_snippets_with_client(&client, &folder.join("snippets")).await?;
@@ -146,7 +139,7 @@ pub async fn import_data_with_client(
     Ok(())
 }
 
-async fn import_snippets_with_client(
+pub async fn import_snippets_with_client(
     client: &ClientHandler,
     folder: &PathBuf,
 ) -> anyhow::Result<()> {
@@ -159,7 +152,10 @@ async fn import_snippets_with_client(
     Ok(())
 }
 
-async fn import_pages_with_client(client: &ClientHandler, folder: &PathBuf) -> anyhow::Result<()> {
+pub async fn import_pages_with_client(
+    client: &ClientHandler,
+    folder: &PathBuf,
+) -> anyhow::Result<()> {
     if let Ok(entries) = fs::read_dir(folder) {
         for file in entries.flatten() {
             import_page_with_client(client, &file.path()).await?;
@@ -169,7 +165,7 @@ async fn import_pages_with_client(client: &ClientHandler, folder: &PathBuf) -> a
     Ok(())
 }
 
-async fn import_courses_with_client(
+pub async fn import_courses_with_client(
     client: &ClientHandler,
     folder: &PathBuf,
 ) -> anyhow::Result<()> {
@@ -182,7 +178,7 @@ async fn import_courses_with_client(
     Ok(())
 }
 
-async fn import_universes_with_client(
+pub async fn import_universes_with_client(
     client: &ClientHandler,
     folder: &PathBuf,
 ) -> anyhow::Result<()> {
@@ -195,7 +191,7 @@ async fn import_universes_with_client(
     Ok(())
 }
 
-async fn import_snippet_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
+pub async fn import_snippet_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -210,7 +206,7 @@ async fn import_snippet_with_client(client: &ClientHandler, file: &Path) -> anyh
     Ok(())
 }
 
-async fn import_page_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
+pub async fn import_page_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -225,7 +221,7 @@ async fn import_page_with_client(client: &ClientHandler, file: &Path) -> anyhow:
     Ok(())
 }
 
-async fn import_course_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
+pub async fn import_course_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
@@ -240,7 +236,10 @@ async fn import_course_with_client(client: &ClientHandler, file: &Path) -> anyho
     Ok(())
 }
 
-async fn import_universe_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
+pub async fn import_universe_with_client(
+    client: &ClientHandler,
+    file: &Path,
+) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);

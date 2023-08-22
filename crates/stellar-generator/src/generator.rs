@@ -1,14 +1,22 @@
 use crate::parser::*;
 use crate::parser::{TeXElement::*, *};
+use import::ClientHandler;
 use std::path::PathBuf;
 use std::{fs, io::Write, path::Path};
+use stellar_import as import;
 
 use serde_json::{json, Value};
 
 //TODO  It seems to always write a file that shouldn't be written
 // but doesn't actually write it in the file system (page)
 
-pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, gen_course: bool) {
+pub async fn generate_from_latex(
+    input: &PathBuf,
+    output: &PathBuf,
+    gen_page: bool,
+    gen_course: bool,
+    client: Option<ClientHandler>,
+) {
     let content = fs::read_to_string(input).unwrap();
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
     let file_id = title_to_id(&filename);
@@ -90,7 +98,12 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
 
                 same_id_counter += 1;
                 saved_snippets_count += 1;
-                save_snippet(&id, &tex, &snippets_dir);
+                let path = save_snippet(&id, &tex, &snippets_dir);
+
+                // import snippet;
+                if let Some(ref client) = client {
+                    let _ = import::import_snippet_with_client(&client, &path).await;
+                }
 
                 // Add entry to html page
                 let snippet = format!("<snippet>{}</snippet>", &id);
@@ -108,7 +121,13 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
     if gen_page {
         let filename = format!("{}.html", &tex_page.id);
         log::debug!("Writing file {}", &filename);
-        fs::write(pages_dir.join(&filename), &html_page).expect("Couldn't write to file");
+        let path = pages_dir.join(&filename);
+        fs::write(&path, &html_page).expect("Couldn't write to file");
+
+        // import page
+        if let Some(ref client) = client {
+            let _ = import::import_page_with_client(&client, &path).await;
+        }
     }
 
     // Generate JSON course
@@ -123,7 +142,13 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
 
         let filename = format!("{}.json", tex_page.id);
         log::debug!("Writing file {}", &filename);
-        fs::write(courses_dir.join(&filename), json_course).expect("Couldn't write to file");
+        let path = courses_dir.join(&filename);
+        fs::write(&path, json_course).expect("Couldn't write to file");
+
+        // import course
+        if let Some(ref client) = client {
+            let _ = import::import_course_with_client(&client, &path);
+        }
     }
 
     log::info!("Saved {saved_snippets_count} snippets");
@@ -134,7 +159,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
     }
 }
 
-fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path) {
+fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path) -> PathBuf {
     let filename = format!("{}.tex", &snippet_id);
     let dir = snippets_dir.join(&snippet_id);
     let file_path = dir.join(&filename);
@@ -150,6 +175,8 @@ fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path) {
     } else {
         log::debug!("Skipping file {}", &filename);
     }
+
+    file_path
 }
 
 fn create_if_necessary(path: &Path) {

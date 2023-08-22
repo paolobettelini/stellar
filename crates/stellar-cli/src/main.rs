@@ -1,7 +1,6 @@
 use args::*;
 use clap::Parser;
 
-
 use stellar_generator as generator;
 use stellar_import as import;
 use stellar_web as web;
@@ -22,7 +21,7 @@ async fn main() -> anyhow::Result<()> {
     let args = App::parse();
 
     match args.command {
-        Command::Generate(args) => parse_generate_args(&args),
+        Command::Generate(args) => parse_generate_args(&args).await?,
         Command::Import(args) => parse_import_args(&args).await?,
         Command::Web(args) => parse_web_args(&args).await?,
     }
@@ -30,12 +29,26 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn parse_generate_args(args: &GenerateArgs) {
+pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
     let input = &args.latex_input;
     let output = &args.data_output;
     let gen_page = !args.no_gen_page;
     let gen_course = args.gen_course;
-    generator::generate_from_latex(input, output, gen_page, gen_course);
+
+    let client = if let Some(url) = &args.connection_url {
+        if args.import {
+            let client = import::get_client(&url).await?;
+            Some(client)
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
+    generator::generate_from_latex(input, output, gen_page, gen_course, client).await;
+
+    Ok(())
 }
 
 pub async fn parse_import_args(args: &ImportArgs) -> anyhow::Result<()> {

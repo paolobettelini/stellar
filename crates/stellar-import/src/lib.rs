@@ -1,4 +1,4 @@
-use stellar_database::ClientHandler;
+pub use stellar_database::ClientHandler;
 
 mod import;
 mod pathbuf_type;
