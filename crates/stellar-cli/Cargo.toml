@@ -13,8 +13,8 @@ log = "0.4.19"
 env_logger = "0.6.0"
 anyhow = "1.0.72"
 tokio = "1.29.1"
-futures = "0.3.28" # TODO remove?
 
 stellar-import = { path = "../stellar-import" }
 stellar-generate = { path = "../stellar-generate" }
 stellar-web = { path = "../stellar-web" }
+stellar-compile = { path = "../stellar-compile" }

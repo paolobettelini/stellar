@@ -1839,13 +1839,17 @@ dependencies = [
  "anyhow",
  "clap",
  "env_logger",
- "futures",
  "log",
+ "stellar-compile",
  "stellar-generate",
  "stellar-import",
  "stellar-web",
  "tokio",
 ]
+
+[[package]]
+name = "stellar-compile"
+version = "0.1.0"
 
 [[package]]
 name = "stellar-database"
