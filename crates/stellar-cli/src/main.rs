@@ -1,7 +1,7 @@
 use args::*;
 use clap::Parser;
 
-use stellar_generator as generator;
+use stellar_generate as generate;
 use stellar_import as import;
 use stellar_web as web;
 
@@ -46,7 +46,7 @@ pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
         None
     };
 
-    generator::generate_from_latex(input, output, gen_page, gen_course, client).await;
+    generate::generate_from_latex(input, output, gen_page, gen_course, client).await;
 
     Ok(())
 }

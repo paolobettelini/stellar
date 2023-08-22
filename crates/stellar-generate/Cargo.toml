@@ -1,5 +1,5 @@
 [package]
-name = "stellar-generator"
+name = "stellar-generate"
 version = "0.1.0"
 edition = "2021"
 

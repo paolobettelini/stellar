@@ -1841,7 +1841,7 @@ dependencies = [
  "env_logger",
  "futures",
  "log",
- "stellar-generator",
+ "stellar-generate",
  "stellar-import",
  "stellar-web",
  "tokio",
@@ -1857,7 +1857,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "stellar-generator"
+name = "stellar-generate"
 version = "0.1.0"
 dependencies = [
  "anyhow",

@@ -16,5 +16,5 @@ tokio = "1.29.1"
 futures = "0.3.28" # TODO remove?
 
 stellar-import = { path = "../stellar-import" }
-stellar-generator = { path = "../stellar-generator" }
+stellar-generate = { path = "../stellar-generate" }
 stellar-web = { path = "../stellar-web" }
