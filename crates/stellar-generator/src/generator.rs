@@ -1,7 +1,7 @@
 use crate::parser::*;
+use crate::parser::{TeXElement::*, *};
 use std::path::PathBuf;
 use std::{fs, io::Write, path::Path};
-use crate::parser::{*, TeXElement::*};
 
 use serde_json::{json, Value};
 
@@ -30,18 +30,20 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
     let mut last_subsection_id = String::from("");
     let mut current_snippet_id = String::from("");
 
+    let mut saved_snippets_count = 0;
+
     // If you have some content, an include, some content
     // then two snippets will be saved with the same id
     let mut same_id_counter = 0;
 
     let mut html_page = String::from("");
-    
+
     for element in &tex_page.elements {
         match element {
             Section(section) => {
                 let section_type = &section.section_type;
                 let id = &section.id;
-                
+
                 current_snippet_id = format!(
                     "{file_id}-{}{}{}",
                     if section_type > &SectionType::Section && !last_section_id.is_empty() {
@@ -67,7 +69,10 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
                 }
 
                 // Add heading to html file
-                let title = format!("<h{0}>{1}</h{0}>", section.section_type as u8, section.title);
+                let title = format!(
+                    "<h{0}>{1}</h{0}>",
+                    section.section_type as u8, section.title
+                );
                 html_page += &(title + "\n");
             }
             TeXContent(content) => {
@@ -84,6 +89,7 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
                 };
 
                 same_id_counter += 1;
+                saved_snippets_count += 1;
                 save_snippet(&id, &tex, &snippets_dir);
 
                 // Add entry to html page
@@ -98,12 +104,14 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
         }
     }
 
+    // Generate HTML page
     if gen_page {
         let filename = format!("{}.html", &tex_page.id);
         log::debug!("Writing file {}", &filename);
         fs::write(pages_dir.join(&filename), &html_page).expect("Couldn't write to file");
     }
 
+    // Generate JSON course
     if gen_course {
         let json_course = json!({
             "title": tex_page.title,
@@ -118,7 +126,12 @@ pub fn generate_from_latex(input: &PathBuf, output: &PathBuf, gen_page: bool, ge
         fs::write(courses_dir.join(&filename), json_course).expect("Couldn't write to file");
     }
 
-    log::info!("Remember to compile the snippets");
+    log::info!("Saved {saved_snippets_count} snippets");
+
+    if saved_snippets_count > 0 {
+        let s = if saved_snippets_count == 1 { "" } else { "s" };
+        log::info!("Remember to compile the snippet{s}");
+    }
 }
 
 fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path) {

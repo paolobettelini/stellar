@@ -23,6 +23,7 @@ pub async fn start_server(
     www_folder: PathBuf,
 ) -> anyhow::Result<()> {
     let client = ClientHandler::new(connection_url).await?;
+
     let _ = client.create_indexes().await;
 
     let data = Data {
