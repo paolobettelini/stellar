@@ -1,6 +1,7 @@
 use args::*;
 use clap::Parser;
 
+use stellar_compile as compile;
 use stellar_generate as generate;
 use stellar_import as import;
 use stellar_server as web;
@@ -24,6 +25,7 @@ async fn main() -> anyhow::Result<()> {
         Command::Generate(args) => parse_generate_args(&args).await?,
         Command::Import(args) => parse_import_args(&args).await?,
         Command::Web(args) => parse_web_args(&args).await?,
+        Command::Compile(args) => parse_compile_args(&args)?,
     }
 
     Ok(())
@@ -73,6 +75,12 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
         args.www.clone(),
     )
     .await?;
+
+    Ok(())
+}
+
+pub fn parse_compile_args(args: &CompileArgs) -> anyhow::Result<()> {
+    compile::compile(&args.path, &args.search_path)?;
 
     Ok(())
 }

@@ -20,6 +20,8 @@ pub enum Command {
     Import(ImportArgs),
     /// Help message for web.
     Web(WebArgs),
+    /// Import message for compile.
+    Compile(CompileArgs),
 }
 
 #[derive(Debug, Args)]
@@ -81,6 +83,17 @@ pub struct WebArgs {
     /// MongoDB Connection URL
     #[arg(short, short, long)]
     pub connection_url: String,
+}
+
+#[derive(Debug, Args)]
+pub struct CompileArgs {
+    /// Path to compile
+    #[arg(short, long)]
+    pub path: PathBuf,
+
+    /// Search path
+    #[arg(short, long)]
+    pub search_path: PathBuf,
 }
 
 fn default_address() -> IpAddr {
