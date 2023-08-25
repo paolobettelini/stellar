@@ -3,7 +3,7 @@ use clap::Parser;
 
 use stellar_generate as generate;
 use stellar_import as import;
-use stellar_web as web;
+use stellar_server as web;
 
 mod args;
 

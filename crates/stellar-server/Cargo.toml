@@ -1,5 +1,5 @@
 [package]
-name = "stellar-web"
+name = "stellar-server"
 version = "0.1.0"
 edition = "2021"
 

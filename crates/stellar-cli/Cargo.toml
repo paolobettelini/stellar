@@ -10,11 +10,11 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.0.29", features = ["derive"] }
 log = "0.4.19"
-env_logger = "0.6.0"
+env_logger = "0.10.0"
 anyhow = "1.0.72"
 tokio = "1.29.1"
 
 stellar-import = { path = "../stellar-import" }
 stellar-generate = { path = "../stellar-generate" }
-stellar-web = { path = "../stellar-web" }
+stellar-server = { path = "../stellar-server" }
 stellar-compile = { path = "../stellar-compile" }

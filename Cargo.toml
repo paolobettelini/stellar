@@ -8,7 +8,12 @@ repository = "https://github.com/paolobettelini/stellar"
 
 [workspace]
 members = [
-  "crates/*",
+  "crates/stellar-cli",
+  "crates/stellar-database",
+  "crates/stellar-generate",
+  "crates/stellar-import",
+  "crates/stellar-server",
+  "crates/stellar-utils"
 ]
 
 default-members = ["crates/stellar-cli"]
