@@ -1,8 +1,11 @@
 use crate::parser::*;
 use crate::parser::{TeXElement::*, *};
 use import::ClientHandler;
-use std::path::PathBuf;
-use std::{fs, io::Write, path::Path};
+use std::{
+    fs,
+    io::Write,
+    path::{Path, PathBuf},
+};
 use stellar_import as import;
 
 use serde_json::{json, Value};
@@ -16,6 +19,7 @@ pub async fn generate_from_latex(
     gen_page: bool,
     gen_course: bool,
     client: Option<ClientHandler>,
+    compile: Option<&PathBuf>,
 ) {
     let content = fs::read_to_string(input).unwrap();
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
@@ -98,7 +102,7 @@ pub async fn generate_from_latex(
 
                 same_id_counter += 1;
                 saved_snippets_count += 1;
-                save_snippet(&id, &tex, &snippets_dir, &client).await;
+                save_snippet(&id, &tex, &snippets_dir, &client, &compile).await;
 
                 // Add entry to html page
                 let snippet = format!("<snippet>{}</snippet>", &id);
@@ -130,7 +134,12 @@ pub async fn generate_from_latex(
     }
 }
 
-async fn save_course(title: &str, page_id: &str, courses_dir: &Path, client: &Option<ClientHandler>) {
+async fn save_course(
+    title: &str,
+    page_id: &str,
+    courses_dir: &Path,
+    client: &Option<ClientHandler>,
+) {
     let json_course = json!({
         "title": title,
         "pages": [
@@ -165,7 +174,13 @@ async fn save_page(page_id: &str, pages_dir: &Path, content: &str, client: &Opti
     }
 }
 
-async fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path, client: &Option<ClientHandler>) {
+async fn save_snippet(
+    snippet_id: &str,
+    tex: &str,
+    snippets_dir: &Path,
+    client: &Option<ClientHandler>,
+    compile: &Option<&PathBuf>,
+) {
     let filename = format!("{}.tex", &snippet_id);
     let dir = snippets_dir.join(&snippet_id);
     let file_path = dir.join(&filename);
@@ -178,6 +193,10 @@ async fn save_snippet(snippet_id: &str, tex: &str, snippets_dir: &Path, client: 
         // Import snippet
         if let Some(ref client) = client {
             let _ = import::import_snippet_with_client(&client, &file_path).await;
+        }
+
+        if let Some(ref search_path) = compile {
+            stellar_compile::compile_snippet(&dir, &search_path);
         }
     }
 }
@@ -196,7 +215,6 @@ fn save_file(file_path: &Path, filename: &str, content: &str) -> bool {
         } else {
             true
         }
-        
     } else {
         //log::debug!("Skipping file {}", &filename);
         false

@@ -37,6 +37,16 @@ pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
     let gen_page = !args.no_gen_page;
     let gen_course = args.gen_course;
 
+    let compile = if let Some(search_path) = &args.search_path {
+        if args.compile {
+            Some(search_path)
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
     let client = if let Some(url) = &args.connection_url {
         if args.import {
             let client = import::get_client(&url).await?;
@@ -48,7 +58,7 @@ pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
         None
     };
 
-    generate::generate_from_latex(input, output, gen_page, gen_course, client).await;
+    generate::generate_from_latex(input, output, gen_page, gen_course, client, compile).await;
 
     Ok(())
 }

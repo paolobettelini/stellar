@@ -38,6 +38,8 @@ pub fn compile_snippet(path: &Path, search_path: &Path) {
         let tex_path = path.join(format!("{folder_name}.tex"));
         let search_path = search_path.to_string_lossy();
 
+        log::info!("Compiling snippet {folder_name}");
+
         if tex_path.exists() {
             let output = Command::new("tectonic")
                 .arg(tex_path)
@@ -47,9 +49,7 @@ pub fn compile_snippet(path: &Path, search_path: &Path) {
 
             match output {
                 Ok(status) => {
-                    if status.success() {
-                        log::debug!("Compiled {folder_name}");
-                    } else {
+                    if !status.success() {
                         log::error!("Could not compile {folder_name}");
                     }
                 }

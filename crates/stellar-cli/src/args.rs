@@ -60,6 +60,14 @@ pub struct GenerateArgs {
     /// Import the generated snippets
     #[arg(short, long, default_value_t = false, requires = "connection_url")]
     pub import: bool,
+
+    /// Search path for tectonic
+    #[arg(short, long)]
+    pub search_path: Option<PathBuf>,
+
+    /// Compile saved snippets
+    #[arg(short, long, default_value_t = false, requires = "search_path")]
+    pub compile: bool,
 }
 
 #[derive(Debug, Args)]

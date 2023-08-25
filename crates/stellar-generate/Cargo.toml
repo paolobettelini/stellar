@@ -12,3 +12,4 @@ serde_json = "1.0"
 serde = { version = "1.0.152", features = [ "derive" ] }
 
 stellar-import = { path = "../stellar-import" }
+stellar-compile = { path = "../stellar-compile" }
