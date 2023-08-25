@@ -1,8 +1,8 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 use std::fs;
 use std::path::{PathBuf, Path};
-use crate::Data;
 use futures::TryStreamExt;
+use crate::{Data, asset::*};
 
 #[post("/course/{course}")]
 async fn course_service(data: web::Data<Data>, course: web::Path<String>) -> impl Responder {
@@ -66,6 +66,11 @@ async fn index() -> impl Responder {
         .finish()
 }
 
+#[get("/{_:.*}")]
+async fn static_files(path: web::Path<String>) -> impl Responder {
+    handle_embedded_file(path.as_str())
+}
+
 #[get("/snippet/{snippet}/{file_name}")]
 async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<(String, String)>) -> impl Responder {
     let snippet = &params.0;
@@ -79,6 +84,7 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
 
     let content = std::fs::read(file).unwrap();
     // TODO this is temporary
+    // use mime_guess::from_path;
     let content_type = if file_name.ends_with("html") {
         "text/html"
     } else if file_name.ends_with("wasm") {
@@ -92,59 +98,34 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
     HttpResponse::Ok().content_type(content_type).body(content)
 }
 
-#[get("/private/{a:.*}")]
-async fn private_folder() -> impl Responder {
-    HttpResponse::NotFound().body("404 not found")
-}
-
 #[get("/search")]
 async fn search_html(data: web::Data<Data>) -> impl Responder {
-    let file = Path::new(&data.www_folder).join("private").join("search.html");
-    let html = fs::read_to_string(file).unwrap();
-
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(html)
+    let path = format!("private/search.html");
+    handle_embedded_file(&path)
 }
 
 #[get("/universe/{universe}")]
 async fn universe_html(data: web::Data<Data>) -> impl Responder {
-    let file = Path::new(&data.www_folder).join("private").join("universe.html");
-    let html = fs::read_to_string(file).unwrap();
-
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(html)
+    let path = format!("private/universe.html");
+    handle_embedded_file(&path)
 }
 
 #[get("/course/{course}")]
 async fn course_html(data: web::Data<Data>) -> impl Responder {
-    let file = Path::new(&data.www_folder).join("private").join("course.html");
-    let html = fs::read_to_string(file).unwrap();
-
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(html)
+    let path = format!("private/course.html");
+    handle_embedded_file(&path)
 }
 
 #[get("/page/{page}")]
 async fn page_html(data: web::Data<Data>) -> impl Responder {
-    let file = Path::new(&data.www_folder).join("private").join("page.html");
-    let html = fs::read_to_string(file).unwrap();
-
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(html)
+    let path = format!("private/page.html");
+    handle_embedded_file(&path)
 }
 
 #[get("/snippet/{snippet}")]
 async fn snippet_html(data: web::Data<Data>) -> impl Responder {
-    let file = Path::new(&data.www_folder).join("private").join("snippet.html");
-    let html = fs::read_to_string(file).unwrap();
-
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(html)
+    let path = format!("private/snippet.html");
+    handle_embedded_file(&path)
 }
 
 #[post("/query/snippet/{keyword}")]

@@ -3,8 +3,6 @@ name = "stellar-server"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 actix-web = "4.3.1"
 tokio = { version = "1", features = ["full"] }
@@ -16,3 +14,5 @@ log = "0.4.19"
 
 stellar-database = { path = "../stellar-database" }
 futures = "0.3.28"
+rust-embed = { version = "8.0.0", features = ["include-exclude", "interpolate-folder-path"] }
+mime_guess = "2.0.4"

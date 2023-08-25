@@ -80,10 +80,6 @@ pub struct WebArgs {
     #[arg(short, long, default_value_t = 8080)]
     pub port: u16,
 
-    /// WWW static files folder
-    #[arg(short, long)]
-    pub www: PathBuf,
-
     /// Data folder
     #[arg(short, long)]
     pub data: PathBuf,

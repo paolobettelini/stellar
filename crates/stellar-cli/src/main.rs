@@ -82,7 +82,6 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
         args.port,
         &args.connection_url,
         args.data.clone(),
-        args.www.clone(),
     )
     .await?;
 
