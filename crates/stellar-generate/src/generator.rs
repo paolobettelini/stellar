@@ -101,8 +101,11 @@ pub async fn generate_from_latex(
                 };
 
                 same_id_counter += 1;
-                saved_snippets_count += 1;
-                save_snippet(&id, &tex, &snippets_dir, &client, &compile).await;
+                let saved = save_snippet(&id, &tex, &snippets_dir, &client, &compile).await;
+                
+                if saved {
+                    saved_snippets_count += 1;
+                }
 
                 // Add entry to html page
                 let snippet = format!("<snippet>{}</snippet>", &id);
@@ -139,7 +142,7 @@ async fn save_course(
     page_id: &str,
     courses_dir: &Path,
     client: &Option<ClientHandler>,
-) {
+) -> bool {
     let json_course = json!({
         "title": title,
         "pages": [
@@ -158,9 +161,11 @@ async fn save_course(
             let _ = import::import_page_with_client(&client, &path).await;
         }
     }
+
+    saved
 }
 
-async fn save_page(page_id: &str, pages_dir: &Path, content: &str, client: &Option<ClientHandler>) {
+async fn save_page(page_id: &str, pages_dir: &Path, content: &str, client: &Option<ClientHandler>) -> bool {
     let filename = format!("{}.html", &page_id);
     let path = pages_dir.join(&filename);
 
@@ -172,6 +177,8 @@ async fn save_page(page_id: &str, pages_dir: &Path, content: &str, client: &Opti
             let _ = import::import_page_with_client(&client, &path).await;
         }
     }
+
+    saved
 }
 
 async fn save_snippet(
@@ -180,7 +187,7 @@ async fn save_snippet(
     snippets_dir: &Path,
     client: &Option<ClientHandler>,
     compile: &Option<&PathBuf>,
-) {
+) -> bool {
     let filename = format!("{}.tex", &snippet_id);
     let dir = snippets_dir.join(&snippet_id);
     let file_path = dir.join(&filename);
@@ -199,6 +206,8 @@ async fn save_snippet(
             stellar_compile::compile_snippet(&dir, &search_path);
         }
     }
+
+    saved
 }
 
 fn save_file(file_path: &Path, filename: &str, content: &str) -> bool {
