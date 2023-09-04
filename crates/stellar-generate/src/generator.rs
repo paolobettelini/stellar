@@ -13,7 +13,7 @@ use serde_json::{json, Value};
 //TODO  It seems to always write a file that shouldn't be written
 // but doesn't actually write it in the file system (page)
 
-pub async fn generate_from_latex(
+pub async fn generate_latex_snippets(
     input: &PathBuf,
     output: &PathBuf,
     gen_page: bool,
@@ -102,7 +102,7 @@ pub async fn generate_from_latex(
 
                 same_id_counter += 1;
                 let saved = save_snippet(&id, &tex, &snippets_dir, &client, &compile).await;
-                
+
                 if saved {
                     saved_snippets_count += 1;
                 }
@@ -165,7 +165,12 @@ async fn save_course(
     saved
 }
 
-async fn save_page(page_id: &str, pages_dir: &Path, content: &str, client: &Option<ClientHandler>) -> bool {
+async fn save_page(
+    page_id: &str,
+    pages_dir: &Path,
+    content: &str,
+    client: &Option<ClientHandler>,
+) -> bool {
     let filename = format!("{}.html", &page_id);
     let path = pages_dir.join(&filename);
 
@@ -203,7 +208,7 @@ async fn save_snippet(
         }
 
         if let Some(ref search_path) = compile {
-            stellar_compile::compile_snippet(&dir, &search_path);
+            stellar_compile::compile_snippet(&dir, &search_path, true);
         }
     }
 

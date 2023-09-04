@@ -98,6 +98,10 @@ pub struct CompileArgs {
     /// Search path
     #[arg(short, long)]
     pub search_path: PathBuf,
+
+    /// Recompile already compiled snippets
+    #[arg(short, long, default_value_t = false)]
+    pub recompile: bool,
 }
 
 fn default_address() -> IpAddr {

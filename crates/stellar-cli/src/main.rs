@@ -58,7 +58,7 @@ pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
         None
     };
 
-    generate::generate_from_latex(input, output, gen_page, gen_course, client, compile).await;
+    generate::generate_latex_snippets(input, output, gen_page, gen_course, client, compile).await;
 
     Ok(())
 }
@@ -89,7 +89,7 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
 }
 
 pub fn parse_compile_args(args: &CompileArgs) -> anyhow::Result<()> {
-    compile::compile(&args.path, &args.search_path)?;
+    compile::compile(&args.path, &args.search_path, args.recompile)?;
 
     Ok(())
 }
