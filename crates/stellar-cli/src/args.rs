@@ -35,8 +35,23 @@ pub struct ImportArgs {
     pub import: Option<Vec<PathBuf>>,
 }
 
-#[derive(Debug, Args)]
+#[derive(Parser, Debug)]
 pub struct GenerateArgs {
+    #[clap(subcommand)]
+    pub command: GenerateCommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum GenerateCommand {
+    /// Help message for snippets
+    Snippets(GenSnippetsArgs),
+
+    /// Help message for PDF
+    Pdf(GenPdfArgs),
+}
+
+#[derive(Debug, Args)]
+pub struct GenSnippetsArgs {
     /// Generate data from a LaTex file
     #[arg(short = 'i', long)]
     pub latex_input: PathBuf,
@@ -66,6 +81,29 @@ pub struct GenerateArgs {
     pub search_path: Option<PathBuf>,
 
     /// Compile saved snippets
+    #[arg(short, long, default_value_t = false, requires = "search_path")]
+    pub compile: bool,
+}
+
+#[derive(Debug, Args)]
+pub struct GenPdfArgs {
+    /// Generate data from a LaTex file
+    #[arg(short = 'i', long)]
+    pub latex_input: PathBuf,
+
+    /// Output for the generated PDF
+    #[arg(short = 'o', long)]
+    pub output: PathBuf,
+
+    /// Data folder to read snippets
+    #[arg(short, long)]
+    pub data: PathBuf,
+
+    /// Search path for tectonic
+    #[arg(short, long)]
+    pub search_path: Option<PathBuf>,
+
+    /// Compile if needed
     #[arg(short, long, default_value_t = false, requires = "search_path")]
     pub compile: bool,
 }

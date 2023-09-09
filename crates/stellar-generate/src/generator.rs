@@ -10,8 +10,18 @@ use stellar_import as import;
 
 use serde_json::{json, Value};
 
-//TODO  It seems to always write a file that shouldn't be written
-// but doesn't actually write it in the file system (page)
+pub fn generate_pdf(
+    input: &PathBuf,
+    output: &PathBuf,
+    data: &PathBuf,
+    search_path: &Option<PathBuf>,
+    compile: &bool,
+) -> anyhow::Result<()> {
+    let content = fs::read_to_string(input)?;
+    let filename = String::from(input.file_stem().unwrap().to_string_lossy());
+    
+    unimplemented!();
+}
 
 pub async fn generate_latex_snippets(
     input: &PathBuf,
@@ -20,8 +30,8 @@ pub async fn generate_latex_snippets(
     gen_course: bool,
     client: Option<ClientHandler>,
     compile: Option<&PathBuf>,
-) {
-    let content = fs::read_to_string(input).unwrap();
+) -> anyhow::Result<()> {
+    let content = fs::read_to_string(input)?;
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
     let file_id = title_to_id(&filename);
 
@@ -135,6 +145,8 @@ pub async fn generate_latex_snippets(
         let s = if saved_snippets_count == 1 { "" } else { "s" };
         log::info!("Remember to compile the snippet{s}");
     }
+
+    Ok(())
 }
 
 async fn save_course(

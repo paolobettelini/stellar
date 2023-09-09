@@ -22,7 +22,7 @@ async fn main() -> anyhow::Result<()> {
     let args = App::parse();
 
     match args.command {
-        Command::Generate(args) => parse_generate_args(&args).await?,
+        Command::Generate(args) => parse_generate_cmd(&args.command).await?,
         Command::Import(args) => parse_import_args(&args).await?,
         Command::Web(args) => parse_web_args(&args).await?,
         Command::Compile(args) => parse_compile_args(&args)?,
@@ -31,7 +31,28 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
+pub async fn parse_generate_cmd(cmd: &GenerateCommand) -> anyhow::Result<()> {
+    match cmd {
+        GenerateCommand::Snippets(args) => parse_gen_snippets_args(&args).await?,
+        GenerateCommand::Pdf(args) => parse_gen_pdf_args(&args)?,
+    }
+
+    Ok(())
+}
+
+pub fn parse_gen_pdf_args(args: &GenPdfArgs) -> anyhow::Result<()> {
+    let input = &args.latex_input;
+    let output = &args.output;
+    let data = &args.output;
+    let search_path = &args.search_path;
+    let compile = &args.compile;
+
+    generate::generate_pdf(input, output, data, search_path, compile)?;
+
+    Ok(())
+}
+
+pub async fn parse_gen_snippets_args(args: &GenSnippetsArgs) -> anyhow::Result<()> {
     let input = &args.latex_input;
     let output = &args.data_output;
     let gen_page = !args.no_gen_page;
@@ -58,7 +79,7 @@ pub async fn parse_generate_args(args: &GenerateArgs) -> anyhow::Result<()> {
         None
     };
 
-    generate::generate_latex_snippets(input, output, gen_page, gen_course, client, compile).await;
+    generate::generate_latex_snippets(input, output, gen_page, gen_course, client, compile).await?;
 
     Ok(())
 }
