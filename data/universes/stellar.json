@@ -1,4 +1,5 @@
 {
+    "title": "Stellar",
     "courses": [
         { "name": "Introduction", "id": "stellar-introduction", "x": 0.15, "y": 0.45 },
         { "name": "Technical Guide", "id": "stellar-technical-guide", "x": 0.30, "y": 0.3 },

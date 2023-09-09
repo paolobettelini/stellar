@@ -6,6 +6,7 @@
 let href = window.location.href;
 let value = "/universe/";
 let universeName = href.substring(value.length + href.indexOf(value));
+let topBarTitle = document.getElementById('top-bar-title');
 
 postData(`/universe/${universeName}`)
     .then(v => v.json())
@@ -34,8 +35,9 @@ canvas.height = canvasContainer.clientHeight;
 ctx.strokeStyle = 'red';
 ctx.lineWidth = "3";
 
-
 function renderUniverse(universe) {
+    topBarTitle.innerText = universe.title;
+
     renderCourses(universe.courses);
     renderDependencies(universe.dependencies);
 }
