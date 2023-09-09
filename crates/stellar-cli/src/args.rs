@@ -73,7 +73,7 @@ pub struct GenSnippetsArgs {
     pub connection_url: Option<String>,
 
     /// Import the generated snippets
-    #[arg(short, long, default_value_t = false, requires = "connection_url")]
+    #[arg(long, default_value_t = false, requires = "connection_url")]
     pub import: bool,
 
     /// Search path for tectonic
@@ -81,7 +81,7 @@ pub struct GenSnippetsArgs {
     pub search_path: Option<PathBuf>,
 
     /// Compile saved snippets
-    #[arg(short, long, default_value_t = false, requires = "search_path")]
+    #[arg(long, default_value_t = false, requires = "search_path")]
     pub compile: bool,
 }
 
