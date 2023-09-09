@@ -110,9 +110,8 @@ function renderSnippet(container, snippetName, index) {
                     loadPDF(buffer, canvasId, textLayerId,
                         () => {
                             // Apply filter
-                            //if (col2 != "#FFFFFF") {
-                                //applyFilter(canvas, "#161923");
-                            //}
+                            let theme = localStorage.getItem('theme');
+                            applyFilter(canvas, theme);
                         });
                 } else if (contentType == 'text/html') {
                     const decoder = new TextDecoder();

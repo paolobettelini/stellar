@@ -1,7 +1,15 @@
 // maps white to "color" and the other colors respectively
 
-function applyFilter(canvas, hexColor) {
-    const diffR = 255 - parseInt(hexColor.slice(1, 3), 16);
+function applyFilter(canvas, theme) {
+  if (theme == null || theme == 'theme-light') {
+    return;
+  }
+
+  // Assume it's theme-light
+  // TODO fix  (--col2)
+  let hexColor = "#161923";
+  
+  const diffR = 255 - parseInt(hexColor.slice(1, 3), 16);
     const diffG = 255 - parseInt(hexColor.slice(3, 5), 16);
     const diffB = 255 - parseInt(hexColor.slice(5, 7), 16);
 

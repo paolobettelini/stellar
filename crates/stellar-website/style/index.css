@@ -1,15 +1,19 @@
-:root {
-    --sidebar-width: 400px;
-    
-    /*--col1: #c8c9db; /* Text */
-    /*--col2: #161923; /* Background */
-    /*--col3: #2c2d41; /* Nav Background */
-    /*--col4: #286f96; /* Colored Text */
-
+.theme-light {
     --col1: black; /* Text */
     --col2: white; /* Background */
     --col3: rgb(245, 245, 245); /* Nav Background */
     --col4: blue; /* Colored Text */
+}
+
+.theme-dark {
+    --col1: #c8c9db; /* Text */
+    --col2: #161923; /* Background */
+    --col3: #2c2d41; /* Nav Background */
+    --col4: #286f96; /* Colored Text */
+}
+
+:root {
+    --sidebar-width: 400px;
 }
 
 body {

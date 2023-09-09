@@ -11,9 +11,3 @@ let href = window.location.href;
 let value = "/course/";
 let courseName = href.substring(value.length + href.indexOf(value));
 renderCourse(innerContent, navbarContent, topBarTitle, courseName);
-
-
-// Go to /search when pressing the search button
-document.getElementById('topbar-search').onclick = () => {
-    window.location = '/search';
-}
