@@ -9,13 +9,20 @@ async fn course_service(data: web::Data<Data>, course: web::Path<String>) -> imp
     let file_name = format!("{course}.json");
     log::debug!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &Path::new(&data.data_folder).join("courses").join(file_name);
-    let content = std::fs::read_to_string(file).unwrap();
+    let file = &Path::new(&data.data_folder).join("courses").join(&file_name);
+    let content = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::warn!("Could not find course: {file_name}");
+            return HttpResponse::NotFound().body("Course not found");
+        }
+    };
+
 
     HttpResponse::Ok()
         .content_type("application/json")
         .body(content)
-    // HttpResponse::NotFound().body("Course not found")
 }
 
 #[post("/universe/{universe}")]
@@ -23,8 +30,16 @@ async fn universe_service(data: web::Data<Data>, universe: web::Path<String>) ->
     let file_name = format!("{universe}.json");
     log::debug!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &Path::new(&data.data_folder).join("universes").join(file_name);
-    let content = std::fs::read_to_string(file).unwrap();
+    let file = &Path::new(&data.data_folder).join("universes").join(&file_name);
+    let content = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::warn!("Could not find universe: {file_name}");
+            return HttpResponse::NotFound().body("Universe not found");
+        }
+    };
+
 
     HttpResponse::Ok()
         .content_type("application/json")
@@ -37,8 +52,16 @@ async fn page_service(data: web::Data<Data>, page: web::Path<String>) -> impl Re
     let file_name = format!("{page}.html");
     log::debug!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &Path::new(&data.data_folder).join("pages").join(file_name);
-    let content = std::fs::read_to_string(file).unwrap();
+    let file = &Path::new(&data.data_folder).join("pages").join(&file_name);
+    let content = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::warn!("Could not find page: {file_name}");
+            return HttpResponse::NotFound().body("Page not found");
+        }
+    };
+
 
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
@@ -51,10 +74,25 @@ async fn snippet_service(data: web::Data<Data>, snippet: web::Path<String>) -> i
     // TODO pre-create path
     let dir = &Path::new(&data.data_folder).join("snippets").join(&snippet);
 
-    let (file, content_type) = get_snippet_file_and_content_type(dir, &snippet).unwrap();
+    let (file, content_type) = {
+        if let Some(v) = get_snippet_file_and_content_type(dir, &snippet) {
+            v
+        } else {
+            log::warn!("Could not find snippet: {snippet}");
+            return HttpResponse::NotFound().body("Snippet not found");
+        }
+    };
 
     log::debug!("Reading file: {file:?}");
-    let content = std::fs::read(file).unwrap();
+    let content = {
+        if let Ok(v) = std::fs::read(file) {
+            v
+        } else {
+            log::warn!("Could not read snippet: {snippet}");
+            return HttpResponse::NotFound().body("Snippet not found");
+        }
+    };
+
 
     HttpResponse::Ok().content_type(content_type).body(content)
 }
