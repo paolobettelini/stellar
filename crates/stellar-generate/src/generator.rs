@@ -7,6 +7,8 @@ use std::{
     path::{Path, PathBuf},
 };
 use stellar_import as import;
+use std::borrow::Cow;
+use std::process::Command;
 
 use serde_json::{json, Value};
 
@@ -14,8 +16,6 @@ pub fn generate_pdf(
     input: &PathBuf,
     output: &PathBuf,
     data: &PathBuf,
-    search_path: &Option<PathBuf>,
-    compile: &bool,
 ) -> anyhow::Result<()> {
     let content = fs::read_to_string(input)?;
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
@@ -23,6 +23,149 @@ pub fn generate_pdf(
     unimplemented!();
 }
 
+pub async fn generate_snippets(
+    input: &PathBuf,
+    output: &PathBuf,
+    client: Option<ClientHandler>,
+) -> anyhow::Result<()> {
+    let out_folder = Path::new(output);
+    let snippets_dir = out_folder.join("snippets");
+    let pages_dir = out_folder.join("pages");
+    let courses_dir = out_folder.join("courses");
+    
+    create_if_necessary(out_folder);
+    create_if_necessary(&snippets_dir);
+    create_if_necessary(&pages_dir);
+    create_if_necessary(&courses_dir);
+    
+    let text_pieces = pdf_extract(&input).unwrap();
+
+    // TODO
+    let gen_course = false;
+    let gen_page = false;
+    // TODO, split each line for \n and consider them separately
+    let mut counter = 0;
+    let mut snippet_opening = None;
+    for text_piece in text_pieces {
+        if text_piece.text.starts_with("!snippet") {
+            snippet_opening = Some(text_piece.clone());
+        } else if text_piece.text.starts_with("!endsnippet") {
+            if let Some(piece) = snippet_opening {
+                log::info!("Cropping snippet: {:?}", &piece.coords);
+
+                let snippet_name = format!("snippet-{counter}");
+                counter += 1;
+
+                let output = snippets_dir.join(&snippet_name);
+                create_if_necessary(&output);
+                let output = output.join(format!("{snippet_name}.pdf"));
+
+                let x1 = piece.coords.0;
+                let y1 = piece.coords.1 - 17.45;
+                let x2 = x1 + 451.5;
+                let y2 = text_piece.coords.1 + 9.9;
+                let page = piece.page - 1;
+                crop_pdf(&input, &output, page, x1, y1, x2, y2);
+            }
+            
+            snippet_opening = None;
+        }
+    }
+    
+    Ok(())
+}
+
+#[derive(Debug, Clone)]
+struct TextPiece {
+    pub text: String,
+    pub coords: (f64, f64),
+    pub page: u16,
+}
+
+fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f64, y2: f64) {
+    let input = &input.to_str().map(|s| s.to_string()).unwrap_or_default();
+    let output = &output.to_str().map(|s| s.to_string()).unwrap_or_default();
+    
+    let _ = Command::new("pdfcrop.py")
+        .arg(input)
+        .arg(page_num.to_string())
+        .arg(x1.to_string())
+        .arg(y1.to_string())
+        .arg(x2.to_string())
+        .arg(y2.to_string())
+        .arg(output)
+        .status();
+}
+
+// why didn't I do a JSON??
+/// Example:
+/// 245.00 234.00 1 [Some text]
+/// 477.00 11.00 2 [Some other text]
+fn pdf_extract(path: &Path) -> anyhow::Result<Vec<TextPiece>> {
+    let mut raw = &pdf_extract_raw(&path)?[..];
+    let mut result = vec![];
+    let mut curr_index = 0;
+
+    while let Some(text_index) = raw.find('[') {
+        let coords_raw = &raw[curr_index..text_index];
+
+        let text = extract_square_parenthesis(&raw[text_index..]).to_string();
+        let mut coords_parts = coords_raw.trim().split_whitespace();
+
+        let x: f64 = coords_parts.next().unwrap().parse()?;
+        let y: f64 = coords_parts.next().unwrap().parse()?;
+        let page: u16 = coords_parts.next().unwrap().parse()?;
+
+        let text_len = &text.len();
+        result.push(TextPiece {
+            text,
+            coords: (x, y),
+            page
+        });
+
+        let index = text_index + text_len + 2;
+        raw = &raw[index..];
+    }
+
+    Ok(result)
+}
+
+fn pdf_extract_raw(path: &Path) -> anyhow::Result<String> {
+    let output = Command::new("pdfextract.py")
+        .arg(path)
+        .output()?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+    Ok(stdout)
+}
+
+fn extract_square_parenthesis<'a>(text: &'a str) -> &'a str {
+    extract_parenthesis(&text, '[', ']') 
+}
+
+fn extract_parenthesis<'a>(text: &'a str, open: char, end: char) -> &'a str {
+    let mut depth = 0;
+    let mut length = 0;
+
+    let chars = text.chars();
+    for c in chars {
+        if c == open {
+            depth += 1;
+        } else if c == end {
+            depth -= 1;
+        }
+        
+        if depth == 0 {
+            break;
+        }
+
+        length += 1;
+    }
+
+    &text[1..length]
+}
+
+/*
 pub async fn generate_latex_snippets(
     input: &PathBuf,
     output: &PathBuf,
@@ -247,12 +390,6 @@ fn save_file(file_path: &Path, filename: &str, content: &str) -> bool {
     }
 }
 
-fn create_if_necessary(path: &Path) {
-    if !path.exists() {
-        fs::create_dir_all(path).unwrap();
-    }
-}
-
 fn make_full_document(preamble: &str, tex: &str) -> String {
     format!(
         r"{preamble}
@@ -280,4 +417,11 @@ fn title_to_id(value: &str) -> String {
         .replace(' ', "-")
         .replace('ô', "o") // maybe remove this
         .to_lowercase()
+}
+*/
+
+fn create_if_necessary(path: &Path) {
+    if !path.exists() {
+        fs::create_dir_all(path).unwrap();
+    }
 }

@@ -52,44 +52,28 @@ pub enum GenerateCommand {
 
 #[derive(Debug, Args)]
 pub struct GenSnippetsArgs {
-    /// Generate data from a LaTex file
+    /// Generate data from a PDF file
     #[arg(short = 'i', long)]
-    pub latex_input: PathBuf,
+    pub input: PathBuf,
 
     /// Output for generated data (uncompiled .tex files)
     #[arg(short = 'o', long)]
     pub data_output: PathBuf,
 
-    /// Do not generate the page .html file
-    #[arg(short, long, default_value_t = false)]
-    pub no_gen_page: bool,
-
-    /// Generate a .json course with this page
-    #[arg(short, long, default_value_t = false)]
-    pub gen_course: bool,
-
-    /// MongoDB connection URL
-    #[arg(short, long)]
-    pub connection_url: Option<String>,
-
     /// Import the generated snippets
     #[arg(long, default_value_t = false, requires = "connection_url")]
     pub import: bool,
 
-    /// Search path for tectonic
+    /// MongoDB connection URL
     #[arg(short, long)]
-    pub search_path: Option<PathBuf>,
-
-    /// Compile saved snippets
-    #[arg(long, default_value_t = false, requires = "search_path")]
-    pub compile: bool,
+    pub connection_url: Option<String>,
 }
 
 #[derive(Debug, Args)]
 pub struct GenPdfArgs {
-    /// Generate data from a LaTex file
+    /// Generate a PDF with snippets from a PDF file
     #[arg(short = 'i', long)]
-    pub latex_input: PathBuf,
+    pub input: PathBuf,
 
     /// Output for the generated PDF
     #[arg(short = 'o', long)]
@@ -98,14 +82,6 @@ pub struct GenPdfArgs {
     /// Data folder to read snippets
     #[arg(short, long)]
     pub data: PathBuf,
-
-    /// Search path for tectonic
-    #[arg(short, long)]
-    pub search_path: Option<PathBuf>,
-
-    /// Compile if needed
-    #[arg(short, long, default_value_t = false, requires = "search_path")]
-    pub compile: bool,
 }
 
 #[derive(Debug, Args)]
@@ -132,14 +108,6 @@ pub struct CompileArgs {
     /// Path to compile
     #[arg(short, long)]
     pub path: PathBuf,
-
-    /// Search path
-    #[arg(short, long)]
-    pub search_path: PathBuf,
-
-    /// Recompile already compiled snippets
-    #[arg(short, long, default_value_t = false)]
-    pub recompile: bool,
 }
 
 fn default_address() -> IpAddr {
