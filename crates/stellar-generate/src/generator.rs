@@ -23,6 +23,15 @@ pub fn generate_pdf(
     unimplemented!();
 }
 
+#[derive(Debug, Default)]
+struct DocProcessor {
+    gen_page: bool,
+    gen_course: bool,
+    current_coords: Option<(f64, f64)>,
+    current_id: Option<String>,
+    current_page: Option<u16>,
+}
+
 pub async fn generate_snippets(
     input: &PathBuf,
     output: &PathBuf,
@@ -39,40 +48,64 @@ pub async fn generate_snippets(
     create_if_necessary(&courses_dir);
     
     let text_pieces = pdf_extract(&input).unwrap();
-
-    // TODO
-    let gen_course = false;
-    let gen_page = false;
-    // TODO, split each line for \n and consider them separately
-    let mut counter = 0;
-    let mut snippet_opening = None;
+    let mut processor = DocProcessor::default();
+    
     for text_piece in text_pieces {
-        if text_piece.text.starts_with("!snippet") {
-            snippet_opening = Some(text_piece.clone());
-        } else if text_piece.text.starts_with("!endsnippet") {
-            if let Some(piece) = snippet_opening {
-                log::info!("Cropping snippet: {:?}", &piece.coords);
-
-                let snippet_name = format!("snippet-{counter}");
-                counter += 1;
-
-                let output = snippets_dir.join(&snippet_name);
-                create_if_necessary(&output);
-                let output = output.join(format!("{snippet_name}.pdf"));
-
-                let x1 = piece.coords.0;
-                let y1 = piece.coords.1 - 17.45;
-                let x2 = x1 + 451.5;
-                let y2 = text_piece.coords.1 + 9.9;
-                let page = piece.page - 1;
-                crop_pdf(&input, &output, page, x1, y1, x2, y2);
-            }
-            
-            snippet_opening = None;
+        let lines = text_piece.text.split("\n");
+        
+        for line in lines {
+            process_line(&input, &mut processor, &text_piece, &line, &snippets_dir);
         }
     }
     
     Ok(())
+}
+
+fn process_line(input: &PathBuf, processor: &mut DocProcessor, text_piece: &TextPiece, line: &str, snippets_dir: &Path) {
+    if line.starts_with("!snippet") {
+        processor.current_coords = Some(text_piece.coords);
+        processor.current_page = Some(text_piece.page);
+        // processor.current_title = Some("Hello title".to_string());
+        processor.current_id = Some("Hello ID".to_string());
+
+        // non ha senso tenere il current_title perché lo aggiungi subito ai titoli della pagina.
+        // a meno che non metti una proprietà anche per l'indentazione della section
+    }
+
+    if line.starts_with("!gen-page") {
+
+    }
+
+    if line.starts_with("!gen-course") {
+
+    }
+
+    // Generate snippet
+    if line.starts_with("!endsnippet") {
+        println!("LINE: {line}");
+
+        let snippet_id = processor.current_id.clone().unwrap();
+
+        let output = snippets_dir.join(&snippet_id);
+        create_if_necessary(&output);
+        let output = output.join(format!("{snippet_id}.pdf"));
+
+        // Crop snippet
+        let x1 = processor.current_coords.unwrap().0;
+        let y1 = processor.current_coords.unwrap().1 - 17.45;
+        let x2 = x1 + 451.5;
+        let y2 = text_piece.coords.1 + 9.9;
+        let page = text_piece.page - 1;
+        crop_pdf(&input, &output, page, x1, y1, x2, y2);
+
+        processor.current_coords = None;
+        processor.current_page = None;
+        processor.current_id = None;
+    }
+}
+
+fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) {
+
 }
 
 #[derive(Debug, Clone)]
