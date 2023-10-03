@@ -52,12 +52,15 @@ pub async fn generate_snippets(
     let commands = pdf_extract(&input).unwrap();
     let mut processor = DocProcessor::default();
 
-    // set default global ID using the file name
+    // Set default global ID using the file name
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
     let filename = strip_filename(&filename);
     let file_id = title_to_id(&filename);
     processor.global_id = file_id;
     
+    // Set default global title using the file name
+    processor.global_title = filename;
+
     for cmd in commands {
         process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client).await;
     }
@@ -133,13 +136,34 @@ async fn process_cmd(
 
 fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) {
     // Generate page
+    let file_id = &processor.global_id;
+    
     if processor.gen_page {
-        let file_id = &processor.global_id;
         let filename = format!("{file_id}.html");
         let file_path = pages_dir.join(&filename);
 
         log::info!("Writing file: {filename}");
         let res = fs::write(&file_path, &processor.html_page);
+
+        if res.is_err() {
+            log::error!("Couldn't write file {}", &filename);
+        }
+    }
+
+    if processor.gen_course {
+        let filename = format!("{file_id}.json");
+        let file_path = courses_dir.join(&filename);
+
+        let json_course = json!({
+            "title": "Course title",
+            "pages": [
+                [1, processor.global_title, file_id]
+            ],
+        });
+        let json_course = serde_json::to_string_pretty(&json_course).unwrap();
+
+        log::info!("Writing file: {filename}");
+        let res = fs::write(&file_path, &json_course);
 
         if res.is_err() {
             log::error!("Couldn't write file {}", &filename);
