@@ -15,6 +15,42 @@
 }
 \ExplSyntaxOff
 
+\renewcommand{\title}[1]{
+    
+!title #1
+
+}
+
+\renewcommand{\section}[1]{
+    
+!section #1
+
+}
+
+\renewcommand{\subsection}[1]{
+    
+!subsection #1
+
+}
+
+\renewcommand{\subsubsection}[1]{
+    
+!subsubsection #1
+
+}
+
+\newcommand{\genpage}{
+
+!gen-page true
+
+}
+
+\newcommand{\gencourse}{
+
+!gen-course true
+
+}
+
 %%%%%%%%%% Colored sentences commands %%%%%%%%%%
 % Adapted from
 % https://github.com/SeniorMars/dotfiles/blob/master/latex_template/preamble.tex
