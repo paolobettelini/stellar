@@ -1,5 +1,4 @@
-use crate::parser::*;
-use crate::parser::{TeXElement::*, *};
+use crate::parser::{*, Cmd::*};
 use import::ClientHandler;
 use std::{
     fs,
@@ -25,11 +24,13 @@ pub fn generate_pdf(
 
 #[derive(Debug, Default)]
 struct DocProcessor {
+    global_title: Option<String>,
     gen_page: bool,
     gen_course: bool,
     current_coords: Option<(f64, f64)>,
     current_id: Option<String>,
     current_page: Option<u16>,
+    current_title: Option<String>,
 }
 
 pub async fn generate_snippets(
@@ -47,72 +48,72 @@ pub async fn generate_snippets(
     create_if_necessary(&pages_dir);
     create_if_necessary(&courses_dir);
     
-    let text_pieces = pdf_extract(&input).unwrap();
+    let commands = pdf_extract(&input).unwrap();
     let mut processor = DocProcessor::default();
     
-    for text_piece in text_pieces {
-        let lines = text_piece.text.split("\n");
-        
-        for line in lines {
-            process_line(&input, &mut processor, &text_piece, &line, &snippets_dir);
-        }
+    for cmd in commands {
+        process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client).await;
     }
     
     Ok(())
 }
 
-fn process_line(input: &PathBuf, processor: &mut DocProcessor, text_piece: &TextPiece, line: &str, snippets_dir: &Path) {
-    if line.starts_with("!snippet") {
-        processor.current_coords = Some(text_piece.coords);
-        processor.current_page = Some(text_piece.page);
-        // processor.current_title = Some("Hello title".to_string());
-        processor.current_id = Some("Hello ID".to_string());
+async fn process_cmd(
+    input: &PathBuf,
+    processor: &mut DocProcessor,
+    cmd: &DocumentCmd,
+    snippets_dir: &Path,
+    client: &Option<ClientHandler>) {
+    match &cmd.cmd {
+        SetGlobalTitle(title) => {
+            processor.global_title = Some(title.to_string());
+        }
+        SetGenPage(gen_page) => processor.gen_page = *gen_page,
+        SetGenCourse(gen_course) => processor.gen_course = *gen_course,
+        StartSnippet(id) => {
+            processor.current_coords = Some(cmd.coords);
+            processor.current_page = Some(cmd.page);
+            processor.current_id = Some(id.to_string());
 
-        // non ha senso tenere il current_title perché lo aggiungi subito ai titoli della pagina.
-        // a meno che non metti una proprietà anche per l'indentazione della section
-    }
+            // non ha senso tenere il current_title perché lo aggiungi subito ai titoli della pagina.
+            // a meno che non metti una proprietà anche per l'indentazione della section
+        }
+        EndSnippet => {
+            let snippet_id = processor.current_id.clone().unwrap();
+            
+            let output = snippets_dir.join(&snippet_id);
+            create_if_necessary(&output);
+            let output = output.join(format!("{snippet_id}.pdf"));
 
-    if line.starts_with("!gen-page") {
+            // Crop snippet using old "current_coords"
+            let x1 = processor.current_coords.unwrap().0;
+            let y1 = processor.current_coords.unwrap().1 - 17.45;
+            let x2 = x1 + 451.5;
+            let y2 = cmd.coords.1 + 9.9;
+            let page = cmd.page - 1;
+            crop_pdf(&input, &output, page, x1, y1, x2, y2);
+            
+            log::info!("Saving snippet: {snippet_id}");
 
-    }
+            if let Some(ref client) = client {
+                let _ = import::import_snippet_with_client(&client, &output).await;
+            }
 
-    if line.starts_with("!gen-course") {
+            processor.current_coords = None;
+            processor.current_page = None;
+            processor.current_id = None;
+        }
+        SetSnippetTitle(title) => {
+            processor.current_title = Some(title.to_string());
+        }
+        Include(id) => {
 
-    }
-
-    // Generate snippet
-    if line.starts_with("!endsnippet") {
-        println!("LINE: {line}");
-
-        let snippet_id = processor.current_id.clone().unwrap();
-
-        let output = snippets_dir.join(&snippet_id);
-        create_if_necessary(&output);
-        let output = output.join(format!("{snippet_id}.pdf"));
-
-        // Crop snippet
-        let x1 = processor.current_coords.unwrap().0;
-        let y1 = processor.current_coords.unwrap().1 - 17.45;
-        let x2 = x1 + 451.5;
-        let y2 = text_piece.coords.1 + 9.9;
-        let page = text_piece.page - 1;
-        crop_pdf(&input, &output, page, x1, y1, x2, y2);
-
-        processor.current_coords = None;
-        processor.current_page = None;
-        processor.current_id = None;
+        }
     }
 }
 
 fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) {
 
-}
-
-#[derive(Debug, Clone)]
-struct TextPiece {
-    pub text: String,
-    pub coords: (f64, f64),
-    pub page: u16,
 }
 
 fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f64, y2: f64) {
@@ -134,13 +135,12 @@ fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f6
 /// Example:
 /// 245.00 234.00 1 [Some text]
 /// 477.00 11.00 2 [Some other text]
-fn pdf_extract(path: &Path) -> anyhow::Result<Vec<TextPiece>> {
+fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
     let mut raw = &pdf_extract_raw(&path)?[..];
     let mut result = vec![];
-    let mut curr_index = 0;
 
     while let Some(text_index) = raw.find('[') {
-        let coords_raw = &raw[curr_index..text_index];
+        let coords_raw = &raw[0..text_index];
 
         let text = extract_square_parenthesis(&raw[text_index..]).to_string();
         let mut coords_parts = coords_raw.trim().split_whitespace();
@@ -150,11 +150,13 @@ fn pdf_extract(path: &Path) -> anyhow::Result<Vec<TextPiece>> {
         let page: u16 = coords_parts.next().unwrap().parse()?;
 
         let text_len = &text.len();
-        result.push(TextPiece {
-            text,
-            coords: (x, y),
-            page
-        });
+        
+        let lines = text.split("\n");
+        for line in lines {
+            let cmd = parse_cmd(&line).unwrap();
+            let coords = (x, y);
+            result.push(DocumentCmd { coords, page, cmd });
+        }
 
         let index = text_index + text_len + 2;
         raw = &raw[index..];
@@ -172,160 +174,7 @@ fn pdf_extract_raw(path: &Path) -> anyhow::Result<String> {
     Ok(stdout)
 }
 
-fn extract_square_parenthesis<'a>(text: &'a str) -> &'a str {
-    extract_parenthesis(&text, '[', ']') 
-}
-
-fn extract_parenthesis<'a>(text: &'a str, open: char, end: char) -> &'a str {
-    let mut depth = 0;
-    let mut length = 0;
-
-    let chars = text.chars();
-    for c in chars {
-        if c == open {
-            depth += 1;
-        } else if c == end {
-            depth -= 1;
-        }
-        
-        if depth == 0 {
-            break;
-        }
-
-        length += 1;
-    }
-
-    &text[1..length]
-}
-
-/*
-pub async fn generate_latex_snippets(
-    input: &PathBuf,
-    output: &PathBuf,
-    gen_page: bool,
-    gen_course: bool,
-    client: Option<ClientHandler>,
-    compile: Option<&PathBuf>,
-) -> anyhow::Result<()> {
-    let content = fs::read_to_string(input)?;
-    let filename = String::from(input.file_stem().unwrap().to_string_lossy());
-    let file_id = title_to_id(&filename);
-
-    let out_folder = Path::new(output);
-    create_if_necessary(out_folder);
-
-    let snippets_dir = out_folder.join("snippets");
-    let pages_dir = out_folder.join("pages");
-    let courses_dir = out_folder.join("courses");
-
-    create_if_necessary(&snippets_dir);
-    create_if_necessary(&pages_dir);
-    create_if_necessary(&courses_dir);
-
-    let tex_page = parse_latex(&content, &filename);
-
-    let mut last_section_id = String::from("");
-    let mut last_subsection_id = String::from("");
-    let mut current_snippet_id = String::from("");
-
-    let mut saved_snippets_count = 0;
-
-    // If you have some content, an include, some content
-    // then two snippets will be saved with the same id
-    let mut same_id_counter = 0;
-
-    let mut html_page = String::from("");
-
-    for element in &tex_page.elements {
-        match element {
-            Section(section) => {
-                let section_type = &section.section_type;
-                let id = &section.id;
-
-                current_snippet_id = format!(
-                    "{file_id}-{}{}{}",
-                    if section_type > &SectionType::Section && !last_section_id.is_empty() {
-                        format!("{last_section_id}-")
-                    } else {
-                        "".to_string()
-                    },
-                    if section_type > &SectionType::Subsection && !last_section_id.is_empty() {
-                        format!("{last_subsection_id}-")
-                    } else {
-                        "".to_string()
-                    },
-                    id
-                );
-                same_id_counter = 0;
-
-                // maybe use a match
-                if let &SectionType::Section = section_type {
-                    last_section_id = id.clone();
-                    last_subsection_id = String::from("");
-                } else if let &SectionType::Subsection = section_type {
-                    last_subsection_id = id.clone();
-                }
-
-                // Add heading to html file
-                let title = format!(
-                    "<h{0}>{1}</h{0}>",
-                    section.section_type as u8, section.title
-                );
-                html_page += &(title + "\n");
-            }
-            TeXContent(content) => {
-                if is_empty_tex(&content) || current_snippet_id.is_empty() {
-                    continue;
-                }
-
-                let tex = make_full_document(&tex_page.preamble, &content);
-
-                let id = if same_id_counter > 0 {
-                    format!("{current_snippet_id}-{same_id_counter}")
-                } else {
-                    current_snippet_id.clone()
-                };
-
-                same_id_counter += 1;
-                let saved = save_snippet(&id, &tex, &snippets_dir, &client, &compile).await;
-
-                if saved {
-                    saved_snippets_count += 1;
-                }
-
-                // Add entry to html page
-                let snippet = format!("<snippet>{}</snippet>", &id);
-                html_page += &(snippet + "\n");
-            }
-            IncludeCmd(id) => {
-                // Add entry to html page
-                let snippet = format!("<snippet>{}</snippet>", &id);
-                html_page += &(snippet + "\n");
-            }
-        }
-    }
-
-    // Generate HTML page
-    if gen_page {
-        save_page(&tex_page.id, &pages_dir, &html_page, &client).await;
-    }
-
-    // Generate JSON course
-    if gen_course {
-        save_course(&tex_page.title, &tex_page.id, &courses_dir, &client).await;
-    }
-
-    log::info!("Saved {saved_snippets_count} snippets");
-
-    if saved_snippets_count > 0 {
-        let s = if saved_snippets_count == 1 { "" } else { "s" };
-        log::info!("Remember to compile the snippet{s}");
-    }
-
-    Ok(())
-}
-
-async fn save_course(
+/*async fn save_course(
     title: &str,
     page_id: &str,
     courses_dir: &Path,
@@ -346,7 +195,7 @@ async fn save_course(
     // Import page
     if saved {
         if let Some(ref client) = client {
-            let _ = import::import_page_with_client(&client, &path).await;
+            let _ = import::import_course_with_client(&client, &path).await;
         }
     }
 
@@ -421,35 +270,6 @@ fn save_file(file_path: &Path, filename: &str, content: &str) -> bool {
         //log::debug!("Skipping file {}", &filename);
         false
     }
-}
-
-fn make_full_document(preamble: &str, tex: &str) -> String {
-    format!(
-        r"{preamble}
-\begin{{document}}
-{tex}
-\end{{document}}"
-    )
-}
-
-fn is_empty_tex(content: &str) -> bool {
-    for line in content.lines() {
-        let trimmed_line = line.trim();
-        if !trimmed_line.is_empty() && !trimmed_line.starts_with('%') {
-            return false;
-        }
-    }
-    true
-}
-
-// TODO: un-duplicate function
-fn title_to_id(value: &str) -> String {
-    value
-        .replace("\'s", "")
-        .replace('\'', "")
-        .replace(' ', "-")
-        .replace('ô', "o") // maybe remove this
-        .to_lowercase()
 }
 */
 
