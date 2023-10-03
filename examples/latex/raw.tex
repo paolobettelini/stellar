@@ -1,0 +1,58 @@
+\documentclass[preview]{standalone}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{parskip}
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{stellar}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdftitle={Example},
+    pdfpagemode=FullScreen,
+}
+
+\title{!title This is my page}
+\author{Paolo Bettelini}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\pagebreak
+
+!gen-page true
+
+!gen-course true
+
+!section Section 1
+
+!subsection Subsection 1
+
+!snippet snippet1-definition
+
+\sdefinition{Some definition}{
+    This is some definition.
+}
+
+!endsnippet
+
+!subsection Subsection 2
+
+!section Section 2
+
+!snippet snippet2-definition
+
+\sdefinition{Some definition}{
+    This is some definition, the sequel.
+}
+
+!endsnippet
+
+\pagebreak
+
+\end{document}
