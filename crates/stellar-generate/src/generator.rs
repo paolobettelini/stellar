@@ -24,13 +24,14 @@ pub fn generate_pdf(
 
 #[derive(Debug, Default)]
 struct DocProcessor {
-    global_title: Option<String>,
+    html_page: String,
+    global_title: String,
+    global_id: String,
     gen_page: bool,
     gen_course: bool,
     current_coords: Option<(f64, f64)>,
     current_id: Option<String>,
     current_page: Option<u16>,
-    current_title: Option<String>,
 }
 
 pub async fn generate_snippets(
@@ -50,10 +51,18 @@ pub async fn generate_snippets(
     
     let commands = pdf_extract(&input).unwrap();
     let mut processor = DocProcessor::default();
+
+    // set default global ID using the file name
+    let filename = String::from(input.file_stem().unwrap().to_string_lossy());
+    let filename = strip_filename(&filename);
+    let file_id = title_to_id(&filename);
+    processor.global_id = file_id;
     
     for cmd in commands {
         process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client).await;
     }
+
+    finalize(&mut processor, &pages_dir, &courses_dir);
     
     Ok(())
 }
@@ -66,7 +75,10 @@ async fn process_cmd(
     client: &Option<ClientHandler>) {
     match &cmd.cmd {
         SetGlobalTitle(title) => {
-            processor.global_title = Some(title.to_string());
+            processor.global_title = title.to_string();
+        }
+        SetGlobalID(id) => {
+            processor.global_id = id.to_string();
         }
         SetGenPage(gen_page) => processor.gen_page = *gen_page,
         SetGenCourse(gen_course) => processor.gen_course = *gen_course,
@@ -74,9 +86,6 @@ async fn process_cmd(
             processor.current_coords = Some(cmd.coords);
             processor.current_page = Some(cmd.page);
             processor.current_id = Some(id.to_string());
-
-            // non ha senso tenere il current_title perché lo aggiungi subito ai titoli della pagina.
-            // a meno che non metti una proprietà anche per l'indentazione della section
         }
         EndSnippet => {
             let snippet_id = processor.current_id.clone().unwrap();
@@ -99,21 +108,43 @@ async fn process_cmd(
                 let _ = import::import_snippet_with_client(&client, &output).await;
             }
 
+            // Add generated snippet to HTML page
+            if let Some(id) = & processor.current_id {
+                let snippet = format!("<snippet>{id}</snippet>\n");
+                processor.html_page.push_str(&snippet);
+            }
+
             processor.current_coords = None;
             processor.current_page = None;
             processor.current_id = None;
         }
         SetSnippetTitle(title) => {
-            processor.current_title = Some(title.to_string());
+            // Add title to HTML page
+            let snippet = format!("<h1>{title}</h1>\n");
+            processor.html_page.push_str(&snippet);
         }
         Include(id) => {
-
+            // Add snippet id to HTML page
+            let snippet = format!("<snippet>{id}</snippet>\n");
+            processor.html_page.push_str(&snippet);
         }
     }
 }
 
 fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) {
+    // Generate page
+    if processor.gen_page {
+        let file_id = &processor.global_id;
+        let filename = format!("{file_id}.html");
+        let file_path = pages_dir.join(&filename);
 
+        log::info!("Writing file: {filename}");
+        let res = fs::write(&file_path, &processor.html_page);
+
+        if res.is_err() {
+            log::error!("Couldn't write file {}", &filename);
+        }
+    }
 }
 
 fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f64, y2: f64) {
@@ -131,7 +162,6 @@ fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f6
         .status();
 }
 
-// why didn't I do a JSON??
 /// Example:
 /// 245.00 234.00 1 [Some text]
 /// 477.00 11.00 2 [Some other text]
@@ -277,4 +307,25 @@ fn create_if_necessary(path: &Path) {
     if !path.exists() {
         fs::create_dir_all(path).unwrap();
     }
+}
+
+// "/path/to/Document.tex" -> "Document"
+fn strip_filename(path: &str) -> String {
+    let mut components: Vec<&str> = path.split('/').collect();
+    if let Some(last_component) = components.pop() {
+        let mut filename = last_component.to_string();
+        if let Some(dot_idx) = filename.rfind('.') {
+            filename.truncate(dot_idx);
+        }
+        return filename;
+    }
+    panic!("File name could not be retrieved")
+}
+
+fn title_to_id(value: &str) -> String {
+    value
+        .replace("\'s", "")
+        .replace('\'', "")
+        .replace(' ', "-")
+        .to_lowercase()
 }

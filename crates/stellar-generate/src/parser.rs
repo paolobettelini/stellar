@@ -4,6 +4,7 @@ const GEN_PAGE: &str = "!gen-page";
 const GEN_COURSE: &str = "!gen-course";
 const INCLUDE: &str = "!include";
 const GLOBAL_TITLE: &str = "!title";
+const GLOBAL_ID: &str = "!id";
 
 #[derive(Debug)]
 pub struct DocumentCmd {
@@ -15,6 +16,7 @@ pub struct DocumentCmd {
 #[derive(Debug)]
 pub enum Cmd {
     SetGlobalTitle(String),
+    SetGlobalID(String),
     SetGenPage(bool),
     SetGenCourse(bool),
     StartSnippet(String),
@@ -65,7 +67,11 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
         let id = parse_start_snippet(&line)?;
         Cmd::Include(id)
     } else if line.starts_with(GLOBAL_TITLE) {
-        todo!()
+        let title = parse_start_snippet(&line)?;
+        Cmd::SetGlobalTitle(title)
+    } else if line.starts_with(GLOBAL_ID) {
+        let id = parse_start_snippet(&line)?;
+        Cmd::SetGlobalID(id)
     } else {
         return None;
     };
@@ -92,5 +98,15 @@ fn parse_gen_course(line: &str) -> Option<bool> {
 
 fn parse_include(line: &str) -> Option<String> {
     let id = &line[(INCLUDE.len() + 1)..];
+    Some(id.to_string())
+}
+
+fn parse_global_title(line: &str) -> Option<String> {
+    let id = &line[(GLOBAL_TITLE.len() + 1)..];
+    Some(id.to_string())
+}
+
+fn parse_global_id(line: &str) -> Option<String> {
+    let id = &line[(GLOBAL_ID.len() + 1)..];
     Some(id.to_string())
 }
