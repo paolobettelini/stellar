@@ -2,14 +2,12 @@ use crate::parser::{*, Cmd::*};
 use import::ClientHandler;
 use std::{
     fs,
-    io::Write,
     path::{Path, PathBuf},
 };
 use stellar_import as import;
-use std::borrow::Cow;
 use std::process::Command;
 
-use serde_json::{json, Value};
+use serde_json::json;
 
 pub fn generate_pdf(
     input: &PathBuf,
@@ -121,9 +119,19 @@ async fn process_cmd(
             processor.current_page = None;
             processor.current_id = None;
         }
-        SetSnippetTitle(title) => {
+        AddSection(title) => {
             // Add title to HTML page
             let snippet = format!("<h1>{title}</h1>\n");
+            processor.html_page.push_str(&snippet);
+        }
+        AddSubSection(title) => {
+            // Add title to HTML page
+            let snippet = format!("<h2>{title}</h2>\n");
+            processor.html_page.push_str(&snippet);
+        }
+        AddSubSubSection(title) => {
+            // Add title to HTML page
+            let snippet = format!("<h3>{title}</h3>\n");
             processor.html_page.push_str(&snippet);
         }
         Include(id) => {
@@ -227,105 +235,6 @@ fn pdf_extract_raw(path: &Path) -> anyhow::Result<String> {
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
 }
-
-/*async fn save_course(
-    title: &str,
-    page_id: &str,
-    courses_dir: &Path,
-    client: &Option<ClientHandler>,
-) -> bool {
-    let json_course = json!({
-        "title": title,
-        "pages": [
-            [1, title, page_id]
-        ],
-    });
-    let json_course = serde_json::to_string_pretty(&json_course).unwrap();
-    let filename = format!("{}.json", page_id);
-    let path = courses_dir.join(&filename);
-
-    let saved = save_file(&path, &filename, &json_course);
-
-    // Import page
-    if saved {
-        if let Some(ref client) = client {
-            let _ = import::import_course_with_client(&client, &path).await;
-        }
-    }
-
-    saved
-}
-
-async fn save_page(
-    page_id: &str,
-    pages_dir: &Path,
-    content: &str,
-    client: &Option<ClientHandler>,
-) -> bool {
-    let filename = format!("{}.html", &page_id);
-    let path = pages_dir.join(&filename);
-
-    let saved = save_file(&path, &filename, &content);
-
-    // Import page
-    if saved {
-        if let Some(ref client) = client {
-            let _ = import::import_page_with_client(&client, &path).await;
-        }
-    }
-
-    saved
-}
-
-async fn save_snippet(
-    snippet_id: &str,
-    tex: &str,
-    snippets_dir: &Path,
-    client: &Option<ClientHandler>,
-    compile: &Option<&PathBuf>,
-) -> bool {
-    let filename = format!("{}.tex", &snippet_id);
-    let dir = snippets_dir.join(&snippet_id);
-    let file_path = dir.join(&filename);
-
-    create_if_necessary(&dir);
-
-    let saved = save_file(&file_path, &filename, &tex);
-
-    if saved {
-        // Import snippet
-        if let Some(ref client) = client {
-            let _ = import::import_snippet_with_client(&client, &file_path).await;
-        }
-
-        if let Some(ref search_path) = compile {
-            stellar_compile::compile_snippet(&dir, &search_path, true);
-        }
-    }
-
-    saved
-}
-
-fn save_file(file_path: &Path, filename: &str, content: &str) -> bool {
-    let existing_content = fs::read_to_string(&file_path).ok();
-
-    // Write only if there are changes
-    if existing_content != Some(content.into()) {
-        log::debug!("Writing file {}", &filename);
-        let res = fs::write(&file_path, content);
-
-        if res.is_err() {
-            log::error!("Couldn't write file {}", &filename);
-            false
-        } else {
-            true
-        }
-    } else {
-        //log::debug!("Skipping file {}", &filename);
-        false
-    }
-}
-*/
 
 fn create_if_necessary(path: &Path) {
     if !path.exists() {

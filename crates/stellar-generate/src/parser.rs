@@ -1,10 +1,13 @@
+const GLOBAL_ID: &str = "!id";
 const SNIPPET: &str = "!snippet";
 const END_SNIPPET: &str = "!endsnippet";
 const GEN_PAGE: &str = "!gen-page";
 const GEN_COURSE: &str = "!gen-course";
 const INCLUDE: &str = "!include";
 const GLOBAL_TITLE: &str = "!title";
-const GLOBAL_ID: &str = "!id";
+const SECTION: &str = "!section";
+const SUBSECTION: &str = "!subsection";
+const SUBSUBSECTION: &str = "!subsubsection";
 
 #[derive(Debug)]
 pub struct DocumentCmd {
@@ -21,8 +24,10 @@ pub enum Cmd {
     SetGenCourse(bool),
     StartSnippet(String),
     EndSnippet,
-    SetSnippetTitle(String),
     Include(String),
+    AddSection(String),
+    AddSubSection(String),
+    AddSubSubSection(String),
 }
 
 pub fn extract_square_parenthesis<'a>(text: &'a str) -> &'a str {
@@ -64,14 +69,23 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
         let v = parse_gen_course(&line)?;
         Cmd::SetGenCourse(v)
     } else if line.starts_with(INCLUDE) {
-        let id = parse_start_snippet(&line)?;
+        let id = parse_include(&line)?;
         Cmd::Include(id)
     } else if line.starts_with(GLOBAL_TITLE) {
-        let title = parse_start_snippet(&line)?;
+        let title = parse_global_title(&line)?;
         Cmd::SetGlobalTitle(title)
     } else if line.starts_with(GLOBAL_ID) {
-        let id = parse_start_snippet(&line)?;
+        let id = parse_global_id(&line)?;
         Cmd::SetGlobalID(id)
+    } else if line.starts_with(SECTION) {
+        let id = parse_section(&line)?;
+        Cmd::AddSection(id)
+    } else if line.starts_with(SUBSECTION) {
+        let id = parse_subsection(&line)?;
+        Cmd::AddSubSection(id)
+    } else if line.starts_with(SUBSUBSECTION) {
+        let id = parse_subsubsection(&line)?;
+        Cmd::AddSubSubSection(id)
     } else {
         return None;
     };
@@ -109,4 +123,19 @@ fn parse_global_title(line: &str) -> Option<String> {
 fn parse_global_id(line: &str) -> Option<String> {
     let id = &line[(GLOBAL_ID.len() + 1)..];
     Some(id.to_string())
+}
+
+fn parse_section(line: &str) -> Option<String> {
+    let v = &line[(SECTION.len() + 1)..];
+    Some(v.to_string())
+}
+
+fn parse_subsection(line: &str) -> Option<String> {
+    let v = &line[(SUBSECTION.len() + 1)..];
+    Some(v.to_string())
+}
+
+fn parse_subsubsection(line: &str) -> Option<String> {
+    let v = &line[(SUBSUBSECTION.len() + 1)..];
+    Some(v.to_string())
 }
