@@ -51,6 +51,24 @@
 
 }
 
+\newcommand{\includesnpt}[1]{
+
+!include #1
+
+}
+
+\newenvironment{snippet}[1]
+{
+
+!snippet #1
+
+}
+{
+
+!endsnippet
+
+}
+
 %%%%%%%%%% Colored sentences commands %%%%%%%%%%
 % Adapted from
 % https://github.com/SeniorMars/dotfiles/blob/master/latex_template/preamble.tex

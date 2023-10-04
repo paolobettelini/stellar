@@ -15,9 +15,6 @@
     pdfpagemode=FullScreen,
 }
 
-\author{Paolo Bettelini}
-\date{}
-
 \begin{document}
 
 \title{This is my page}
@@ -29,26 +26,23 @@
 
 \subsection{Subsection 1}
 
-!snippet snippet1-definition
-
-\sdefinition{Some definition}{
-    This is some definition.
-}
-
-!endsnippet
+\begin{snippet}[snippet1-definition]
+    \sdefinition{Some definition}{
+        This is some definition
+    }
+\end{snippet}
 
 \subsection{Subsection 2}
 
 \section{Section 2}
 
-!snippet snippet2-definition
+\begin{snippet}[snippet2-definition]
+    \sdefinition{Some definition}{
+        This is some definition, the sequel
+    }
+\end{snippet}
 
-\sdefinition{Some definition}{
-    This is some definition, the sequel.
-}
 
-!endsnippet
-
-\pagebreak
+\includesnpt{snippet2-definition}
 
 \end{document}
