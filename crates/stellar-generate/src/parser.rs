@@ -1,3 +1,6 @@
+use std::process::Command;
+use std::path::Path;
+
 const GLOBAL_ID: &str = "!id";
 const SNIPPET: &str = "!snippet";
 const END_SNIPPET: &str = "!endsnippet";
@@ -28,6 +31,51 @@ pub enum Cmd {
     AddSection(String),
     AddSubSection(String),
     AddSubSubSection(String),
+}
+
+
+/// Example:
+/// 245.00 234.00 1 [Some text]
+/// 477.00 11.00 2 [Some other text]
+pub fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
+    let mut raw = &pdf_extract_raw(&path)?[..];
+    let mut result = vec![];
+
+    while let Some(text_index) = raw.find('[') {
+        let coords_raw = &raw[0..text_index];
+
+        let text = extract_square_parenthesis(&raw[text_index..]).to_string();
+        let mut coords_parts = coords_raw.trim().split_whitespace();
+
+        let x: f64 = coords_parts.next().unwrap().parse()?;
+        let y: f64 = coords_parts.next().unwrap().parse()?;
+        let page: u16 = coords_parts.next().unwrap().parse()?;
+
+        let text_len = &text.len();
+        
+        let lines = text.split("\n");
+        for line in lines {
+            log::debug!("Prcessing line: {line}");
+
+            let cmd = parse_cmd(&line).unwrap();
+            let coords = (x, y);
+            result.push(DocumentCmd { coords, page, cmd });
+        }
+
+        let index = text_index + text_len + 2;
+        raw = &raw[index..];
+    }
+
+    Ok(result)
+}
+
+pub fn pdf_extract_raw(path: &Path) -> anyhow::Result<String> {
+    let output = Command::new("pdfextract.py")
+        .arg(path)
+        .output()?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+    Ok(stdout)
 }
 
 pub fn extract_square_parenthesis<'a>(text: &'a str) -> &'a str {
