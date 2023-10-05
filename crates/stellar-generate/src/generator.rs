@@ -96,10 +96,14 @@ async fn process_cmd(
             let output = output.join(format!("{snippet_id}.pdf"));
 
             // Crop snippet using old "current_coords"
+            let top_spacing = -10.8;
+            let width = 451.5;
+            let bottom_spacing = 3.8;
+
             let x1 = processor.current_coords.unwrap().0;
-            let y1 = processor.current_coords.unwrap().1 - 17.45;
-            let x2 = x1 + 451.5;
-            let y2 = cmd.coords.1 + 9.9;
+            let y1 = processor.current_coords.unwrap().1 + top_spacing;
+            let x2 = x1 + width;
+            let y2 = cmd.coords.1 + bottom_spacing;
             let page = cmd.page - 1;
             crop_pdf(&input, &output, page, x1, y1, x2, y2);
             
@@ -215,6 +219,8 @@ fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
         
         let lines = text.split("\n");
         for line in lines {
+            log::debug!("Prcessing line: {line}");
+
             let cmd = parse_cmd(&line).unwrap();
             let coords = (x, y);
             result.push(DocumentCmd { coords, page, cmd });
