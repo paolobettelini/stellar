@@ -3,7 +3,11 @@
 \RequirePackage{hyperref}
 \RequirePackage{xparse}
 \RequirePackage{xcolor}
+\RequirePackage{parskip}
+\RequirePackage{fullpage}
 \RequirePackage[most]{tcolorbox}
+
+%%%%%%%%%% Stellar commands utils %%%%%%%%%%
 
 \ExplSyntaxOn
 \DeclareDocumentCommand{\snippetref}{d[] d[]}{%
@@ -12,6 +16,28 @@
     { \href{/snippet/#1}{#2} }
 }
 \ExplSyntaxOff
+
+\newcommand{\@padcmd}[1]{
+
+#1
+\newline
+}
+
+\renewcommand{\title}[1]{\@padcmd{!title #1}}
+\renewcommand{\section}[1]{\@padcmd{!section #1}}
+\renewcommand{\subsection}[1]{\@padcmd{!subsection #1}}
+\renewcommand{\subsubsection}[1]{\@padcmd{!subsubsection #1}}
+\newcommand{\genpage}{\@padcmd{!gen-page true}}
+\newcommand{\gencourse}{\@padcmd{!gen-course true}}
+\newcommand{\includesnpt}[1]{\@padcmd{!include #1}}
+
+\newenvironment{snippet}[1]
+{
+
+!snippet #1
+
+}
+{\@padcmd{!endsnippet}}
 
 %%%%%%%%%% Colored sentences commands %%%%%%%%%%
 % Adapted from

@@ -41,32 +41,18 @@ pub async fn parse_generate_cmd(cmd: &GenerateCommand) -> anyhow::Result<()> {
 }
 
 pub fn parse_gen_pdf_args(args: &GenPdfArgs) -> anyhow::Result<()> {
-    let input = &args.latex_input;
+    let input = &args.input;
     let output = &args.output;
     let data = &args.output;
-    let search_path = &args.search_path;
-    let compile = &args.compile;
 
-    generate::generate_pdf(input, output, data, search_path, compile)?;
+    generate::generate_pdf(input, output, data)?;
 
     Ok(())
 }
 
 pub async fn parse_gen_snippets_args(args: &GenSnippetsArgs) -> anyhow::Result<()> {
-    let input = &args.latex_input;
+    let input = &args.input;
     let output = &args.data_output;
-    let gen_page = !args.no_gen_page;
-    let gen_course = args.gen_course;
-
-    let compile = if let Some(search_path) = &args.search_path {
-        if args.compile {
-            Some(search_path)
-        } else {
-            None
-        }
-    } else {
-        None
-    };
 
     let client = if let Some(url) = &args.connection_url {
         if args.import {
@@ -79,7 +65,7 @@ pub async fn parse_gen_snippets_args(args: &GenSnippetsArgs) -> anyhow::Result<(
         None
     };
 
-    generate::generate_latex_snippets(input, output, gen_page, gen_course, client, compile).await?;
+    generate::generate_snippets(input, output, client).await?;
 
     Ok(())
 }
@@ -110,7 +96,7 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
 }
 
 pub fn parse_compile_args(args: &CompileArgs) -> anyhow::Result<()> {
-    compile::compile(&args.path, &args.search_path, args.recompile)?;
+    compile::compile(&args.path)?;
 
     Ok(())
 }

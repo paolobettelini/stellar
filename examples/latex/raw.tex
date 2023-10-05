@@ -1,0 +1,52 @@
+\documentclass[preview]{standalone}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{parskip}
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{stellar}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdftitle={Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+
+!title This is my page
+\\\\
+!gen-page true
+\\\\
+!gen-course true
+\\\\
+!section Section 1
+\\\\
+!subsection Subsection 1
+\\\\
+!snippet snippet1-definition
+
+\sdefinition{Some definition}{
+    This is some definition.
+}
+
+!endsnippet
+\\\\
+!subsection Subsection 2
+\\\\
+!section Section 2
+\\\\
+!snippet snippet2-definition
+
+\sdefinition{Some definition}{
+    This is some definition, the sequel.
+}
+
+!endsnippet
+\\\\
+!include snippet2-definition
+\\
+\end{document}

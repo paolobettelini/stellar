@@ -1,0 +1,44 @@
+\documentclass[preview]{standalone}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stellar}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdftitle={Example},
+    pdfpagemode=FullScreen,
+}
+
+\begin{document}
+
+\title{This is my page}
+
+\genpage
+\gencourse
+
+\section{Section 1}
+
+\subsection{Subsection 1}
+
+\begin{snippet}{snippet1-definition}
+    \sdefinition{Some definition}{
+        This is some definition
+    }
+\end{snippet}
+
+\subsection{Subsection 2}
+
+\section{Section 2}
+
+\begin{snippet}{snippet2-definition}
+    \sdefinition{Some definition}{
+        This is some definition, the sequel
+    }
+\end{snippet}
+
+\includesnpt{snippet2-definition}
+
+\end{document}

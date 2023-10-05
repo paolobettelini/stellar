@@ -3,8 +3,10 @@ use std::path::Path;
 use std::process::Command;
 use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 
-pub fn compile(path: &Path, search_path: &Path, recompile: bool) -> anyhow::Result<()> {
-    let path_type = get_path_type(&path);
+pub fn compile(path: &Path) -> anyhow::Result<()> {
+    todo!()
+    
+    /*let path_type = get_path_type(&path);
 
     match path_type {
         PathBufType::SnippetsFile => {
@@ -18,9 +20,10 @@ pub fn compile(path: &Path, search_path: &Path, recompile: bool) -> anyhow::Resu
         }
     }
 
-    Ok(())
+    Ok(())*/
 }
 
+/*
 pub fn compile_snippets(path: &Path, search_path: &Path, recompile: bool) -> anyhow::Result<()> {
     for entry in fs::read_dir(&path)? {
         let entry_path = entry?.path();
@@ -100,3 +103,4 @@ fn is_tex_compiled(path: &Path, folder_name: &str, tex_path: &Path) -> bool {
         Err(_) => false,
     }
 }
+*/
