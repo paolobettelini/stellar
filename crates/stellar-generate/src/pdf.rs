@@ -58,7 +58,7 @@ pub fn generate_pdf(
     let tex_file = format!("{id}.tex");
     let pdf_file = format!("{id}.pdf");
     let tex_path = Path::new(&tex_file);
-    let pdf_path = Path::new(&tex_file);
+    let pdf_path = Path::new(&pdf_file);
 
     // Write temporary tex
     let res = fs::write(&tex_path, &rendered);
@@ -70,6 +70,7 @@ pub fn generate_pdf(
     compile_latex(&tex_path);
 
     // Remove temporary file
+    log::info!("Deleting {tex_path:?}");
     fs::remove_file(&tex_path).unwrap();
 
     // Move compiled tex
