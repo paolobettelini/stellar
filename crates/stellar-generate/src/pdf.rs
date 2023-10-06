@@ -4,6 +4,8 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+use stellar_compile::*;
+use uuid::Uuid;
 
 pub fn generate_pdf(
     input: &PathBuf,
@@ -32,11 +34,11 @@ pub fn generate_pdf(
             SetGenPage(_) => {},
             SetGenCourse(_) => {},
             StartSnippet(id) => {
-                doc.push(&*include(id));
+                doc.push(&*include(&data, id));
             }
             EndSnippet => {},
             Include(id) => {
-                doc.push(&*include(id));
+                doc.push(&*include(&data, id));
             }
             AddSection(title) => {
                 doc.push(&*format!(r"\section{{{title}}}"));
@@ -51,13 +53,41 @@ pub fn generate_pdf(
     }
 
     let rendered = latex::print(&doc).unwrap();
-    println!("{}", &rendered);
+    let id = Uuid::new_v4().to_string();
 
+    let tex_file = format!("{id}.tex");
+    let pdf_file = format!("{id}.pdf");
+    let tex_path = Path::new(&tex_file);
+    let pdf_path = Path::new(&tex_file);
+
+    // Write temporary tex
+    let res = fs::write(&tex_path, &rendered);
+    if res.is_err() {
+        log::error!("Couldn't write temporary file {}", &filename);
+    }
+
+    // Compile temporary file
+    compile_latex(&tex_path);
+
+    // Remove temporary file
+    fs::remove_file(&tex_path).unwrap();
+
+    // Move compiled tex
+    fs::rename(&pdf_path, &output).unwrap();
+    
     Ok(())
 }
 
-fn include(id: &str) -> String {
-    // TODO check if file exists
+fn include(data: &PathBuf, id: &str) -> String {
+    // TODO: different extensions
+    let file = data.join("snippets").join(&id).join(format!("{id}.pdf"));
 
-    id.to_string()
+    if !file.exists(){
+        log::error!("File {file:?} not found");
+        return String::from("");
+    }
+
+    let path = fs::canonicalize(file).unwrap();
+    let path = path.to_string_lossy();
+    format!("\\begin{{figure}}[ht]\n\\includegraphics[width=\\textwidth]{{{path}}}\n\\end{{figure}}")
 }

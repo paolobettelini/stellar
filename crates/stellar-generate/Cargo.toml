@@ -12,5 +12,10 @@ serde_json = "1.0"
 serde = { version = "1.0.152", features = [ "derive" ] }
 
 stellar-import = { path = "../stellar-import" }
+stellar-utils = { path = "../stellar-utils" }
 stellar-compile = { path = "../stellar-compile" }
 latex = "0.3.1"
+
+[dependencies.uuid]
+version = "1.4.1"
+features = [ "v4", "fast-rng" ]

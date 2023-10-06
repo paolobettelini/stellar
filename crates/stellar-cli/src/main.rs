@@ -43,7 +43,7 @@ pub async fn parse_generate_cmd(cmd: &GenerateCommand) -> anyhow::Result<()> {
 pub fn parse_gen_pdf_args(args: &GenPdfArgs) -> anyhow::Result<()> {
     let input = &args.input;
     let output = &args.output;
-    let data = &args.output;
+    let data = &args.data;
 
     generate::generate_pdf(input, output, data)?;
 

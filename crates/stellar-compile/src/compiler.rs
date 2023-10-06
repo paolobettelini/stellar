@@ -3,6 +3,23 @@ use std::path::Path;
 use std::process::Command;
 use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 
+pub fn compile_latex(tex_path: &Path) {
+    let output = Command::new("tectonic")
+        .arg(tex_path)
+        .status();
+
+    match output {
+        Ok(status) => {
+            if !status.success() {
+                log::error!("Could not compile {tex_path:?}");
+            }
+        }
+        Err(_) => {
+            log::error!("Error executing tectonic");
+        }
+    }
+}
+
 pub fn compile(path: &Path) -> anyhow::Result<()> {
     todo!()
     
