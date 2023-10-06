@@ -9,17 +9,6 @@ use std::process::Command;
 
 use serde_json::json;
 
-pub fn generate_pdf(
-    input: &PathBuf,
-    output: &PathBuf,
-    data: &PathBuf,
-) -> anyhow::Result<()> {
-    let content = fs::read_to_string(input)?;
-    let filename = String::from(input.file_stem().unwrap().to_string_lossy());
-    
-    unimplemented!();
-}
-
 #[derive(Debug, Default)]
 struct DocProcessor {
     html_page: String,
@@ -196,50 +185,6 @@ fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f6
         .arg(y2.to_string())
         .arg(output)
         .status();
-}
-
-/// Example:
-/// 245.00 234.00 1 [Some text]
-/// 477.00 11.00 2 [Some other text]
-fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
-    let mut raw = &pdf_extract_raw(&path)?[..];
-    let mut result = vec![];
-
-    while let Some(text_index) = raw.find('[') {
-        let coords_raw = &raw[0..text_index];
-
-        let text = extract_square_parenthesis(&raw[text_index..]).to_string();
-        let mut coords_parts = coords_raw.trim().split_whitespace();
-
-        let x: f64 = coords_parts.next().unwrap().parse()?;
-        let y: f64 = coords_parts.next().unwrap().parse()?;
-        let page: u16 = coords_parts.next().unwrap().parse()?;
-
-        let text_len = &text.len();
-        
-        let lines = text.split("\n");
-        for line in lines {
-            log::debug!("Prcessing line: {line}");
-
-            let cmd = parse_cmd(&line).unwrap();
-            let coords = (x, y);
-            result.push(DocumentCmd { coords, page, cmd });
-        }
-
-        let index = text_index + text_len + 2;
-        raw = &raw[index..];
-    }
-
-    Ok(result)
-}
-
-fn pdf_extract_raw(path: &Path) -> anyhow::Result<String> {
-    let output = Command::new("pdfextract.py")
-        .arg(path)
-        .output()?;
-
-    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    Ok(stdout)
 }
 
 fn create_if_necessary(path: &Path) {
