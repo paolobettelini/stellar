@@ -87,7 +87,7 @@ async fn process_cmd(
             // Crop snippet using old "current_coords"
             let top_spacing = -19.8;
             let width = 451.5;
-            let bottom_spacing = 12.0;
+            let bottom_spacing = 3.8;
 
             let x1 = processor.current_coords.unwrap().0;
             let y1 = processor.current_coords.unwrap().1 + top_spacing;

@@ -36,7 +36,11 @@
 
 \newenvironment{snippet}[1]
 {\@padcmd{!snippet #1}}
-{\@padcmd{!endsnippet}}
+{
+    
+!endsnippet
+
+~\par}
 
 %%%%%%%%%% Colored sentences commands %%%%%%%%%%
 % Adapted from

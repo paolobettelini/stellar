@@ -1,19 +1,19 @@
 use std::fs;
 use std::path::Path;
+use std::io::Write;
 use std::process::Command;
 use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 
 pub fn compile_latex(tex_path: &Path) {
-    let output = Command::new("tectonic")
+    let res = Command::new("tectonic")
         .arg(tex_path)
-        .status();
+        .stdout(std::process::Stdio::null())
+        .output();
 
-    match output {
-        Ok(status) => {
-            if !status.success() {
-                log::error!("Could not compile {tex_path:?}");
-            }
-        }
+    match res {
+        Ok(output) => {
+            std::io::stdout().write_all(&output.stdout).unwrap();
+        },
         Err(_) => {
             log::error!("Error executing tectonic");
         }
