@@ -65,7 +65,11 @@ pub async fn parse_gen_snippets_args(args: &GenSnippetsArgs) -> anyhow::Result<(
         None
     };
 
-    generate::generate_snippets(input, output, client).await?;
+    let top_offset = args.top_offset;
+    let width = args.width;
+    let bottom_offset = args.bottom_offset;
+
+    generate::generate_snippets(input, output, client, top_offset, width, bottom_offset).await?;
 
     Ok(())
 }

@@ -21,10 +21,20 @@ struct DocProcessor {
     current_page: Option<u16>,
 }
 
+#[derive(Debug)]
+struct CropDimension {
+    top_offset: f64,
+    width: f64,
+    bottom_offset: f64,
+}
+
 pub async fn generate_snippets(
     input: &PathBuf,
     output: &PathBuf,
     client: Option<ClientHandler>,
+    top_offset: f64,
+    width: f64,
+    bottom_offset: f64,
 ) -> anyhow::Result<()> {
     let out_folder = Path::new(output);
     let snippets_dir = out_folder.join("snippets");
@@ -48,8 +58,9 @@ pub async fn generate_snippets(
     // Set default global title using the file name
     processor.global_title = filename;
 
+    let dim = CropDimension { top_offset, width, bottom_offset };
     for cmd in commands {
-        process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client).await;
+        process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client, &dim).await;
     }
 
     finalize(&mut processor, &pages_dir, &courses_dir);
@@ -62,7 +73,9 @@ async fn process_cmd(
     processor: &mut DocProcessor,
     cmd: &DocumentCmd,
     snippets_dir: &Path,
-    client: &Option<ClientHandler>) {
+    client: &Option<ClientHandler>,
+    dim: &CropDimension,
+) {
     match &cmd.cmd {
         SetGlobalTitle(title) => {
             processor.global_title = title.to_string();
@@ -85,14 +98,10 @@ async fn process_cmd(
             let output = output.join(format!("{snippet_id}.pdf"));
 
             // Crop snippet using old "current_coords"
-            let top_spacing = -19.8;
-            let width = 451.5;
-            let bottom_spacing = 3.8;
-
             let x1 = processor.current_coords.unwrap().0;
-            let y1 = processor.current_coords.unwrap().1 + top_spacing;
-            let x2 = x1 + width;
-            let y2 = cmd.coords.1 + bottom_spacing;
+            let y1 = processor.current_coords.unwrap().1 + dim.top_offset;
+            let x2 = x1 + dim.width;
+            let y2 = cmd.coords.1 + dim.bottom_offset;
             let page = cmd.page - 1;
             crop_pdf(&input, &output, page, x1, y1, x2, y2);
             

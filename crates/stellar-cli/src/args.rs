@@ -67,6 +67,18 @@ pub struct GenSnippetsArgs {
     /// MongoDB connection URL
     #[arg(short, long)]
     pub connection_url: Option<String>,
+
+    /// Snippet cut top offset
+    #[arg(long, default_value_t = -19.8)]
+    pub top_offset: f64,
+    
+    /// Snippet cut width
+    #[arg(long, default_value_t = 451.5)]
+    pub width: f64,
+
+    /// Snippet cut bottom offset
+    #[arg(long, default_value_t = 3.8)]
+    pub bottom_offset: f64,
 }
 
 #[derive(Debug, Args)]
