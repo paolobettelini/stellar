@@ -90,5 +90,5 @@ fn include(data: &PathBuf, id: &str) -> String {
 
     let path = fs::canonicalize(file).unwrap();
     let path = path.to_string_lossy();
-    format!("\\begin{{figure}}[ht]\n\\includegraphics[width=\\textwidth]{{{path}}}\n\\end{{figure}}")
+    format!("\\includegraphics[width=\\textwidth]{{{path}}}")
 }
