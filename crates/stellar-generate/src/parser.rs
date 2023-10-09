@@ -1,5 +1,4 @@
-use std::process::Command;
-use std::path::Path;
+use std::{path::Path, process::Command};
 
 const GLOBAL_ID: &str = "!id";
 const SNIPPET: &str = "!snippet";
@@ -33,7 +32,6 @@ pub enum Cmd {
     AddSubSubSection(String),
 }
 
-
 /// Example:
 /// 245.00 234.00 1 [Some text]
 /// 477.00 11.00 2 [Some other text]
@@ -47,15 +45,19 @@ pub fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
         let text = extract_square_parenthesis(&raw[text_index..]).to_string();
         let mut coords_parts = coords_raw.trim().split_whitespace();
 
-        let x: f64 = coords_parts.next().unwrap().parse()?;
-        let y: f64 = coords_parts.next().unwrap().parse()?;
-        let page: u16 = coords_parts.next().unwrap().parse()?;
+        let x = coords_parts.next().unwrap();
+        let y = coords_parts.next().unwrap();
+        let page = coords_parts.next().unwrap();
+
+        let x: f64 = x.parse()?;
+        let y: f64 = y.parse()?;
+        let page: u16 = page.parse()?;
 
         let text_len = &text.len();
         
         let lines = text.split("\n");
         for line in lines {
-            log::debug!("Prcessing line: {line}");
+            log::debug!("Processing line: {line}");
 
             let cmd = parse_cmd(&line).unwrap();
             let coords = (x, y);
