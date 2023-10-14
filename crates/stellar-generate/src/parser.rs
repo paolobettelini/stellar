@@ -54,7 +54,7 @@ pub fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
         let page: u16 = page.parse()?;
 
         let text_len = &text.len();
-        
+
         let lines = text.split("\n");
         for line in lines {
             log::debug!("Processing line: {line}");
@@ -72,16 +72,14 @@ pub fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
 }
 
 pub fn pdf_extract_raw(path: &Path) -> anyhow::Result<String> {
-    let output = Command::new("pdfextract.py")
-        .arg(path)
-        .output()?;
+    let output = Command::new("pdfextract.py").arg(path).output()?;
 
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     Ok(stdout)
 }
 
 pub fn extract_square_parenthesis<'a>(text: &'a str) -> &'a str {
-    extract_parenthesis(&text, '[', ']') 
+    extract_parenthesis(&text, '[', ']')
 }
 
 pub fn extract_parenthesis<'a>(text: &'a str, open: char, end: char) -> &'a str {
@@ -95,7 +93,7 @@ pub fn extract_parenthesis<'a>(text: &'a str, open: char, end: char) -> &'a str 
         } else if c == end {
             depth -= 1;
         }
-        
+
         if depth == 0 {
             break;
         }

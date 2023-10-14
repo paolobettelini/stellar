@@ -1,11 +1,11 @@
-use crate::parser::{*, Cmd::*};
+use crate::parser::{Cmd::*, *};
 use import::ClientHandler;
+use std::process::{Command, Stdio};
 use std::{
     fs,
     path::{Path, PathBuf},
 };
 use stellar_import as import;
-use std::process::Command;
 
 use serde_json::json;
 
@@ -24,8 +24,9 @@ struct DocProcessor {
 #[derive(Debug)]
 struct CropDimension {
     top_offset: f64,
-    width: f64,
     bottom_offset: f64,
+    left_margin: Option<f64>,
+    right_margin: Option<f64>,
 }
 
 pub async fn generate_snippets(
@@ -33,19 +34,20 @@ pub async fn generate_snippets(
     output: &PathBuf,
     client: Option<ClientHandler>,
     top_offset: f64,
-    width: f64,
     bottom_offset: f64,
+    left_margin: Option<f64>,
+    right_margin: Option<f64>,
 ) -> anyhow::Result<()> {
     let out_folder = Path::new(output);
     let snippets_dir = out_folder.join("snippets");
     let pages_dir = out_folder.join("pages");
     let courses_dir = out_folder.join("courses");
-    
+
     create_if_necessary(out_folder);
     create_if_necessary(&snippets_dir);
     create_if_necessary(&pages_dir);
     create_if_necessary(&courses_dir);
-    
+
     let commands = pdf_extract(&input).unwrap();
     let mut processor = DocProcessor::default();
 
@@ -54,17 +56,22 @@ pub async fn generate_snippets(
     let filename = strip_filename(&filename);
     let file_id = title_to_id(&filename);
     processor.global_id = file_id;
-    
+
     // Set default global title using the file name
     processor.global_title = filename;
 
-    let dim = CropDimension { top_offset, width, bottom_offset };
+    let dim = CropDimension {
+        top_offset,
+        bottom_offset,
+        left_margin,
+        right_margin,
+    };
     for cmd in commands {
         process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client, &dim).await;
     }
 
     finalize(&mut processor, &pages_dir, &courses_dir);
-    
+
     Ok(())
 }
 
@@ -92,19 +99,25 @@ async fn process_cmd(
         }
         EndSnippet => {
             let snippet_id = processor.current_id.clone().unwrap();
-            
+
             let output = snippets_dir.join(&snippet_id);
             create_if_necessary(&output);
             let output = output.join(format!("{snippet_id}.pdf"));
 
             // Crop snippet using old "current_coords"
-            let x1 = processor.current_coords.unwrap().0;
-            let y1 = processor.current_coords.unwrap().1 + dim.top_offset;
-            let x2 = x1 + dim.width;
-            let y2 = cmd.coords.1 + dim.bottom_offset;
             let page = cmd.page - 1;
-            crop_pdf(&input, &output, page, x1, y1, x2, y2);
-            
+            let y1 = processor.current_coords.unwrap().1 + dim.top_offset;
+            let y2 = cmd.coords.1 + dim.bottom_offset;
+            crop_pdf(
+                &input,
+                &output,
+                page,
+                y1,
+                y2,
+                dim.left_margin,
+                dim.right_margin,
+            );
+
             log::info!("Saving snippet: {snippet_id}");
 
             if let Some(ref client) = client {
@@ -112,7 +125,7 @@ async fn process_cmd(
             }
 
             // Add generated snippet to HTML page
-            if let Some(id) = & processor.current_id {
+            if let Some(id) = &processor.current_id {
                 let snippet = format!("<snippet>{id}</snippet>\n");
                 processor.html_page.push_str(&snippet);
             }
@@ -147,7 +160,7 @@ async fn process_cmd(
 fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) {
     // Generate page
     let file_id = &processor.global_id;
-    
+
     if processor.gen_page {
         let filename = format!("{file_id}.html");
         let file_path = pages_dir.join(&filename);
@@ -181,19 +194,76 @@ fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) 
     }
 }
 
-fn crop_pdf(input: &Path, output: &Path, page_num: u16, x1: f64, y1: f64, x2: f64, y2: f64) {
+fn crop_pdf(
+    input: &Path,
+    output: &Path,
+    page_num: u16,
+    y1: f64,
+    y2: f64,
+    left_margin: Option<f64>,
+    right_margin: Option<f64>,
+) {
     let input = &input.to_str().map(|s| s.to_string()).unwrap_or_default();
     let output = &output.to_str().map(|s| s.to_string()).unwrap_or_default();
-    
-    let _ = Command::new("pdfcrop.py")
+
+    let (width, height) = get_page_size(&input, page_num);
+
+    let top = y1 - height;
+    let bottom = -y2;
+    let left = if let Some(v) = left_margin { v } else { 0.0 };
+    let right = if let Some(v) = right_margin { v } else { 0.0 };
+
+    let left = left.to_string();
+    let top = top.to_string();
+    let right = right.to_string();
+    let bottom = bottom.to_string();
+
+    let res = Command::new("pdfcrop")
+        .arg("--margins")
+        .arg(&format!("{left} {top} {right} {bottom}"))
+        .stdout(Stdio::piped())
+        .stderr(Stdio::inherit())
         .arg(input)
-        .arg(page_num.to_string())
-        .arg(x1.to_string())
-        .arg(y1.to_string())
-        .arg(x2.to_string())
-        .arg(y2.to_string())
         .arg(output)
         .status();
+
+    if let Err(e) = res {
+        log::error!("pdfcrop error: {e:?}");
+    }
+}
+
+fn get_page_size(input: &String, page: u16) -> (f64, f64) {
+    let page = page + 1;
+    let output = Command::new("pdfinfo")
+        .args(&[
+            "-f",
+            &page.to_string(),
+            "-l",
+            &page.to_string(),
+            "-box",
+            &input,
+        ])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::inherit())
+        .output()
+        .unwrap();
+
+    let output = String::from_utf8_lossy(&output.stdout).to_string();
+
+    let mut width = None;
+    let mut height = None;
+
+    for line in output.lines() {
+        if line.contains(&format!("Page    {} CropBox:", page)) {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.len() >= 7 {
+                width = parts[5].parse().ok();
+                height = parts[6].parse().ok();
+            }
+        }
+    }
+
+    (width.unwrap(), height.unwrap())
 }
 
 fn create_if_necessary(path: &Path) {

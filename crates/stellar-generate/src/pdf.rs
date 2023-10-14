@@ -1,5 +1,5 @@
-use latex::{DocumentClass, Element, Document, Section, Align};
-use crate::parser::{*, Cmd::*};
+use crate::parser::{Cmd::*, *};
+use latex::{Align, Document, DocumentClass, Element, Section};
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -7,13 +7,9 @@ use std::{
 use stellar_compile::*;
 use uuid::Uuid;
 
-pub fn generate_pdf(
-    input: &PathBuf,
-    output: &PathBuf,
-    data: &PathBuf,
-) -> anyhow::Result<()> {
+pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow::Result<()> {
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
-    
+
     let commands = pdf_extract(&input).unwrap();
     let mut doc = Document::new(DocumentClass::Article);
 
@@ -29,14 +25,14 @@ pub fn generate_pdf(
         match &cmd.cmd {
             SetGlobalTitle(title) => {
                 doc.preamble.title(title);
-            },
-            SetGlobalID(_) => {},
-            SetGenPage(_) => {},
-            SetGenCourse(_) => {},
+            }
+            SetGlobalID(_) => {}
+            SetGenPage(_) => {}
+            SetGenCourse(_) => {}
             StartSnippet(id) => {
                 doc.push(&*include(&data, id));
             }
-            EndSnippet => {},
+            EndSnippet => {}
             Include(id) => {
                 doc.push(&*include(&data, id));
             }
@@ -75,7 +71,7 @@ pub fn generate_pdf(
 
     // Move compiled tex
     fs::rename(&pdf_path, &output).unwrap();
-    
+
     Ok(())
 }
 
@@ -83,7 +79,7 @@ fn include(data: &PathBuf, id: &str) -> String {
     // TODO: different extensions
     let file = data.join("snippets").join(&id).join(format!("{id}.pdf"));
 
-    if !file.exists(){
+    if !file.exists() {
         log::error!("File {file:?} not found");
         return String::from("");
     }

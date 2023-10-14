@@ -71,14 +71,18 @@ pub struct GenSnippetsArgs {
     /// Snippet cut top offset
     #[arg(long, default_value_t = -22.0)]
     pub top_offset: f64,
-    
-    /// Snippet cut width
-    #[arg(long, default_value_t = 451.5)]
-    pub width: f64,
 
     /// Snippet cut bottom offset
     #[arg(long, default_value_t = 15.0)]
     pub bottom_offset: f64,
+
+    /// Snippet cut left margin
+    #[arg(long)]
+    pub left_margin: Option<f64>,
+
+    /// Snippet cut right margin
+    #[arg(long)]
+    pub right_margin: Option<f64>,
 }
 
 #[derive(Debug, Args)]

@@ -8,12 +8,12 @@ cd stellar
 cargo b -r -p stellar-cli
 mv target/release/stellar-cli /usr/local/bin
 
-# These python scripts are needed to generate the snippets
-cd scripts
-chmod +x pdfcrop.py
-chmod +x pdfextract.py
-mv pdfcrop.py /usr/local/bin
-mv pdfextract.py /usr/local/bin
-pacman -S python-pypdf2 python-pdfminer
+# Needed scripts
+chmod +x scripts/*
+mv scripts/* /usr/local/bin
+
+pacman -S python-pdfminer
+pacman -S pdfcrop # in texlive-binextra
+pacman -S bc
 
 ```

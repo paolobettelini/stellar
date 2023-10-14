@@ -1,6 +1,6 @@
-mod snippets;
-mod pdf;
 pub(crate) mod parser;
+mod pdf;
+mod snippets;
 
-pub use snippets::*;
 pub use pdf::*;
+pub use snippets::*;
