@@ -12,8 +12,6 @@ mv target/release/stellar-cli /usr/local/bin
 chmod +x scripts/*
 mv scripts/* /usr/local/bin
 
-pacman -S python-pdfminer
-pacman -S pdfcrop # in texlive-binextra
-pacman -S bc
+pacman -S python-pdfminer python-pymupdf
 
 ```

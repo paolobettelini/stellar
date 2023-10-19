@@ -206,64 +206,23 @@ fn crop_pdf(
     let input = &input.to_str().map(|s| s.to_string()).unwrap_or_default();
     let output = &output.to_str().map(|s| s.to_string()).unwrap_or_default();
 
-    let (width, height) = get_page_size(&input, page_num);
+    let right_margin = if let Some(v) = right_margin { v } else { 0.0 };
+    let left_margin = if let Some(v) = left_margin { v } else { 0.0 };
 
-    let top = y1 - height;
-    let bottom = -y2;
-    let left = if let Some(v) = left_margin { v } else { 0.0 };
-    let right = if let Some(v) = right_margin { v } else { 0.0 };
-
-    let left = left.to_string();
-    let top = top.to_string();
-    let right = right.to_string();
-    let bottom = bottom.to_string();
-
-    let res = Command::new("pdfcrop")
-        .arg("--margins")
-        .arg(&format!("{left} {top} {right} {bottom}"))
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
+    let res = Command::new("pdfcrop.py")
         .arg(input)
         .arg(output)
+        .arg(y1.to_string())
+        .arg(y2.to_string())
+        .arg(right_margin.to_string())
+        .arg(left_margin.to_string())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::inherit())
         .status();
 
     if let Err(e) = res {
         log::error!("pdfcrop error: {e:?}");
     }
-}
-
-fn get_page_size(input: &String, page: u16) -> (f64, f64) {
-    let page = page + 1;
-    let output = Command::new("pdfinfo")
-        .args(&[
-            "-f",
-            &page.to_string(),
-            "-l",
-            &page.to_string(),
-            "-box",
-            &input,
-        ])
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
-        .output()
-        .unwrap();
-
-    let output = String::from_utf8_lossy(&output.stdout).to_string();
-
-    let mut width = None;
-    let mut height = None;
-
-    for line in output.lines() {
-        if line.contains(&format!("Page    {} CropBox:", page)) {
-            let parts: Vec<&str> = line.split_whitespace().collect();
-            if parts.len() >= 7 {
-                width = parts[5].parse().ok();
-                height = parts[6].parse().ok();
-            }
-        }
-    }
-
-    (width.unwrap(), height.unwrap())
 }
 
 fn create_if_necessary(path: &Path) {
