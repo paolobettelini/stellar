@@ -15,6 +15,7 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
 
     doc.preamble.use_package("fullpage");
     doc.preamble.use_package("graphicx");
+    doc.preamble.use_package("parskip");
 
     doc.push(Element::TitlePage)
         .push(Element::ClearPage)

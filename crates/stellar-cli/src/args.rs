@@ -69,11 +69,11 @@ pub struct GenSnippetsArgs {
     pub connection_url: Option<String>,
 
     /// Snippet cut top offset
-    #[arg(long, default_value_t = -22.0)]
+    #[arg(long, default_value_t = -20.0)]
     pub top_offset: f64,
 
     /// Snippet cut bottom offset
-    #[arg(long, default_value_t = 15.0)]
+    #[arg(long, default_value_t = 2.5)]
     pub bottom_offset: f64,
 
     /// Snippet cut left margin
