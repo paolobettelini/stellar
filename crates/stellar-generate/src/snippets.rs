@@ -48,7 +48,7 @@ pub async fn generate_snippets(
     create_if_necessary(&pages_dir);
     create_if_necessary(&courses_dir);
 
-    let commands = pdf_extract(&input).unwrap();
+    let commands = pdf_extract(input).unwrap();
     let mut processor = DocProcessor::default();
 
     // Set default global ID using the file name
@@ -67,7 +67,7 @@ pub async fn generate_snippets(
         right_margin,
     };
     for cmd in commands {
-        process_cmd(&input, &mut processor, &cmd, &snippets_dir, &client, &dim).await;
+        process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim).await;
     }
 
     finalize(&mut processor, &pages_dir, &courses_dir);
@@ -109,7 +109,7 @@ async fn process_cmd(
             let y1 = processor.current_coords.unwrap().1 + dim.top_offset;
             let y2 = cmd.coords.1 + dim.bottom_offset;
             crop_pdf(
-                &input,
+                input,
                 &output,
                 page,
                 y1,
@@ -121,7 +121,7 @@ async fn process_cmd(
             log::info!("Saving snippet: {snippet_id}");
 
             if let Some(ref client) = client {
-                let _ = import::import_snippet_with_client(&client, &output).await;
+                let _ = import::import_snippet_with_client(client, &output).await;
             }
 
             // Add generated snippet to HTML page
@@ -166,7 +166,7 @@ fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) 
         let file_path = pages_dir.join(&filename);
 
         log::info!("Writing file: {filename}");
-        let res = fs::write(&file_path, &processor.html_page);
+        let res = fs::write(file_path, &processor.html_page);
 
         if res.is_err() {
             log::error!("Couldn't write file {}", &filename);
@@ -186,7 +186,7 @@ fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) 
         let json_course = serde_json::to_string_pretty(&json_course).unwrap();
 
         log::info!("Writing file: {filename}");
-        let res = fs::write(&file_path, &json_course);
+        let res = fs::write(file_path, json_course);
 
         if res.is_err() {
             log::error!("Couldn't write file {}", &filename);

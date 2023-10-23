@@ -33,8 +33,8 @@ async fn main() -> anyhow::Result<()> {
 
 pub async fn parse_generate_cmd(cmd: &GenerateCommand) -> anyhow::Result<()> {
     match cmd {
-        GenerateCommand::Snippets(args) => parse_gen_snippets_args(&args).await?,
-        GenerateCommand::Pdf(args) => parse_gen_pdf_args(&args)?,
+        GenerateCommand::Snippets(args) => parse_gen_snippets_args(args).await?,
+        GenerateCommand::Pdf(args) => parse_gen_pdf_args(args)?,
     }
 
     Ok(())
@@ -56,7 +56,7 @@ pub async fn parse_gen_snippets_args(args: &GenSnippetsArgs) -> anyhow::Result<(
 
     let client = if let Some(url) = &args.connection_url {
         if args.import {
-            let client = import::get_client(&url).await?;
+            let client = import::get_client(url).await?;
             Some(client)
         } else {
             None

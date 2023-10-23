@@ -10,7 +10,7 @@ use uuid::Uuid;
 pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow::Result<()> {
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
 
-    let commands = pdf_extract(&input).unwrap();
+    let commands = pdf_extract(input).unwrap();
     let mut doc = create_document();
 
     for cmd in &commands {
@@ -22,11 +22,11 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
             SetGenPage(_) => {}
             SetGenCourse(_) => {}
             StartSnippet(id) => {
-                doc.push(&*include(&data, id));
+                doc.push(&*include(data, id));
             }
             EndSnippet => {}
             Include(id) => {
-                doc.push(&*include(&data, id));
+                doc.push(&*include(data, id));
             }
             AddSection(title) => {
                 doc.push(&*format!(r"\section{{{title}}}"));
@@ -49,20 +49,20 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
     let pdf_path = Path::new(&pdf_file);
 
     // Write temporary tex
-    let res = fs::write(&tex_path, &rendered);
+    let res = fs::write(tex_path, rendered);
     if res.is_err() {
         log::error!("Couldn't write temporary file {}", &filename);
     }
 
     // Compile temporary file
-    compile_latex(&tex_path);
+    compile_latex(tex_path);
 
     // Remove temporary file
     log::info!("Deleting {tex_path:?}");
-    fs::remove_file(&tex_path).unwrap();
+    fs::remove_file(tex_path).unwrap();
 
     // Move compiled tex
-    fs::rename(&pdf_path, &output).unwrap();
+    fs::rename(pdf_path, output).unwrap();
 
     Ok(())
 }
@@ -84,7 +84,7 @@ fn create_document() -> Document {
 
 fn include(data: &PathBuf, id: &str) -> String {
     // TODO: different extensions
-    let file = data.join("snippets").join(&id).join(format!("{id}.pdf"));
+    let file = data.join("snippets").join(id).join(format!("{id}.pdf"));
 
     if !file.exists() {
         log::error!("File {file:?} not found");
