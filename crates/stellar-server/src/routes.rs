@@ -1,5 +1,5 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
-use std::fs;
+
 use std::path::{PathBuf, Path};
 use futures::TryStreamExt;
 use crate::{Data, asset::*};
@@ -100,7 +100,7 @@ async fn snippet_service(data: web::Data<Data>, snippet: web::Path<String>) -> i
 #[get("/")]
 async fn index() -> impl Responder {
     HttpResponse::Found()
-        .header("Location", "/universe/stellar")
+        .append_header(("Location", "/universe/stellar"))
         .finish()
 }
 
@@ -137,31 +137,31 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
 }
 
 #[get("/search")]
-async fn search_html(data: web::Data<Data>) -> impl Responder {
+async fn search_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/search.html");
     handle_embedded_file(&path)
 }
 
 #[get("/universe/{universe}")]
-async fn universe_html(data: web::Data<Data>) -> impl Responder {
+async fn universe_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/universe.html");
     handle_embedded_file(&path)
 }
 
 #[get("/course/{course}")]
-async fn course_html(data: web::Data<Data>) -> impl Responder {
+async fn course_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/course.html");
     handle_embedded_file(&path)
 }
 
 #[get("/page/{page}")]
-async fn page_html(data: web::Data<Data>) -> impl Responder {
+async fn page_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/page.html");
     handle_embedded_file(&path)
 }
 
 #[get("/snippet/{snippet}")]
-async fn snippet_html(data: web::Data<Data>) -> impl Responder {
+async fn snippet_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/snippet.html");
     handle_embedded_file(&path)
 }

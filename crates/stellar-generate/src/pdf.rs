@@ -1,5 +1,5 @@
 use crate::parser::{Cmd::*, *};
-use latex::{Align, Document, DocumentClass, Element, Section};
+use latex::{Document, DocumentClass, Element};
 use std::{
     fs,
     path::{Path, PathBuf},

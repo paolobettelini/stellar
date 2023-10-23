@@ -1,8 +1,7 @@
-use std::fs;
 use std::path::Path;
 use std::io::Write;
 use std::process::Command;
-use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
+// use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 
 pub fn compile_latex(tex_path: &Path) {
     let res = Command::new("tectonic")
@@ -20,7 +19,7 @@ pub fn compile_latex(tex_path: &Path) {
     }
 }
 
-pub fn compile(path: &Path) -> anyhow::Result<()> {
+pub fn compile(_path: &Path) -> anyhow::Result<()> {
     todo!()
     
     /*let path_type = get_path_type(&path);
