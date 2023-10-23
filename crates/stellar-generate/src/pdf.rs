@@ -11,16 +11,7 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
     let filename = String::from(input.file_stem().unwrap().to_string_lossy());
 
     let commands = pdf_extract(&input).unwrap();
-    let mut doc = Document::new(DocumentClass::Article);
-
-    doc.preamble.use_package("fullpage");
-    doc.preamble.use_package("graphicx");
-    doc.preamble.use_package("parskip");
-
-    doc.push(Element::TitlePage)
-        .push(Element::ClearPage)
-        .push(Element::TableOfContents)
-        .push(Element::ClearPage);
+    let mut doc = create_document();
 
     for cmd in &commands {
         match &cmd.cmd {
@@ -74,6 +65,21 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
     fs::rename(&pdf_path, &output).unwrap();
 
     Ok(())
+}
+
+fn create_document() -> Document {
+    let mut doc = Document::new(DocumentClass::Article);
+
+    doc.preamble.use_package("fullpage");
+    doc.preamble.use_package("graphicx");
+    doc.preamble.use_package("parskip");
+
+    doc.push(Element::TitlePage)
+        .push(Element::ClearPage)
+        .push(Element::TableOfContents)
+        .push(Element::ClearPage);
+
+    doc
 }
 
 fn include(data: &PathBuf, id: &str) -> String {

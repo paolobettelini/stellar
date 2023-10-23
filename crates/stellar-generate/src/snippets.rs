@@ -216,6 +216,7 @@ fn crop_pdf(
         .arg(y2.to_string())
         .arg(right_margin.to_string())
         .arg(left_margin.to_string())
+        .arg(page_num.to_string())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
         .status();
