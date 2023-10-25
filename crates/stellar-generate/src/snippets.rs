@@ -1,4 +1,5 @@
-use stellar_parser::pdf_parser::{Cmd::*, *};
+use stellar_parser::pdf_parser::*;
+use stellar_parser::{Cmd::*, *};
 use import::ClientHandler;
 use std::process::{Command, Stdio};
 use std::{

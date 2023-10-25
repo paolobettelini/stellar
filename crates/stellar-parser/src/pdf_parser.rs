@@ -1,3 +1,4 @@
+use crate::models::*;
 use std::{path::Path, process::Command};
 
 const GLOBAL_ID: &str = "!id";
@@ -10,27 +11,6 @@ const GLOBAL_TITLE: &str = "!title";
 const SECTION: &str = "!section";
 const SUBSECTION: &str = "!subsection";
 const SUBSUBSECTION: &str = "!subsubsection";
-
-#[derive(Debug)]
-pub struct DocumentCmd {
-    pub coords: (f64, f64),
-    pub page: u16,
-    pub cmd: Cmd,
-}
-
-#[derive(Debug)]
-pub enum Cmd {
-    SetGlobalTitle(String),
-    SetGlobalID(String),
-    SetGenPage(bool),
-    SetGenCourse(bool),
-    StartSnippet(String),
-    EndSnippet,
-    Include(String),
-    AddSection(String),
-    AddSubSection(String),
-    AddSubSubSection(String),
-}
 
 /// Example:
 /// 245.00 234.00 1 [Some text]

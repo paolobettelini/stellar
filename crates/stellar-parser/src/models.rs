@@ -1,10 +1,33 @@
+#[derive(Debug)]
 pub struct Course {
-    id: String,
-    pages: Vec<Page>,
+    pub id: String,
+    pub pages: Vec<Page>,
 }
 
+#[derive(Debug)]
 pub struct Page {
-    id: String,
-    level: u8,
-    title: String,
+    pub id: String,
+    pub level: u8,
+    pub title: String,
+}
+
+#[derive(Debug)]
+pub struct DocumentCmd {
+    pub coords: (f64, f64),
+    pub page: u16,
+    pub cmd: Cmd,
+}
+
+#[derive(Debug)]
+pub enum Cmd {
+    SetGlobalTitle(String),
+    SetGlobalID(String),
+    SetGenPage(bool),
+    SetGenCourse(bool),
+    StartSnippet(String),
+    EndSnippet,
+    Include(String),
+    AddSection(String),
+    AddSubSection(String),
+    AddSubSubSection(String),
 }
