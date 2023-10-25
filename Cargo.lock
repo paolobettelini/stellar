@@ -1959,7 +1959,7 @@ version = "0.2.0"
 
 [[package]]
 name = "stellar-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -2022,6 +2022,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "log",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
