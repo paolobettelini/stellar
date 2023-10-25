@@ -13,7 +13,8 @@ members = [
   "crates/stellar-generate",
   "crates/stellar-import",
   "crates/stellar-server",
-  "crates/stellar-utils"
+  "crates/stellar-utils",
+  "crates/stellar-parser",
 ]
 
 default-members = ["crates/stellar-cli"]

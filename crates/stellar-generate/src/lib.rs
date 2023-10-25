@@ -1,4 +1,3 @@
-pub(crate) mod parser;
 mod pdf;
 mod snippets;
 

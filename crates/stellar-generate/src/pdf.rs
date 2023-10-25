@@ -1,4 +1,4 @@
-use crate::parser::{Cmd::*, *};
+use stellar_parser::pdf_parser::{Cmd::*, *};
 use latex::{Document, DocumentClass, Element};
 use std::{
     fs,

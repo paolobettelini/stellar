@@ -2001,6 +2001,7 @@ dependencies = [
  "serde_json",
  "stellar-compile",
  "stellar-import",
+ "stellar-parser",
  "stellar-utils",
  "uuid",
 ]
@@ -2013,6 +2014,14 @@ dependencies = [
  "log",
  "stellar-database",
  "stellar-utils",
+]
+
+[[package]]
+name = "stellar-parser"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "log",
 ]
 
 [[package]]
