@@ -73,6 +73,7 @@ fn create_document() -> Document {
 
     doc.preamble.use_package("fullpage");
     doc.preamble.use_package("graphicx");
+    doc.preamble.use_package("hyperref");
     doc.preamble.use_package("parskip");
 
     doc.push(Element::TitlePage)

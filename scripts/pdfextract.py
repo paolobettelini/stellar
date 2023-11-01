@@ -36,8 +36,10 @@ def extract_text_from_pdf(pdf_file):
                 x, y, text = lobj.bbox[0], lobj.bbox[3], lobj.get_text().strip()
 
                 if text.startswith("!"):
-                    # Clean some weird characters I encountered
-                    clean_text = text.replace('ﬀ', 'ff')
+                    # Clean characters.
+                    # TODO: ' needs to ne replace, but the other characters should be supported
+
+                    clean_text = text.replace('’', '\'').replace('ﬀ', 'ff').replace('ô', 'o')
                     # Print "x y page_number [text]"
                     print(f'{x} {y} {page_number} [{clean_text}]')
 
