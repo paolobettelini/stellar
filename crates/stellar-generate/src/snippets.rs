@@ -155,6 +155,11 @@ async fn process_cmd(
             let snippet = format!("<snippet>{id}</snippet>\n");
             processor.html_page.push_str(&snippet);
         }
+        Plain(text) => {
+            // TODO: maybe you need to replace \\ with <br> ?
+            // Add snippet id to HTML page
+            processor.html_page.push_str(&text);
+        }
     }
 }
 

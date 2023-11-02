@@ -27,6 +27,7 @@ pub enum Cmd {
     StartSnippet(String),
     EndSnippet,
     Include(String),
+    Plain(String),
     AddSection(String),
     AddSubSection(String),
     AddSubSubSection(String),

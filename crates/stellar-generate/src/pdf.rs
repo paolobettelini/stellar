@@ -29,6 +29,9 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
             Include(id) => {
                 doc.push(&*include(data, id));
             }
+            Plain(text) => {
+                doc.push(&*text.to_string());
+            }
             AddSection(title) => {
                 doc.push(&*format!(r"\section{{{title}}}"));
             }

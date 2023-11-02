@@ -7,6 +7,7 @@ const END_SNIPPET: &str = "!endsnippet";
 const GEN_PAGE: &str = "!gen-page";
 const GEN_COURSE: &str = "!gen-course";
 const INCLUDE: &str = "!include";
+const PLAIN: &str = "!plain";
 const GLOBAL_TITLE: &str = "!title";
 const SECTION: &str = "!section";
 const SUBSECTION: &str = "!subsection";
@@ -99,6 +100,9 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
     } else if line.starts_with(INCLUDE) {
         let id = parse_include(line)?;
         Cmd::Include(id)
+    } else if line.starts_with(PLAIN) {
+        let text = parse_plain(line)?;
+        Cmd::Plain(text)
     } else if line.starts_with(GLOBAL_TITLE) {
         let title = parse_global_title(line)?;
         Cmd::SetGlobalTitle(title)
@@ -141,6 +145,11 @@ fn parse_gen_course(line: &str) -> Option<bool> {
 fn parse_include(line: &str) -> Option<String> {
     let id = &line[(INCLUDE.len() + 1)..];
     Some(id.to_string())
+}
+
+fn parse_plain(line: &str) -> Option<String> {
+    let text = &line[(PLAIN.len() + 1)..];
+    Some(text.to_string())
 }
 
 fn parse_global_title(line: &str) -> Option<String> {
