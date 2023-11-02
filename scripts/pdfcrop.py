@@ -21,6 +21,9 @@ def crop_and_redact_pdf(input_pdf, output_pdf, y1, y2, right_margin, left_margin
     y1,y2 = y2,y1
     snippet_height = y2 - y1
 
+    redact_y1_offset = -4 # some math character go beyond the rect (?)
+    y1 += redact_y1_offset
+
     # Remove content outside crop region
     # you can add the parameter fill=(1,0,0) to check the region (need to remove the set_mediabox below in order to see it)
     page.add_redact_annot((0, 0, page_original_width, page_original_height - y2))
@@ -28,7 +31,9 @@ def crop_and_redact_pdf(input_pdf, output_pdf, y1, y2, right_margin, left_margin
     page.add_redact_annot((x2, 0, page_original_width, page_original_height))
     page.add_redact_annot((0, 0, x1, page_original_height))
 
-    # Crop the page to the specified bounding box 
+    y1 -= redact_y1_offset
+
+    # Crop the page to the specified bounding box
     page.set_mediabox((x1, y1, x2, y2))
 
     # Apply the redaction to the page
