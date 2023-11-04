@@ -46,6 +46,7 @@ pub async fn start_server(
             .service(index)
             .service(search_html)
             .service(universe_html)
+            .service(universe_editor_html)
             .service(course_html)
             .service(page_html)
             .service(snippet_html)

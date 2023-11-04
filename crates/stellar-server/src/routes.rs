@@ -148,6 +148,12 @@ async fn universe_html(_data: web::Data<Data>) -> impl Responder {
     handle_embedded_file(&path)
 }
 
+#[get("/universe_editor/{universe}")]
+async fn universe_editor_html(_data: web::Data<Data>) -> impl Responder {
+    let path = format!("private/universe_editor.html");
+    handle_embedded_file(&path)
+}
+
 #[get("/course/{course}")]
 async fn course_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/course.html");

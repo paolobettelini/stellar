@@ -1,16 +1,13 @@
 "use strict";
 
-// This is the entry point of the universe page.
-// Read the page from the URL and load it using AJAX
-// E.g. "http://localhost:8080/universe/analysis";
-let href = window.location.href;
-let value = "/universe/";
-let universeName = href.substring(value.length + href.indexOf(value));
 let topBarTitle = document.getElementById('top-bar-title');
 
-postData(`/universe/${universeName}`)
-    .then(v => v.json())
-    .then(renderUniverse);
+function renderUniverse(universeName) {
+    postData(`/universe/${universeName}`)
+        .then(v => v.json())
+        .then(renderJSONUniverse);
+}
+
 
 //// Rendering code ////
 
@@ -26,7 +23,7 @@ async function postData(url = '', data = {}) {
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
-let content = document.getElementById('content');
+let content = document.getElementById('universe-content');
 
 let canvasContainer = document.getElementById('canvas-container');
 canvas.width = canvasContainer.clientWidth;
@@ -35,7 +32,7 @@ canvas.height = canvasContainer.clientHeight;
 ctx.strokeStyle = 'red';
 ctx.lineWidth = "3";
 
-function renderUniverse(universe) {
+function renderJSONUniverse(universe) {
     topBarTitle.innerText = universe.title;
 
     renderCourses(universe.courses);
@@ -44,56 +41,68 @@ function renderUniverse(universe) {
 
 function renderCourses(courses) {
     for (let course of courses) {
-        let title = document.createElement('a');
-        let div = document.createElement('div');
-
-        title.innerHTML = course.name;
-        let titleId = `course-${course.id}`;
-        title.id = titleId; // course-<id>;
-        title.href = `/course/${course.id}`;
-        div.appendChild(title);
-        content.appendChild(div);
-
-        title.style.position = "absolute";
-        title.style.left = course.x * canvas.width + "px";
-        title.style.top = course.y * canvas.height + "px";
+        renderCourse(course);
     }
 }
 
+function renderCourse(course) {
+    let title = document.createElement('a');
+    let div = document.createElement('div');
+
+    title.innerHTML = course.name;
+    let titleId = `course-${course.id}`;
+    title.id = titleId; // course-<id>;
+    title.href = `/course/${course.id}`;
+    div.appendChild(title);
+    content.appendChild(div);
+
+    title.style.position = "absolute";
+    title.style.left = course.x * canvas.width + "px";
+    title.style.top = course.y * canvas.height + "px";
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function renderDependencies(dependencies) {
-    for (let dependencie of dependencies) {
-        let from = document.getElementById(`course-${dependencie.from}`);
-        let to = document.getElementById(`course-${dependencie.to}`);
+    for (let dependency of dependencies) {
+        renderDependency(dependency)
+    }
+}
 
-        let rectA = from.getBoundingClientRect();
-        let pointA = {x: rectA.x + rectA.width, y: rectA.y + rectA.height * 0.5};
+function renderDependency(dependency) {
+    let from = document.getElementById(`course-${dependency.from}`);
+    let to = document.getElementById(`course-${dependency.to}`);
 
-        let rectB = to.getBoundingClientRect();
-        let pointB = {x: rectB.x, y: rectB.y + rectB.height * 0.5};
+    let rectA = from.getBoundingClientRect();
+    let pointA = {x: rectA.x + rectA.width, y: rectA.y + rectA.height * 0.5};
 
-        ctx.beginPath();
+    let rectB = to.getBoundingClientRect();
+    let pointB = {x: rectB.x, y: rectB.y + rectB.height * 0.5};
+
+    ctx.beginPath();
+    ctx.moveTo(pointA.x, pointA.y);
+
+    // If there aren't any control points, draw a straight line
+    if (dependency.curve == undefined) {
+        // Compute middle point
         ctx.moveTo(pointA.x, pointA.y);
-
-        // If there aren't any control points, draw a straight line
-        if (dependencie.curve == undefined) {
-            // Compute middle point
-            ctx.moveTo(pointA.x, pointA.y);
-            ctx.lineTo(pointB.x, pointB.y);
-
-            ctx.stroke();
-            continue;
-        }
-
-        for (let i = 0; i < dependencie.curve.length; i += 4) {
-            ctx.bezierCurveTo(
-            dependencie.curve[i] * canvas.width,
-            dependencie.curve[i + 1] * canvas.height,
-            dependencie.curve[i + 2] * canvas.width,
-            dependencie.curve[i + 3] * canvas.height,
-            pointB.x, pointB.y
-            );
-        }
+        ctx.lineTo(pointB.x, pointB.y);
 
         ctx.stroke();
+        return;
     }
+
+    for (let i = 0; i < dependency.curve.length; i += 4) {
+        ctx.bezierCurveTo(
+            dependency.curve[i] * canvas.width,
+            dependency.curve[i + 1] * canvas.height,
+            dependency.curve[i + 2] * canvas.width,
+            dependency.curve[i + 3] * canvas.height,
+            dependency.x, pointB.y
+        );
+    }
+
+    ctx.stroke();
 }

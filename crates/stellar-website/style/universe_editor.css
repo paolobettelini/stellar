@@ -1,0 +1,8 @@
+#editor {
+    position: absolute;
+    top: 500px;
+    left: 100px;
+    width: 550px;
+    height: 500px;
+    z-index: 10;
+}
