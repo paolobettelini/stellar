@@ -27,6 +27,11 @@
             "stellar-technical-courses"
         ],
         [
+            2,
+            "Universes",
+            "stellar-technical-universes"
+        ],
+        [
             1,
             "MathJax Support",
             "stellar-technical-mathjax"
@@ -53,8 +58,8 @@
         ],
         [
             2,
-            "Parsing LaTeX",
-            "stellar-technical-cli-latex"
+            "PDF to snippets",
+            "stellar-technical-cli-pdf"
         ],
         [
             2,

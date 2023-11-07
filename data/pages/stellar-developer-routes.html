@@ -4,6 +4,10 @@
 
 Returns the course JSON file.
 
+<h2>POST /universe/&lt;id&gt;</h2>
+
+Returns the universe JSON file.
+
 <h2>POST /page/&lt;id&gt;</h2>
 
 Returns the course HTML file.
@@ -25,6 +29,14 @@ Returns 404.
 
 Returns <b>/private/course.html</b>.
 
+<h2>GET /universe/&lt;id&gt;</h2>
+
+Returns <b>/private/universe.html</b>.
+
+<h2>GET /universe_editor/&lt;id&gt;</h2>
+
+Returns <b>/private/universe_editor.html</b>.
+
 <h2>GET /page/&lt;id&gt;</h2>
 
 Returns <b>/private/page.html</b>.
@@ -40,3 +52,23 @@ Returns <b>/private/search.html</b>.
 <h2>GET /&lt;file&gt;</h2>
 
 Returns a static file.
+
+<h2>GET /</h2>
+
+Returns the index file.
+
+<h2>POST /query/snippet/&lt;keyword&gt;</h2>
+
+Returns a JSON lookup result for the matching snippets.
+
+<h2>POST /query/page/&lt;keyword&gt;</h2>
+
+Returns a JSON lookup result for the matching pages.
+
+<h2>POST /query/courses/&lt;keyword&gt;</h2>
+
+Returns a JSON lookup result for the matching courses.
+
+<h2>POST /query/universe/&lt;keyword&gt;</h2>
+
+Returns a JSON lookup result for the matching universe.
