@@ -106,7 +106,12 @@ async fn index() -> impl Responder {
 
 #[get("/{_:.*}")]
 async fn static_files(path: web::Path<String>) -> impl Responder {
-    handle_embedded_file(path.as_str())
+    handle_static_file(path.as_str())
+}
+
+#[get("/private/{_:.*}")]
+async fn private_files() -> impl Responder {
+    HttpResponse::NotFound().body("404 not found")
 }
 
 #[get("/snippet/{snippet}/{file_name}")]
@@ -139,37 +144,37 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
 #[get("/search")]
 async fn search_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/search.html");
-    handle_embedded_file(&path)
+    handle_static_file(&path)
 }
 
 #[get("/universe/{universe}")]
 async fn universe_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/universe.html");
-    handle_embedded_file(&path)
+    handle_static_file(&path)
 }
 
 #[get("/universe_editor/{universe}")]
 async fn universe_editor_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/universe_editor.html");
-    handle_embedded_file(&path)
+    handle_static_file(&path)
 }
 
 #[get("/course/{course}")]
 async fn course_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/course.html");
-    handle_embedded_file(&path)
+    handle_static_file(&path)
 }
 
 #[get("/page/{page}")]
 async fn page_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/page.html");
-    handle_embedded_file(&path)
+    handle_static_file(&path)
 }
 
 #[get("/snippet/{snippet}")]
 async fn snippet_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/snippet.html");
-    handle_embedded_file(&path)
+    handle_static_file(&path)
 }
 
 #[post("/query/snippet/{keyword}")]

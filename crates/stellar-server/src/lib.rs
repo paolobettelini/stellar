@@ -50,6 +50,7 @@ pub async fn start_server(
             .service(course_html)
             .service(page_html)
             .service(snippet_html)
+            .service(private_files)
             .service(static_files)
             // Data
             .app_data(web::Data::new(data.clone()))
