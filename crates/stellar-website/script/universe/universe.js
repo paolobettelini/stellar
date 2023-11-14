@@ -1,13 +1,13 @@
 "use strict";
 
 let topBarTitle = document.getElementById('top-bar-title');
+const DEFAULT_COURSE_COLOR = "#3498db";
 
 function renderUniverse(universeName) {
     postData(`/universe/${universeName}`)
         .then(v => v.json())
         .then(renderJSONUniverse);
 }
-
 
 //// Rendering code ////
 
@@ -59,6 +59,16 @@ function renderCourse(course) {
     title.style.position = "absolute";
     title.style.left = course.x * canvas.width + "px";
     title.style.top = course.y * canvas.height + "px";
+    // Default color is blueish
+
+    let color = course.color || DEFAULT_COURSE_COLOR;
+    setCourseColor(title, color);
+}
+
+function setCourseColor(title, color) {
+    title.style.backgroundColor = color;
+    title.style.boxShadow = `0 0 10px ${color}83`;
+    title.style.border = `2px solid ${color}`;
 }
 
 function clearCanvas() {

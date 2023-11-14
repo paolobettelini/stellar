@@ -92,6 +92,17 @@ function addCourseToEditor(course) {
         renderDependencies(jsonUniverse.dependencies);
     }
 
+    let colorButton = document.createElement('input');
+    colorButton.type = 'color';
+    colorButton.value = course.color || DEFAULT_COURSE_COLOR;
+    colorButton.oninput = () => {
+        let color = colorButton.value;
+        let titleId = `course-${course.id}`;
+        let title = document.getElementById(titleId);
+        course.color = color == DEFAULT_COURSE_COLOR ? undefined : color;
+        setCourseColor(title, color);
+    }
+
     let deleteButton = document.createElement('button');
     deleteButton.innerHTML = 'x';
     deleteButton.onclick = () => {
@@ -115,6 +126,7 @@ function addCourseToEditor(course) {
     container.appendChild(nameInput);
     container.appendChild(xInput);
     container.appendChild(yInput);
+    container.appendChild(colorButton);
     container.appendChild(deleteButton);
 
     coursesEditor.appendChild(container);

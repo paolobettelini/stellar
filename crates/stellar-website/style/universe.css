@@ -15,12 +15,10 @@
 #content a {
     display: inline-block;
     position: relative;
-    border: 2px solid #3498db; /* Border color */
     border-radius: 10px;
     padding: 10px;
     text-decoration: none;
     color: #fff; /* Text color */
-    background-color: #3498db; /* Background color */
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.7); /* Box shadow */
     overflow: hidden;
 }
