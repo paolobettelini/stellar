@@ -53,6 +53,7 @@ function renderPage(container, pageName) {
 
             // Parse everything
             container.innerHTML = content;
+            // TODO. Handle <script> because it doesn't work 
             
             snippets.forEach((snippetName, index) => {                
                 // Retrieve the snippet wrapper via getElementById
@@ -117,6 +118,9 @@ function renderSnippet(container, snippetName, index) {
                     const decoder = new TextDecoder();
                     let content = decoder.decode(buffer);
                     container.innerHTML = content;
+
+                    // Handle <script> because they dont't work
+                    nodeScriptReplace(container);
 
                     // TODO:
                     // Typeset with MathJax3
