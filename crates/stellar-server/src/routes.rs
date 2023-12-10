@@ -134,6 +134,8 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
         "application/wasm"
     } else if file_name.ends_with("js") {
         "text/javascript"
+    } else if file_name.ends_with("css") {
+        "text/css"
     } else {
         panic!("Content type not implemented");
     };
