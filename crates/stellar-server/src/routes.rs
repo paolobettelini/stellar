@@ -114,7 +114,7 @@ async fn private_files() -> impl Responder {
     HttpResponse::NotFound().body("404 not found")
 }
 
-#[get("/snippet/{snippet}/{file_name}")]
+#[get("/snippet/{snippet}/{file_name:.*}")]
 async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<(String, String)>) -> impl Responder {
     let snippet = &params.0;
     let file_name = &params.1;
@@ -122,7 +122,7 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
     let file = &Path::new(&data.data_folder)
         .join("snippets")
         .join(snippet)
-        .join(file_name);
+        .join(file_name.replace("..", "")); // replace .. just to be sure
     log::debug!("Reading file: {file:?}");
 
     let content = std::fs::read(file).unwrap();
