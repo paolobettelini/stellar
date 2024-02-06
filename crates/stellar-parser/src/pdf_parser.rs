@@ -40,9 +40,33 @@ pub fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
         for line in lines {
             log::debug!("Processing line: {line}");
 
-            let cmd = parse_cmd(line).unwrap();
             let coords = (x, y);
-            result.push(DocumentCmd { coords, page, cmd });
+            let res = parse_cmd(line);
+
+            match res {
+                Some(cmd) => {
+                    result.push(DocumentCmd { coords, page, cmd });    
+                },
+                None => {
+                    // If the line does not start with a CMD,
+                    // it means that the argument(s) of the last command extend to
+                    // multiple line. In this case we add the line to the previous command,
+                    // and update its coordinates.
+
+                    let mut last_cmd = if let Some(cmd) = result.pop() {
+                        cmd
+                    } else {
+                        log::warn!("Discarded line: {line}");
+                        continue;
+                    };
+
+                    last_cmd.cmd.inject_additional_arguments(line);
+                    last_cmd.page = page;
+                    last_cmd.coords = coords;
+
+                    result.push(last_cmd);
+                }
+            }
         }
 
         let index = text_index + text_len + 2;

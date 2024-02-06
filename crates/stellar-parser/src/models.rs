@@ -32,3 +32,21 @@ pub enum Cmd {
     AddSubSection(String),
     AddSubSubSection(String),
 }
+
+impl Cmd {
+
+    /// Adds a string to the command argument
+    pub fn inject_additional_arguments(&mut self, arg: &str) {
+        match self {
+            Self::SetGlobalTitle(s) => s.push_str(arg),
+            Self::SetGlobalID(s) => s.push_str(arg),
+            Self::StartSnippet(s) => s.push_str(arg),
+            Self::Include(s) => s.push_str(arg),
+            Self::Plain(s) => s.push_str(arg),
+            Self::AddSection(s) => s.push_str(arg),
+            Self::AddSubSection(s) => s.push_str(arg),
+            Self::AddSubSubSection(s) => s.push_str(arg),
+            _ => {}
+        }
+    }
+}
