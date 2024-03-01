@@ -97,7 +97,7 @@ async fn snippet_service(data: web::Data<Data>, snippet: web::Path<String>) -> i
     HttpResponse::Ok().content_type(content_type).body(content)
 }
 
-#[get("/")]
+/*#[get("/")]
 async fn index() -> impl Responder {
     HttpResponse::Found()
         .append_header(("Location", "/universe/stellar"))
@@ -112,7 +112,7 @@ async fn static_files(path: web::Path<String>) -> impl Responder {
 #[get("/private/{_:.*}")]
 async fn private_files() -> impl Responder {
     HttpResponse::NotFound().body("404 not found")
-}
+}*/
 
 #[get("/snippet/{snippet}/{file_name:.*}")]
 async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<(String, String)>) -> impl Responder {
@@ -143,6 +143,7 @@ async fn snippet_complementary_service(data: web::Data<Data>, params: web::Path<
     HttpResponse::Ok().content_type(content_type).body(content)
 }
 
+/*
 #[get("/search")]
 async fn search_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/search.html");
@@ -177,7 +178,7 @@ async fn page_html(_data: web::Data<Data>) -> impl Responder {
 async fn snippet_html(_data: web::Data<Data>) -> impl Responder {
     let path = format!("private/snippet.html");
     handle_static_file(&path)
-}
+}*/
 
 #[post("/query/snippet/{keyword}")]
 async fn snippet_query(data: web::Data<Data>, keyword: web::Path<String>) -> impl Responder {

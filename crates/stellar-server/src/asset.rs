@@ -3,6 +3,7 @@ use mime_guess::from_path;
 use std::path::Path;
 use actix_web::HttpResponse;
 
+/*
 #[derive(RustEmbed)]
 #[folder = "$CARGO_MANIFEST_DIR/../stellar-website/"]
 pub(crate) struct Asset;
@@ -31,4 +32,4 @@ pub(crate) fn handle_static_file(path: &str) -> HttpResponse {
             .body(content),
         Err(_) => HttpResponse::NotFound().body("404 Not Found"),
     }
-}
+}*/

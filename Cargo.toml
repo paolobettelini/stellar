@@ -2,23 +2,46 @@
 name = "stellar"
 version = "0.2.0"
 edition = "2021"
+resolver = "2"
 description = "CLI tool for the Stellar project"
 readme = "README.md"
 repository = "https://github.com/paolobettelini/stellar"
 
 [workspace]
-members = [
-  "crates/stellar-cli",
-  "crates/stellar-database",
-  "crates/stellar-generate",
-  "crates/stellar-import",
-  "crates/stellar-server",
-  "crates/stellar-utils",
-  "crates/stellar-parser",
-]
-
+members = ["crates/*"]
 default-members = ["crates/stellar-cli"]
+
+# need to be applied only to wasm build
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z'
 
 [[bin]]
 name = "stellar-cli"
 path = "src/main.rs"
+
+[[workspace.metadata.leptos]]
+name = "stellar"
+bin-package = "stellar-cli"
+lib-package = "stellar-server"
+
+site-root = "dist"
+site-pkg-dir = "pkg"
+style-file = "crates/stellar-server/style/main.scss"
+assets-dir = "crates/stellar-server/assets"
+
+site-addr = "127.0.0.1:8080"
+reload-port = 8081
+
+browserquery = "defaults"
+# Set by cargo-leptos watch when building with that tool. Controls whether autoreload JS will be included in the head
+watch = false
+# The environment Leptos will run in, usually either "DEV" or "PROD"
+env = "DEV"
+
+bin-features = []
+bin-default-features = false
+
+lib-features = ["hydrate"]
+lib-default-features = false
