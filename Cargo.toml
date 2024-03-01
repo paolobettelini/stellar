@@ -23,25 +23,33 @@ path = "src/main.rs"
 
 [[workspace.metadata.leptos]]
 name = "stellar"
+output-name = "stellar"
 bin-package = "stellar-cli"
 lib-package = "stellar-server"
 
-site-root = "dist"
-site-pkg-dir = "pkg"
 style-file = "crates/stellar-server/style/main.scss"
 assets-dir = "crates/stellar-server/assets"
 
-site-addr = "127.0.0.1:8080"
-reload-port = 8081
+reload-port = 3080
 
-browserquery = "defaults"
 # Set by cargo-leptos watch when building with that tool. Controls whether autoreload JS will be included in the head
 watch = false
-# The environment Leptos will run in, usually either "DEV" or "PROD"
-env = "DEV"
+browserquery = "defaults"
 
-bin-features = []
+bin-features = [] # the "ssr" feature is always passed by "stellar-cli"
 bin-default-features = false
 
 lib-features = ["hydrate"]
 lib-default-features = false
+
+# Disabled: stellar sets this value to DEV or PROD according
+# to the compilation mode (debug or release).
+# env = "DEV"
+
+# Disabled: stellar uses --address and --port instead
+# site-addr = "0.0.0.0:8080"
+
+# The following two options are hardcoded in the stellar-server lib,
+# so make sure to update it there aswell if you were to change these.
+site-root = "dist"
+site-pkg-dir = "pkg"

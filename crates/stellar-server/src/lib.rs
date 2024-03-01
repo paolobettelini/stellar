@@ -1,3 +1,7 @@
+mod hydrate;
+#[cfg(feature = "hydrate")]
+pub use hydrate::*;
+
 #[cfg(feature = "ssr")]
 use actix_web::{web, App, HttpServer};
 
@@ -7,8 +11,6 @@ use std::net::IpAddr;
 use std::path::PathBuf;
 #[cfg(feature = "ssr")]
 use stellar_database::*;
-
-use wasm_bindgen::prelude::wasm_bindgen;
 
 #[cfg(feature = "ssr")]
 mod routes;
@@ -24,15 +26,6 @@ use routes::*;
 pub(crate) struct Data {
     client: ClientHandler,
     data_folder: PathBuf,
-}
-
-#[cfg(feature = "hydrate")]
-#[wasm_bindgen]
-pub fn hydrate() {
-    use leptos::*;
-    console_error_panic_hook::set_once();
-
-    leptos::mount_to_body(App);
 }
 
 #[cfg(feature = "ssr")]
@@ -54,31 +47,27 @@ pub async fn start_server(
         data_folder,
     };
 
-    let leptos_options = if let Ok(file) = get_configuration(None).await {
-        log::info!("Using leptos metadata configuration in Cargo.toml");
-        file.leptos_options
-    } else {
-        let env = if cfg!(debug_assertions) {
-                leptos_config::Env::DEV
-            } else {
-                leptos_config::Env::PROD
-            };
-        use std::net::Ipv4Addr;
-        LeptosOptions {
-            site_root: String::from("dist"),
-            site_pkg_dir: String::from("pkg"),
-            env,
-            // TODO use param
-            site_addr: std::net::SocketAddr::new(std::net::IpAddr::V4("127.0.0.1".parse::<Ipv4Addr>().unwrap()), 8081),
-            ..LeptosOptions::default()
-        }
+    let cargo_toml = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.toml"));
+    let mut leptos_options = match leptos_config::get_config_from_str(cargo_toml) {
+        Ok(file) => file.leptos_options,
+        Err(err) => {
+            log::error!("{:#?}", err);
+            panic!("Error in cargo leptos configuration")
+        },
     };
+
+    leptos_options.site_addr = std::net::SocketAddr::new(address, port);
+    leptos_options.env = if cfg!(debug_assertions) {
+        leptos_config::Env::DEV
+    } else {
+        leptos_config::Env::PROD
+    };
+
+    println!("{leptos_options:#?}");
 
     // Generate the list of routes in your Leptos App
     let routes = generate_route_list(App);
-
-    //let binding = (address, port);
-    let binding = leptos_options.site_addr;
+    let listen_addr = leptos_options.site_addr;
 
     HttpServer::new(move || {
         let site_root = &leptos_options.site_root;
@@ -111,7 +100,7 @@ pub async fn start_server(
             // Data
             .app_data(web::Data::new(data.clone()))
     })
-    .bind(binding)?
+    .bind(listen_addr)?
     .run()
     .await?;
 
