@@ -2,7 +2,7 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 
 use std::path::{PathBuf, Path};
 use futures::TryStreamExt;
-use crate::{Data, asset::*};
+use crate::server::Data;
 
 #[post("/course/{course}")]
 async fn course_service(data: web::Data<Data>, course: web::Path<String>) -> impl Responder {

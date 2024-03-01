@@ -1,7 +1,7 @@
 #![cfg(feature = "hydrate")]
 
 use wasm_bindgen::prelude::wasm_bindgen;
-use crate::App;
+use crate::app::App;
 
 #[wasm_bindgen]
 pub fn hydrate() {

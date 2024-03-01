@@ -1,4 +1,4 @@
-#![cfg(feature = "ssr")]
+/*#![cfg(feature = "ssr")]
 
 use rust_embed::RustEmbed;
 use mime_guess::from_path;
