@@ -38,7 +38,6 @@ browserquery = "defaults"
 
 bin-features = [] # the "ssr" feature is always passed by "stellar-cli"
 bin-default-features = false
-
 lib-features = ["hydrate"]
 lib-default-features = false
 

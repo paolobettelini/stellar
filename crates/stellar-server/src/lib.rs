@@ -1,6 +1,10 @@
+// Hydrate feature-gated function(s)
 mod hydrate;
 #[cfg(feature = "hydrate")]
 pub use hydrate::*;
+
+//#[cfg(feature = "ssr")]
+//pub(crate) mod asset;
 
 #[cfg(feature = "ssr")]
 use actix_web::{web, App, HttpServer};
@@ -16,8 +20,7 @@ use stellar_database::*;
 mod routes;
 mod app;
 use app::*;
-#[cfg(feature = "ssr")]
-pub(crate) mod asset;
+
 #[cfg(feature = "ssr")]
 use routes::*;
 
@@ -47,15 +50,15 @@ pub async fn start_server(
         data_folder,
     };
 
+    // Generate leptos options
     let cargo_toml = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.toml"));
     let mut leptos_options = match leptos_config::get_config_from_str(cargo_toml) {
         Ok(file) => file.leptos_options,
         Err(err) => {
             log::error!("{:#?}", err);
-            panic!("Error in cargo leptos configuration")
+            panic!("Error in leptos config file")
         },
     };
-
     leptos_options.site_addr = std::net::SocketAddr::new(address, port);
     leptos_options.env = if cfg!(debug_assertions) {
         leptos_config::Env::DEV
@@ -63,7 +66,8 @@ pub async fn start_server(
         leptos_config::Env::PROD
     };
 
-    println!("{leptos_options:#?}");
+    //println!("{}", env!("LEPTOS_SITE_ROOT"));
+    //println!("{}", env!("LEPTOS_SITE_PKG_DIR"));
 
     // Generate the list of routes in your Leptos App
     let routes = generate_route_list(App);
@@ -94,7 +98,9 @@ pub async fn start_server(
             //.service(static_files)
             // Leptos
             .service(favicon)
+            // /pkg/<path> -> <site_root>/pkg/<path>
             .service(Files::new("/pkg", format!("{site_root}/pkg")))
+            // /assets/<path> -> <site_root>/<path>
             .service(Files::new("/assets", site_root))
             .leptos_routes(leptos_options.to_owned(), routes.to_owned(), App)
             // Data
