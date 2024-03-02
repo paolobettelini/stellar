@@ -26,6 +26,9 @@ http = "0.2"
 log = "0.4.20"
 wasm-bindgen = "=0.2.91"
 thaw = { git = "https://github.com/thaw-ui/thaw" }
+icondata_fa = "0.0.10"
+icondata_ai = "0.0.10"
+icondata = "0.3.0"
 
 [features]
 hydrate = [

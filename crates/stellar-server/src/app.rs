@@ -26,7 +26,7 @@ pub fn App() -> impl IntoView {
             <Router>
                 <main>
                     <Routes>
-                        <Route path="/" view=HomePage/>
+                        <Route path="" view=HomePage/>
                         <Route path="/*any" view=NotFound/>
                     </Routes>
                 </main>
@@ -37,27 +37,85 @@ pub fn App() -> impl IntoView {
 
 #[server]
 pub async fn do_smth() -> Result<String, ServerFnError> {
-    std::thread::sleep(std::time::Duration::from_secs(2));
     Ok(String::from("HELLOOO"))
 }
 
-/// Renders the home page of your application.
+#[component]
+fn TopBar() -> impl IntoView {
+    let theme = use_context::<RwSignal<Theme>>().unwrap();
+    let (themes_hidden, set_themes_hidden) = create_signal(true);
+
+    // https://carlosted.github.io/icondata/
+
+    view! {
+        <div id="top-bar">
+            <div id="top-bar-icons">
+                <i>
+                    <Icon icon=icondata::FaBarsSolid/>
+                </i>
+                <i id="topbar-search">
+                    <Icon icon=icondata::ImSearch/>
+                </i>
+                <i
+                    id="topbar-theme"
+                    on:click=move |_| {
+                        set_themes_hidden.update(|v| *v = !*v)
+                    }
+                >
+                    <Icon icon=icondata::FaPaintbrushSolid/>
+                </i>
+                <ul
+                    id="theme-list"
+                    style:display=move || if themes_hidden() { "none" } else { "block" }
+                >
+                    <Button on_click=move |_| theme.set(Theme::light())>"Light"</Button>
+                    <Button on_click=move |_| theme.set(Theme::dark())>"Dark"</Button>
+                </ul>
+            </div>
+
+            <div id="top-bar-title">Title</div>
+        </div>
+    }
+}
+
+#[component]
+fn SideBar() -> impl IntoView {
+    view! {
+        <div id="side-bar">
+            "Hello"
+        </div>
+    }
+}
+
+#[component]
+fn PageRenderer() -> impl IntoView {
+    view! {
+        <h1>"Welcome to Leptos!"</h1>
+    }
+}
+
 #[component]
 fn HomePage() -> impl IntoView {
-    let theme = use_context::<RwSignal<Theme>>().unwrap();
     let once = create_resource(|| (), |_| async move { do_smth().await });
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
+        <Layout has_sider=true>
+            <LayoutSider>
+                <SideBar />
+            </LayoutSider>
+            <Layout>
+                <div id="right-side-container">
+                    <LayoutHeader>
+                        <TopBar />
+                    </LayoutHeader>
+                    <Layout>
+                        <PageRenderer />
+                    </Layout>
+                </div>
+            </Layout>
+        </Layout>
 
-        <Card>
-            <Space>
-                <Button on_click=move |_| theme.set(Theme::light())>"Light"</Button>
-                <Button on_click=move |_| theme.set(Theme::dark())>"Dark"</Button>
-            </Space>
-        </Card>
-
-        <Suspense
+        /*<Suspense
             fallback=move || view! {
                 <Skeleton width="10%" text=true/>
                 <br></br>
@@ -78,7 +136,7 @@ fn HomePage() -> impl IntoView {
                 None => view! {}.into_view(),
                 Some(data) => view! { {data} }.into_view()
             }}
-        </Suspense>
+        </Suspense>*/
     }
 }
 
