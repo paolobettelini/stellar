@@ -8,6 +8,9 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
+    let theme = create_rw_signal(Theme::light());
+    provide_context(theme);
+
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
@@ -17,25 +20,65 @@ pub fn App() -> impl IntoView {
         <Title text="Welcome to Leptoss"/>
 
         // content for this welcome page
-        <Router>
-            <main>
-                <Routes>
-                    <Route path="/" view=HomePage/>
-                    <Route path="/*any" view=NotFound/>
-                </Routes>
-            </main>
-        </Router>
+        <ThemeProvider theme>
+            <GlobalStyle />
+
+            <Router>
+                <main>
+                    <Routes>
+                        <Route path="/" view=HomePage/>
+                        <Route path="/*any" view=NotFound/>
+                    </Routes>
+                </main>
+            </Router>
+        </ThemeProvider>
     }
+}
+
+#[server]
+pub async fn do_smth() -> Result<String, ServerFnError> {
+    std::thread::sleep(std::time::Duration::from_secs(2));
+    Ok(String::from("HELLOOO"))
 }
 
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
+    let theme = use_context::<RwSignal<Theme>>().unwrap();
+    let once = create_resource(|| (), |_| async move { do_smth().await });
 
     view! {
         <h1>"Welcome to Leptos!"</h1>
-        <Button variant=ButtonVariant::Primary>"Primary"</Button>
+
+        <Card>
+            <Space>
+                <Button on_click=move |_| theme.set(Theme::light())>"Light"</Button>
+                <Button on_click=move |_| theme.set(Theme::dark())>"Dark"</Button>
+            </Space>
+        </Card>
+
+        <Suspense
+            fallback=move || view! {
+                <Skeleton width="10%" text=true/>
+                <br></br>
+                <Skeleton width="10%" text=true/>
+                <br></br>
+                <Skeleton width="10%" text=true/>
+                <br></br>
+                <Skeleton width="10%" text=true/>
+                <br></br>
+                <Skeleton width="10%" text=true/>
+                <br></br>
+                <Skeleton width="10%" text=true/>
+                <br></br>
+                <Skeleton width="10%" text=true/>
+            }
+        >
+            {move || match once.get() {
+                None => view! {}.into_view(),
+                Some(data) => view! { {data} }.into_view()
+            }}
+        </Suspense>
     }
 }
 
