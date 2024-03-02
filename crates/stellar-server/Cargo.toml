@@ -15,19 +15,25 @@ futures = "0.3.28"
 rust-embed = { version = "8.0.0", features = ["include-exclude", "interpolate-folder-path"] }
 mime_guess = "2.0.4"
 
-leptos = { git = "https://github.com/leptos-rs/leptos/", features = ["nightly"] }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos/", features = ["nightly"] }
-leptos_router = { git = "https://github.com/leptos-rs/leptos/", features = ["nightly"] }
-leptos_actix = { git = "https://github.com/leptos-rs/leptos/", optional = true }
+leptos = { version = "0.6.7", features = ["nightly"] }
+leptos_meta = { version = "0.6.7", features = ["nightly"] }
+leptos_router = { version = "0.6.7", features = ["nightly"] }
+leptos_actix = { version = "0.6.7", optional = true }
 actix-web = { version = "4.3.1", optional = true, features = ["macros"] }
 cfg-if = "1"
 console_error_panic_hook = "0.1"
 http = "0.2"
 log = "0.4.20"
-wasm-bindgen = "=0.2.89"
+wasm-bindgen = "=0.2.91"
+thaw = { git = "https://github.com/thaw-ui/thaw" }
 
 [features]
-hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
+hydrate = [
+  "leptos/hydrate",
+  "leptos_meta/hydrate",
+  "leptos_router/hydrate",
+  "thaw/hydrate"
+]
 ssr = [
   "dep:stellar-database",
   "dep:actix-files",
@@ -36,4 +42,5 @@ ssr = [
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
+  "thaw/ssr",
 ]
