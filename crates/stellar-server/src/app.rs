@@ -103,14 +103,13 @@ fn TopBar() -> impl IntoView {
                 </ul>
             </div>
 
-            <Avatar src="/assets/logo.png"/>
             <div id="top-bar-title">Title</div>
         </div>
     }
 }
 
 #[component]
-fn SideBar() -> impl IntoView {
+fn Navbar() -> impl IntoView { // todo call navbar
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
 
@@ -190,7 +189,7 @@ fn CoursePage() -> impl IntoView {
     view! {
         <Layout has_sider=true>
             <LayoutSider>
-                <SideBar />
+                <Navbar />
             </LayoutSider>
             <Layout>
                 <div id="right-side-container">
