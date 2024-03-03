@@ -3388,6 +3388,7 @@ dependencies = [
  "log",
  "mime_guess",
  "rust-embed",
+ "serde",
  "serde_json",
  "stellar-database",
  "thaw",

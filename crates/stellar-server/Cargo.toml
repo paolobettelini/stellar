@@ -29,6 +29,7 @@ thaw = { git = "https://github.com/thaw-ui/thaw" }
 icondata_fa = "0.0.10"
 icondata_ai = "0.0.10"
 icondata = "0.3.0"
+serde = "1.0.197"
 
 [features]
 hydrate = [

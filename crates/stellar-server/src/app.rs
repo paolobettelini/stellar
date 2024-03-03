@@ -26,7 +26,8 @@ pub fn App() -> impl IntoView {
             <Router>
                 <main>
                     <Routes>
-                        <Route path="" view=HomePage/>
+                        <Route path="/" view=HomePage/>
+                        <Route path="/course/:course" view=CoursePage/>
                         <Route path="/*any" view=NotFound/>
                     </Routes>
                 </main>
@@ -35,29 +36,38 @@ pub fn App() -> impl IntoView {
     }
 }
 
+#[derive(serde::Deserialize)]
+struct Course {
+    title: String,
+    pages: Vec<Page>,
+}
+#[derive(serde::Deserialize)]
+#[serde(untagged)]
+enum Page {
+    Empty((u8, String)),
+    Ref((u8, String, String))
+}
+
 #[server]
-pub async fn do_smth() -> Result<String, ServerFnError> {
+pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     let data = expect_context::<ServerData>();
 
-    let file_name = format!("abstractalgebra.json");
+    let file_name = format!("{course}.json");
     log::info!("Reading file: {file_name:?}"); // debug
     // TODO pre-create path
     let file = &std::path::Path::new(&data.data_folder).join("courses").join(&file_name);
     
-    let content = {
+    let json = {
         if let Ok(v) = std::fs::read_to_string(file) {
             v
         } else {
             log::warn!("Could not find course: {file_name}");
-           // return HttpResponse::NotFound().body("Course not found");
-           panic!("sad");
+            panic!("sad");
         }
     };
 
-    log::info!("REad {content}");
-
-    Ok(content)
+    Ok(json)
 }
 
 #[component]
@@ -93,6 +103,7 @@ fn TopBar() -> impl IntoView {
                 </ul>
             </div>
 
+            <Avatar src="/assets/logo.png"/>
             <div id="top-bar-title">Title</div>
         </div>
     }
@@ -100,14 +111,69 @@ fn TopBar() -> impl IntoView {
 
 #[component]
 fn SideBar() -> impl IntoView {
-    let once = create_resource(|| (), |_| async move { do_smth().await });
+    let params = use_params_map();
+    let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
+
+    let once = create_resource(course, get_course_json);
 
     view! {
-        <div id="side-bar">
-            <p>{move || match once.get() {
-                None => view! {}.into_view(),
-                Some(data) => view! { {data} }.into_view()
-            }}</p>
+        <div id="navbar">
+            <div id="navbar-content">
+                <Suspense
+                    fallback=move || view! {
+                        <Skeleton text=true/>
+                        <br></br>
+                        <Skeleton text=true/>
+                        <br></br>
+                        <Skeleton text=true/>
+                        <br></br>
+                        <Skeleton text=true/>
+                        <br></br>
+                        <Skeleton text=true/>
+                        <br></br>
+                        <Skeleton text=true/>
+                        <br></br>
+                        <Skeleton text=true/>
+                    }
+                >
+                    {move || match once.get() {
+                        None => view! {}.into_view(),
+                        Some(res) => {
+                            let json = res.unwrap();
+                            let course: Course = serde_json::from_str(&json).unwrap();
+
+                            course.pages.into_iter()
+                                .map(|page| {
+                                    use crate::app::Page::*;
+                                    let (lvl, title, id) = match page {
+                                        Empty((lvl, title)) => (lvl, title, None),
+                                        Ref((lvl, title, id)) => (lvl, title, Some(id)),
+                                    };
+                                    let lvl_class = format!("nav-title-level-{lvl}");
+                                    let id_str = if let Some(ref id) = id {
+                                        format!("nav-title-{id}")
+                                    } else {
+                                        "".to_string()
+                                    };
+
+                                    view! {
+                                        <span
+                                            class={lvl_class}
+                                            class=("empty-nav-title", id.is_none())
+                                            on:click=move |_| {
+                                                // navigate to page
+                                            }
+                                            id=id_str
+                                            >
+                                            {title}
+                                        </span>
+                                    }
+                                })
+                                .collect_view()
+                        }
+                    }}
+                </Suspense>
+            </div>
         </div>
     }
 }
@@ -120,8 +186,7 @@ fn PageRenderer() -> impl IntoView {
 }
 
 #[component]
-fn HomePage() -> impl IntoView {
-
+fn CoursePage() -> impl IntoView {
     view! {
         <Layout has_sider=true>
             <LayoutSider>
@@ -138,29 +203,6 @@ fn HomePage() -> impl IntoView {
                 </div>
             </Layout>
         </Layout>
-
-        /*<Suspense
-            fallback=move || view! {
-                <Skeleton width="10%" text=true/>
-                <br></br>
-                <Skeleton width="10%" text=true/>
-                <br></br>
-                <Skeleton width="10%" text=true/>
-                <br></br>
-                <Skeleton width="10%" text=true/>
-                <br></br>
-                <Skeleton width="10%" text=true/>
-                <br></br>
-                <Skeleton width="10%" text=true/>
-                <br></br>
-                <Skeleton width="10%" text=true/>
-            }
-        >
-            {move || match once.get() {
-                None => view! {}.into_view(),
-                Some(data) => view! { {data} }.into_view()
-            }}
-        </Suspense>*/
     }
 }
 
@@ -183,5 +225,12 @@ fn NotFound() -> impl IntoView {
 
     view! {
         <h1>"Not Found"</h1>
+    }
+}
+
+#[component]
+fn HomePage() -> impl IntoView {
+    view! {
+        <p>Home page</p>
     }
 }
