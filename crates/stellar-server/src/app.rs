@@ -37,7 +37,27 @@ pub fn App() -> impl IntoView {
 
 #[server]
 pub async fn do_smth() -> Result<String, ServerFnError> {
-    Ok(String::from("HELLOOO"))
+    use crate::data::ServerData;
+    let data = expect_context::<ServerData>();
+
+    let file_name = format!("abstractalgebra.json");
+    log::info!("Reading file: {file_name:?}"); // debug
+    // TODO pre-create path
+    let file = &std::path::Path::new(&data.data_folder).join("courses").join(&file_name);
+    
+    let content = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::warn!("Could not find course: {file_name}");
+           // return HttpResponse::NotFound().body("Course not found");
+           panic!("sad");
+        }
+    };
+
+    log::info!("REad {content}");
+
+    Ok(content)
 }
 
 #[component]
@@ -80,9 +100,14 @@ fn TopBar() -> impl IntoView {
 
 #[component]
 fn SideBar() -> impl IntoView {
+    let once = create_resource(|| (), |_| async move { do_smth().await });
+
     view! {
         <div id="side-bar">
-            "Hello"
+            <p>{move || match once.get() {
+                None => view! {}.into_view(),
+                Some(data) => view! { {data} }.into_view()
+            }}</p>
         </div>
     }
 }
@@ -96,7 +121,6 @@ fn PageRenderer() -> impl IntoView {
 
 #[component]
 fn HomePage() -> impl IntoView {
-    let once = create_resource(|| (), |_| async move { do_smth().await });
 
     view! {
         <Layout has_sider=true>

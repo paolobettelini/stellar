@@ -1,4 +1,4 @@
-use actix_web::{get, post, web, HttpResponse, Responder};
+/*use actix_web::{get, post, web, HttpResponse, Responder};
 
 use std::path::{PathBuf, Path};
 use futures::TryStreamExt;
@@ -253,4 +253,4 @@ fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathB
     }
 
     None
-}
+}*/

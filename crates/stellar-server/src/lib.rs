@@ -11,3 +11,6 @@ pub use server::*;
 #[cfg(feature = "ssr")]
 pub(crate) mod routes;
 pub(crate) mod app;
+
+#[cfg(feature = "ssr")]
+mod data;
