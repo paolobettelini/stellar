@@ -2,7 +2,7 @@
 //import postData from "../utils/utils.js";
 //import nodeScriptReplace from "../utils/utils.js";
 
-export class SnippetElement extends HTMLElement {
+class SnippetElement extends HTMLElement {
     static observedAttributes = [];
   
     constructor() {
@@ -63,6 +63,4 @@ export class SnippetElement extends HTMLElement {
     }
 }
 
-export default function defineSnippetElement() {
-    customElements.define("stellar-snippet", SnippetElement);
-}
+customElements.define("stellar-snippet", SnippetElement);

@@ -10,7 +10,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 const scale = 2.75;
 
 // Asynchronous download of PDF
-export default function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
+function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
     let loadingTask = pdfjsLib.getDocument({ data: buffer });
 
     loadingTask.promise.then(function(pdf) {

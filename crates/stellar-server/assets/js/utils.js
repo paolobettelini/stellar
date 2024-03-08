@@ -1,4 +1,4 @@
-export default async function postData(url = '', data = {}) {
+async function postData(url = '', data = {}) {
     const response = await fetch('/api' + url, {
         method: 'POST',
         cache: 'no-cache',
@@ -11,7 +11,7 @@ export default async function postData(url = '', data = {}) {
 // Taken from https://stackoverflow.com/questions/1197575/can-scripts-be-inserted-with-innerhtml
 // Replaces <script> so they work after doing .innerHTML = ...
 
-export function nodeScriptReplace(node) {
+function nodeScriptReplace(node) {
     if ( nodeScriptIs(node) === true ) {
             node.parentNode.replaceChild( nodeScriptClone(node) , node );
     }

@@ -71,14 +71,35 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
     Ok(json)
 }
 
+#[server]
+pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
+    if page.is_empty() {
+        return Ok(String::from(""));
+    }
+
+    use crate::data::ServerData;
+    let data = expect_context::<ServerData>();
+
+    let file_name = format!("{page}.html");
+    log::info!("Reading file: {file_name:?}");
+    // TODO pre-create path
+    let file = &std::path::Path::new(&data.data_folder).join("pages").join(&file_name);
+    let content = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::warn!("Could not find page: {file_name}");
+            panic!("sad");
+        }
+    };
+
+    Ok(content)
+}
+
 #[component]
-fn TopBar(
-    set_page: WriteSignal<String>,
-) -> impl IntoView {
+fn TopBar() -> impl IntoView {
     let theme = use_context::<RwSignal<Theme>>().unwrap();
     let (themes_hidden, set_themes_hidden) = create_signal(true);
-
-    set_page.set(String::from("overrideden"));
 
     // https://carlosted.github.io/icondata/
 
@@ -114,7 +135,9 @@ fn TopBar(
 }
 
 #[component]
-fn Navbar() -> impl IntoView { // todo call navbar
+fn Navbar(
+    set_page: WriteSignal<String>,
+) -> impl IntoView {
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
 
@@ -146,6 +169,9 @@ fn Navbar() -> impl IntoView { // todo call navbar
                             let json = res.unwrap();
                             let course: Course = serde_json::from_str(&json).unwrap();
 
+                            // Flag to set the first page
+                            let mut first_page_found = false;
+
                             course.pages.into_iter()
                                 .map(|page| {
                                     use crate::app::Page::*;
@@ -153,6 +179,7 @@ fn Navbar() -> impl IntoView { // todo call navbar
                                         Empty((lvl, title)) => (lvl, title, None),
                                         Ref((lvl, title, id)) => (lvl, title, Some(id)),
                                     };
+                                    let id_is_none = id.is_none();
                                     let lvl_class = format!("nav-title-level-{lvl}");
                                     let id_str = if let Some(ref id) = id {
                                         format!("nav-title-{id}")
@@ -160,12 +187,22 @@ fn Navbar() -> impl IntoView { // todo call navbar
                                         "".to_string()
                                     };
 
+                                    /*if !first_page_found {
+                                        if let Some(ref id) = id {
+                                            set_page.set(id.to_string());
+                                            first_page_found = true;
+                                        }
+                                    }*/
+
                                     view! {
                                         <span
                                             class={lvl_class}
-                                            class=("empty-nav-title", id.is_none())
+                                            class=("empty-nav-title", id_is_none)
                                             on:click=move |_| {
-                                                // navigate to page
+                                                if let Some(id) = &id {
+                                                    // Update page
+                                                    set_page.set(id.to_string());
+                                                }
                                             }
                                             id=id_str
                                             >
@@ -186,30 +223,57 @@ fn Navbar() -> impl IntoView { // todo call navbar
 fn PageRenderer(
     page: ReadSignal<String>,
 ) -> impl IntoView {
+    let once = create_resource(page, |page| async move { get_page_html(page).await });    
+
     view! {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
         <script src="/assets/js/load-pdf.js" />
         <script src="/assets/js/utils.js" />
         <script src="/assets/js/snippet.js" />
 
+        <Suspense
+            fallback=move || view! {
+                <Skeleton text=true/>
+                <br></br>
+            }
+        >
+            {move || match once.get() {
+                None => view! {}.into_view(),
+                Some(res) => {
+                    if let Ok(content) = res {
+                        if !content.is_empty() {
+                            view! {
+                                <div id="inner-content" inner_html=content>
+                                </div>
+                            }.into_view()
+                        } else {
+                            view! {}.into_view()    
+                        }
+                    } else {
+                        view! {}.into_view()
+                    }
+                }
+            }}
+        </Suspense>
+
         <h1>"Currenctly rendering page: !"</h1>
-        {page}
+        
     }
 }
 
 #[component]
 fn CoursePage() -> impl IntoView {
-    let (page, set_page) = create_signal("integers".to_string());
+    let (page, set_page) = create_signal("".to_string());
 
     view! {
         <Layout has_sider=true>
             <LayoutSider>
-                <Navbar />
+                <Navbar set_page />
             </LayoutSider>
             <Layout>
                 <div id="right-side-container">
                     <LayoutHeader>
-                        <TopBar set_page />
+                        <TopBar />
                     </LayoutHeader>
                     <Layout>
                         <PageRenderer page />
