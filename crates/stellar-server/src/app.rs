@@ -72,9 +72,13 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
 }
 
 #[component]
-fn TopBar() -> impl IntoView {
+fn TopBar(
+    set_page: WriteSignal<String>,
+) -> impl IntoView {
     let theme = use_context::<RwSignal<Theme>>().unwrap();
     let (themes_hidden, set_themes_hidden) = create_signal(true);
+
+    set_page.set(String::from("overrideden"));
 
     // https://carlosted.github.io/icondata/
 
@@ -179,19 +183,24 @@ fn Navbar() -> impl IntoView { // todo call navbar
 }
 
 #[component]
-fn PageRenderer() -> impl IntoView {
+fn PageRenderer(
+    page: ReadSignal<String>,
+) -> impl IntoView {
     view! {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
         <script src="/assets/js/load-pdf.js" />
         <script src="/assets/js/utils.js" />
         <script src="/assets/js/snippet.js" />
 
-        <h1>"Welcome to Leptos!"</h1>
+        <h1>"Currenctly rendering page: !"</h1>
+        {page}
     }
 }
 
 #[component]
 fn CoursePage() -> impl IntoView {
+    let (page, set_page) = create_signal("integers".to_string());
+
     view! {
         <Layout has_sider=true>
             <LayoutSider>
@@ -200,10 +209,10 @@ fn CoursePage() -> impl IntoView {
             <Layout>
                 <div id="right-side-container">
                     <LayoutHeader>
-                        <TopBar />
+                        <TopBar set_page />
                     </LayoutHeader>
                     <Layout>
-                        <PageRenderer />
+                        <PageRenderer page />
                     </Layout>
                 </div>
             </Layout>
