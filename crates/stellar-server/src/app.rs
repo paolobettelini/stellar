@@ -12,9 +12,10 @@ pub fn App() -> impl IntoView {
     provide_context(theme);
 
     view! {
-        // injects a stylesheet into the document <head>
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/stellar.css"/>
+
+    //    <!-- Computer Modern (LaTeX) font-->
+    // <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css">
 
         // sets the document title
         <Title text="Welcome to Leptoss"/>
@@ -180,6 +181,11 @@ fn Navbar() -> impl IntoView { // todo call navbar
 #[component]
 fn PageRenderer() -> impl IntoView {
     view! {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+        <script src="/assets/js/load-pdf.js" />
+        <script src="/assets/js/utils.js" />
+        <script src="/assets/js/snippet.js" />
+
         <h1>"Welcome to Leptos!"</h1>
     }
 }
