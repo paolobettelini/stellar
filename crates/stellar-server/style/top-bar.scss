@@ -1,0 +1,54 @@
+#top-bar {
+	padding: 16px 0px 6px 0px;
+
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+  
+	border-width: 0 0 2px 0;
+	border-style: solid;
+	border-color: rgba(18, 18, 18, 100%);
+	border-radius: 0;
+}
+  
+#top-bar i {
+	text-align: center;
+}
+
+#top-bar-icons {
+	flex: 1;
+	display: flex;
+	gap: 24px;
+
+	font-size: 28px;
+}
+
+#top-bar-title {
+	flex: 30;
+	display: flex;
+	font-size: 28px;
+	justify-content: center;
+	text-transform: uppercase;
+	opacity: 0.65;
+}
+
+#top-bar-icons i {
+	opacity: 50%;
+	transition: opacity 0.1s ease;
+	width: 40px;
+	/*height: 40px;*/
+	cursor: pointer;
+}
+
+#top-bar-icons i:hover {
+	opacity: 100%;
+}
+
+#theme-list {
+	list-style-type: none; /* Remove bullets */
+	position: absolute;
+	padding: 15px;
+	border: 1px solid black;
+	background: white;
+	top: 50px;
+}
