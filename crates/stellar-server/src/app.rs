@@ -226,7 +226,7 @@ fn PageRenderer(
     let once = create_resource(page, |page| async move { get_page_html(page).await });    
 
     view! {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js" />
         <script src="/assets/js/load-pdf.js" />
         <script src="/assets/js/utils.js" />
         <script src="/assets/js/snippet.js" />

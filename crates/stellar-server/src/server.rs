@@ -51,6 +51,7 @@ pub async fn start_server(
 
     HttpServer::new(move || {
         let data = data.clone();
+        let data2 = data.clone();
         let site_root = &leptos_options.site_root;
 
         App::new()
@@ -61,8 +62,8 @@ pub async fn start_server(
             //.service(universe_service)
             //.service(course_service)
             //.service(page_service)
-            //.service(snippet_service)
-            //.service(snippet_complementary_service)
+            .service(snippet_service)
+            .service(snippet_complementary_service)
             // Static files
             //.service(index)
             //.service(search_html)
@@ -86,7 +87,7 @@ pub async fn start_server(
                 App
             )
             // Data
-            //.app_data(web::Data::new(data.clone()))
+            .app_data(web::Data::new(data2))
     })
     .bind(listen_addr)?
     .run()
