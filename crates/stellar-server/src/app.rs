@@ -148,19 +148,8 @@ fn Navbar(
             <div id="navbar-content">
                 <Suspense
                     fallback=move || view! {
-                        <Skeleton text=true/>
+                        <Skeleton repeat=10 text=true/>
                         <br></br>
-                        <Skeleton text=true/>
-                        <br></br>
-                        <Skeleton text=true/>
-                        <br></br>
-                        <Skeleton text=true/>
-                        <br></br>
-                        <Skeleton text=true/>
-                        <br></br>
-                        <Skeleton text=true/>
-                        <br></br>
-                        <Skeleton text=true/>
                     }
                 >
                     {move || match once.get() {
