@@ -2,10 +2,23 @@ use leptos::*;
 use leptos_router::*;
 use thaw::*;
 
-use crate::app::{get_course_json, Course};
+use crate::app::get_course_json;
+
+#[derive(serde::Deserialize)]
+struct Course {
+    title: String,
+    pages: Vec<Page>,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(untagged)]
+enum Page {
+    Empty((u8, String)),
+    Ref((u8, String, String)),
+}
 
 #[component]
-pub fn Navbar(set_page: WriteSignal<String>) -> impl IntoView {
+pub fn Navbar(page_sig: RwSignal<String>) -> impl IntoView {
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
 
@@ -28,14 +41,13 @@ pub fn Navbar(set_page: WriteSignal<String>) -> impl IntoView {
                             let course: Course = serde_json::from_str(&json).unwrap();
 
                             // Flag to set the first page
-                            let first_page_found = false;
+                            let mut first_page_found = false;
 
                             course.pages.into_iter()
                                 .map(|page| {
-                                    use crate::app::Page::*;
                                     let (lvl, title, id) = match page {
-                                        Empty((lvl, title)) => (lvl, title, None),
-                                        Ref((lvl, title, id)) => (lvl, title, Some(id)),
+                                        Page::Empty((lvl, title)) => (lvl, title, None),
+                                        Page::Ref((lvl, title, id)) => (lvl, title, Some(id)),
                                     };
                                     let id_is_none = id.is_none();
                                     let lvl_class = format!("nav-title-level-{lvl}");
@@ -44,10 +56,11 @@ pub fn Navbar(set_page: WriteSignal<String>) -> impl IntoView {
                                     } else {
                                         "".to_string()
                                     };
+                                    let id_clone = id.clone();
 
                                     /*if !first_page_found {
-                                        if let Some(ref id) = id {
-                                            set_page.set(id.to_string());
+                                        if let Some(id) = id.clone() {
+                                            page_sig.update(id.to_string());
                                             first_page_found = true;
                                         }
                                     }*/
@@ -57,10 +70,16 @@ pub fn Navbar(set_page: WriteSignal<String>) -> impl IntoView {
                                             class="nav-title"
                                             class={lvl_class}
                                             class=("empty-nav-title", id_is_none)
+                                            class=("active", move || {
+                                                if let Some(id) = id_clone.clone() {
+                                                    return id == page_sig()
+                                                }
+                                                return false;
+                                            })
                                             on:click=move |_| {
                                                 if let Some(id) = &id {
                                                     // Update page
-                                                    set_page.set(id.to_string());
+                                                    page_sig.set(id.to_string());
                                                 }
                                             }
                                             id=id_str

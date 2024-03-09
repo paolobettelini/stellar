@@ -4,11 +4,12 @@ use crate::app::{Navbar, PageRenderer, Topbar};
 
 #[component]
 pub fn CoursePage() -> impl IntoView {
-    let (page, set_page) = create_signal("".to_string());
+    let page_sig = create_rw_signal("".to_string());
+    let page = page_sig.read_only();
 
     view! {
         <div class="course-container">
-            <Navbar set_page />
+            <Navbar page_sig />
 
             <div class="course-body">
                 <div class="course-topbar">
