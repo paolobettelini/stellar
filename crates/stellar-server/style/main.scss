@@ -1,6 +1,7 @@
 @import 'navbar.scss';
 @import 'top-bar.scss';
-@import 'page.scss';
+@import 'page-renderer.scss';
+@import 'course-view.scss';
 @import 'pdf_viewer.scss';
 
 body {
@@ -25,8 +26,29 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-/* Course page */
-#right-side-container {
-	padding-left: 2.5%;
-	padding-right: 2.5%;
+/* MathJax not yet used */
+.MathJax {
+	font-style: italic;
+	font-size: 0.9em;
 }
+
+#content, h1, h2, h3, h4, h5, h6 {
+	/*color: var(--col1);*/
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+	/*color: var(--col1);*/
+	text-decoration: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+	overflow: hidden;
+  }
+  

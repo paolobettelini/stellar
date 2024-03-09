@@ -145,6 +145,7 @@ fn Navbar(
 
     view! {
         <div id="navbar">
+            <img style="padding-left: 10px; padding-top: 10px" src="/assets/logo.png" width="64px" height="64px" />
             <div id="navbar-content">
                 <Suspense
                     fallback=move || view! {
@@ -244,9 +245,6 @@ fn PageRenderer(
                 }
             }}
         </Suspense>
-
-        <h1>"Currenctly rendering page: !"</h1>
-        
     }
 }
 
@@ -255,21 +253,18 @@ fn CoursePage() -> impl IntoView {
     let (page, set_page) = create_signal("".to_string());
 
     view! {
-        <Layout has_sider=true>
-            <LayoutSider>
-                <Navbar set_page />
-            </LayoutSider>
-            <Layout>
-                <div id="right-side-container">
-                    <LayoutHeader>
-                        <TopBar />
-                    </LayoutHeader>
-                    <Layout>
-                        <PageRenderer page />
-                    </Layout>
+        <div class="course-container">
+            <Navbar set_page />
+            
+            <div class="course-body">
+                <div class="course-topbar">
+                    <TopBar />
                 </div>
-            </Layout>
-        </Layout>
+                <div class="course-content">
+                    <PageRenderer page />
+                </div>
+            </div>
+        </div>
     }
 }
 
