@@ -18,5 +18,7 @@ pacman -S python-pdfminer python-pymupdf
 
 # Dev
 ```bash
-cargo leptos watch [--release] -- web ...
+cargo leptos watch -- web ...
 ```
+Do not use `--port` or `--address` in development,
+set those values in the `Cargo.toml` instead.

@@ -30,7 +30,7 @@ lib-package = "stellar-server"
 style-file = "crates/stellar-server/style/main.scss"
 assets-dir = "crates/stellar-server/assets"
 
-reload-port = 3080
+reload-port = 8081
 
 # Set by cargo-leptos watch when building with that tool. Controls whether autoreload JS will be included in the head
 watch = false
@@ -45,8 +45,8 @@ lib-default-features = false
 # to the compilation mode (debug or release).
 # env = "DEV"
 
-# Disabled: stellar uses --address and --port instead
-# site-addr = "0.0.0.0:8080"
+# use --address and --port instead for the release version
+site-addr = "0.0.0.0:8080"
 
 # The following two options are hardcoded in the stellar-server lib,
 # so make sure to update it there aswell if you were to change these.
