@@ -3,7 +3,7 @@ use leptos::*;
 use thaw::*;
 
 #[component]
-pub fn Topbar() -> impl IntoView {
+pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
     let theme = use_context::<RwSignal<Theme>>().unwrap();
     let (themes_hidden, set_themes_hidden) = create_signal(true);
 
@@ -35,7 +35,7 @@ pub fn Topbar() -> impl IntoView {
                 </ul>
             </div>
 
-            <div id="top-bar-title">Title</div>
+            <div id="top-bar-title">{title}</div>
         </div>
     }
 }
