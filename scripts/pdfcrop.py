@@ -15,8 +15,8 @@ def crop_and_redact_pdf(input_pdf, output_pdf, y1, y2, right_margin, left_margin
     page_original_height = page.cropbox.height
     page_original_width = page.cropbox.width
 
-    x1 = right_margin
-    x2 = page_original_width - left_margin
+    x1 = left_margin
+    x2 = page_original_width - right_margin
 
     y1,y2 = y2,y1
     snippet_height = y2 - y1
