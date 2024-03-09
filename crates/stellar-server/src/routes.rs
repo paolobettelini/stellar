@@ -1,11 +1,14 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 
-use std::path::{PathBuf, Path};
-use futures::TryStreamExt;
 use crate::data::ServerData;
+use futures::TryStreamExt;
+use std::path::{Path, PathBuf};
 
 #[post("/api/snippet/{snippet}")]
-async fn snippet_service(data: web::Data<ServerData>, snippet: web::Path<String>) -> impl Responder {
+async fn snippet_service(
+    data: web::Data<ServerData>,
+    snippet: web::Path<String>,
+) -> impl Responder {
     let snippet = snippet.to_string();
     // TODO pre-create path
     let dir = &Path::new(&data.data_folder).join("snippets").join(&snippet);
@@ -29,7 +32,6 @@ async fn snippet_service(data: web::Data<ServerData>, snippet: web::Path<String>
         }
     };
 
-
     HttpResponse::Ok().content_type(content_type).body(content)
 }
 
@@ -49,7 +51,10 @@ fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathB
 }
 
 #[get("/api/snippet/{snippet}/{file_name:.*}")]
-async fn snippet_complementary_service(data: web::Data<ServerData>, params: web::Path<(String, String)>) -> impl Responder {
+async fn snippet_complementary_service(
+    data: web::Data<ServerData>,
+    params: web::Path<(String, String)>,
+) -> impl Responder {
     let snippet = &params.0;
     let file_name = &params.1;
     // TODO pre-create path

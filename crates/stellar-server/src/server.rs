@@ -1,11 +1,11 @@
 #![cfg(feature = "ssr")]
 
+use crate::app::App;
+use crate::routes::*;
 use actix_web::{web, App, HttpServer};
 use std::net::IpAddr;
 use std::path::PathBuf;
 use stellar_database::*;
-use crate::routes::*;
-use crate::app::App;
 
 pub async fn start_server(
     address: IpAddr,
@@ -13,13 +13,13 @@ pub async fn start_server(
     connection_url: &str,
     data_folder: PathBuf,
 ) -> anyhow::Result<()> {
+    use actix_files::Files;
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
-    use actix_files::Files;
 
     let client = ClientHandler::new(connection_url).await?;
     let _ = client.create_indexes().await;
-    
+
     use crate::data::ServerData;
     let data = ServerData {
         client,
@@ -33,7 +33,7 @@ pub async fn start_server(
         Err(err) => {
             log::error!("{:#?}", err);
             panic!("Error in leptos config file")
-        },
+        }
     };
     leptos_options.site_addr = std::net::SocketAddr::new(address, port);
     leptos_options.env = if cfg!(debug_assertions) {
@@ -84,7 +84,7 @@ pub async fn start_server(
                 leptos_options.to_owned(),
                 routes.to_owned(),
                 move || provide_context(data.clone()),
-                App
+                App,
             )
             // Data
             .app_data(web::Data::new(data2))

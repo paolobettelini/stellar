@@ -1,15 +1,12 @@
 use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
+
 use thaw::*;
 
 use crate::app::get_page_html;
 
 #[component]
-pub fn PageRenderer(
-    page: ReadSignal<String>,
-) -> impl IntoView {
-    let once = create_resource(page, |page| async move { get_page_html(page).await });    
+pub fn PageRenderer(page: ReadSignal<String>) -> impl IntoView {
+    let once = create_resource(page, |page| async move { get_page_html(page).await });
 
     view! {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js" />
@@ -33,7 +30,7 @@ pub fn PageRenderer(
                                 </div>
                             }.into_view()
                         } else {
-                            view! {}.into_view()    
+                            view! {}.into_view()
                         }
                     } else {
                         view! {}.into_view()

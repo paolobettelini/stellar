@@ -5,9 +5,7 @@ use thaw::*;
 use crate::app::{get_course_json, Course};
 
 #[component]
-pub fn Navbar(
-    set_page: WriteSignal<String>,
-) -> impl IntoView {
+pub fn Navbar(set_page: WriteSignal<String>) -> impl IntoView {
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
 
@@ -30,7 +28,7 @@ pub fn Navbar(
                             let course: Course = serde_json::from_str(&json).unwrap();
 
                             // Flag to set the first page
-                            let mut first_page_found = false;
+                            let first_page_found = false;
 
                             course.pages.into_iter()
                                 .map(|page| {

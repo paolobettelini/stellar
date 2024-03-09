@@ -1,5 +1,5 @@
 use leptos::*;
-use leptos_router::*;
+
 use thaw::*;
 
 #[component]

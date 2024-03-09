@@ -1,12 +1,7 @@
-use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
-use thaw::*;
-
-mod not_found;
-mod home;
 mod course;
+mod home;
+mod not_found;
 
 pub use course::*;
-pub use not_found::*;
 pub use home::*;
+pub use not_found::*;

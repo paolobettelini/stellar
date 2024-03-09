@@ -51,7 +51,7 @@ struct Course {
 #[serde(untagged)]
 enum Page {
     Empty((u8, String)),
-    Ref((u8, String, String))
+    Ref((u8, String, String)),
 }
 
 #[server]
@@ -61,9 +61,11 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
 
     let file_name = format!("{course}.json");
     log::info!("Reading file: {file_name:?}"); // debug
-    // TODO pre-create path
-    let file = &std::path::Path::new(&data.data_folder).join("courses").join(&file_name);
-    
+                                               // TODO pre-create path
+    let file = &std::path::Path::new(&data.data_folder)
+        .join("courses")
+        .join(&file_name);
+
     let json = {
         if let Ok(v) = std::fs::read_to_string(file) {
             v
@@ -88,7 +90,9 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     let file_name = format!("{page}.html");
     log::info!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &std::path::Path::new(&data.data_folder).join("pages").join(&file_name);
+    let file = &std::path::Path::new(&data.data_folder)
+        .join("pages")
+        .join(&file_name);
     let content = {
         if let Ok(v) = std::fs::read_to_string(file) {
             v

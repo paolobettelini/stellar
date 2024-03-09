@@ -1,9 +1,6 @@
 use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
-use thaw::*;
 
-use crate::app::{Navbar, Topbar, PageRenderer};
+use crate::app::{Navbar, PageRenderer, Topbar};
 
 #[component]
 pub fn CoursePage() -> impl IntoView {
@@ -12,7 +9,7 @@ pub fn CoursePage() -> impl IntoView {
     view! {
         <div class="course-container">
             <Navbar set_page />
-            
+
             <div class="course-body">
                 <div class="course-topbar">
                     <Topbar />
