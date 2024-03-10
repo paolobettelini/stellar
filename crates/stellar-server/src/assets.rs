@@ -24,7 +24,8 @@ pub(crate) fn handle_static_file(path: &str) -> HttpResponse {
 
 #[cfg(debug_assertions)]
 pub(crate) fn handle_static_file(path: &str) -> HttpResponse {
-    let path = Path::new(path);
+    let site_root = env!("LEPTOS_SITE_ROOT");
+    let path = Path::new(site_root).join(path);
     match std::fs::read(&path) {
         Ok(content) => HttpResponse::Ok()
             .content_type(from_path(path).first_or_octet_stream().as_ref())
