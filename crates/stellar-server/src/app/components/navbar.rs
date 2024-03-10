@@ -27,6 +27,8 @@ pub fn Navbar(
 
     let once = create_resource(course, get_course_json);
 
+    // TODO: show hamburger only if an optional signal is passed
+
     view! {
         <div id="navbar">
             <img style="padding-left: 10px; padding-top: 10px" src="/assets/logo.png" width="64px" height="64px" />

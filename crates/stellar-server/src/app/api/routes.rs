@@ -45,7 +45,7 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
             v
         } else {
             log::warn!("Could not find page: {file_name}");
-            panic!("sad");
+            panic!("Could not find {file:?}");
         }
     };
 

@@ -1,5 +1,4 @@
 use leptos::*;
-
 use thaw::*;
 
 use crate::app::get_page_html;
