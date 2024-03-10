@@ -1,7 +1,9 @@
-@import 'navbar.scss';
-@import 'top-bar.scss';
-@import 'page-renderer.scss';
-@import 'course-view.scss';
+@import 'components/navbar.scss';
+@import 'components/topbar.scss';
+@import 'components/page_renderer.scss';
+@import 'components/universe_renderer.scss';
+
+@import 'pages/course.scss';
 @import 'pdf_viewer.scss';
 
 body {
