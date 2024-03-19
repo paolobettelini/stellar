@@ -103,7 +103,10 @@ pub fn extract_parenthesis(text: &str, open: char, end: char) -> &str {
             break;
         }
 
-        length += 1;
+        // This is wrong as a char may be more than one byte long
+        // length += 1;
+
+        length += c.len_utf8();
     }
 
     &text[1..length]
