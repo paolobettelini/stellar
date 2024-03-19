@@ -26,6 +26,30 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
 }
 
 #[server]
+pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    let data = expect_context::<ServerData>();
+
+    let file_name = format!("{universe}.json");
+    log::info!("Reading file: {file_name:?}"); // debug
+                                               // TODO pre-create path
+    let file = &Path::new(&data.data_folder)
+        .join("universes")
+        .join(&file_name);
+
+    let json = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::warn!("Could not find universe: {file_name}");
+            panic!("sad");
+        }
+    };
+
+    Ok(json)
+}
+
+#[server]
 pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     if page.is_empty() {

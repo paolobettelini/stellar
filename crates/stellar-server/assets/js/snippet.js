@@ -1,7 +1,3 @@
-// import loadPDF from "../utils/load-pdf.js";
-//import postData from "../utils/utils.js";
-//import nodeScriptReplace from "../utils/utils.js";
-
 class SnippetElement extends HTMLElement {
     static observedAttributes = [];
   
