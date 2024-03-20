@@ -9,8 +9,6 @@ canvas.height = canvasContainer.clientHeight;
 ctx.strokeStyle = 'red';
 ctx.lineWidth = "3";
 
-// renderUniverse(universe.value);
-
 //// Rendering code ////
 
 const DEFAULT_COURSE_COLOR = "#3498db";

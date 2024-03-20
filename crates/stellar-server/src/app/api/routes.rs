@@ -1,6 +1,7 @@
 use leptos::*;
 use std::path::Path;
 
+// POST /course/{course}
 #[server]
 pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
@@ -25,6 +26,7 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
     Ok(json)
 }
 
+// POST /universe/{universe}
 #[server]
 pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
@@ -49,6 +51,7 @@ pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError
     Ok(json)
 }
 
+// POST /page/{page}
 #[server]
 pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
@@ -74,4 +77,80 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     };
 
     Ok(content)
+}
+
+// POST /query/snippet/{keyword}
+#[server]
+pub async fn query_snippet(keyword: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    use futures::TryStreamExt;
+
+    let data = expect_context::<ServerData>();
+
+    let mut cursor = data.client.query_snippets(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    Ok(json)
+}
+
+// POST /query/page/{keyword}
+#[server]
+pub async fn query_page(keyword: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    use futures::TryStreamExt;
+
+    let data = expect_context::<ServerData>();
+
+    let mut cursor = data.client.query_pages(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    Ok(json)
+}
+
+// POST /query/course/{keyword}
+#[server]
+pub async fn query_course(keyword: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    use futures::TryStreamExt;
+
+    let data = expect_context::<ServerData>();
+
+    let mut cursor = data.client.query_courses(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    Ok(json)
+}
+
+// POST /query/universe/{keyword}
+#[server]
+pub async fn query_universe(keyword: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    use futures::TryStreamExt;
+
+    let data = expect_context::<ServerData>();
+
+    let mut cursor = data.client.query_universes(&keyword).await.unwrap();
+
+    let mut vec = Vec::new();
+    while let Some(document) = cursor.try_next().await.unwrap() {
+        vec.push(document);
+    }
+    let json = serde_json::to_string(&vec).unwrap();
+
+    Ok(json)
 }
