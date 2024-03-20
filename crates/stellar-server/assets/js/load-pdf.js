@@ -49,10 +49,11 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
                 let height = canvas.height;
                 let width = canvas.width;
 
+                textLayerDiv.style.position = 'absolute';
                 textLayerDiv.style.width = width;
                 textLayerDiv.style.height = height;
-                textLayerDiv.style.left = canvas.offsetLeft; // non è meglio usare getBoundingClientRect? (absolute offset)
-                textLayerDiv.style.top = canvas.offsetTop;
+                textLayerDiv.style.left = canvas.offsetLeft + 'px';
+                textLayerDiv.style.top = canvas.offsetTop + 'px';
 
                 pdfjsLib.renderTextLayer({
                     textContentSource: textContent,
@@ -63,7 +64,7 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
             })
 
             // Render annotations on textLayer
-            setupAnnotations(page, viewport, textLayerDiv)
+            //setupAnnotations(page, viewport, textLayerDiv)
         });
     }, function (reason) {
         // PDF loading error
