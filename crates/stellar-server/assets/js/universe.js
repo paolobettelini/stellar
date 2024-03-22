@@ -1,24 +1,31 @@
-let canvas = document.getElementById('canvas');
-let ctx = canvas.getContext('2d');
-let content = document.getElementById('universe-content');
-let canvasContainer = document.getElementById('canvas-container');
-
-canvas.width = canvasContainer.clientWidth;
-canvas.height = canvasContainer.clientHeight;
-
-ctx.strokeStyle = 'red';
-ctx.lineWidth = "3";
+let canvas;
+let ctx;
+let content;
+let canvasContainer;
 
 //// Rendering code ////
 
 const DEFAULT_COURSE_COLOR = "#3498db";
 
-export function render_universe(universe) {
-    //clearCanvas();
-    //content.innerHTML = '';
+export function render_universe(universe){
+    canvas = document.getElementById('universe-canvas');
+    ctx = canvas.getContext('2d');
+    content = document.getElementById('universe-content');
+    canvasContainer = document.getElementById('canvas-container');
 
-    renderCourses(universe.courses);
-    renderDependencies(universe.dependencies);
+    canvas.width = canvasContainer.clientWidth;
+    canvas.height = canvasContainer.clientHeight;
+    
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = "3";
+
+    let json = JSON.parse(universe);
+
+    console.log("rendering 1")
+    renderCourses(json.courses);
+    console.log("rendering 2")
+    renderDependencies(json.dependencies);
+    console.log("rendering 3")
 }
 
 function renderCourses(courses) {

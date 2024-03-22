@@ -10,7 +10,7 @@ pub fn UniversePage() -> impl IntoView {
     let (universe, _set_title) = create_signal(universe().to_string());
 
     view! {
-        <p>Universe page {universe}</p>
+        <p>Universe page</p>
         <UniverseRenderer universe />
     }
 }

@@ -1,6 +1,12 @@
 use leptos::*;
 use thaw::*;
 use crate::app::get_universe_json;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen(module = "/assets/js/universe.js")]
+extern "C" {
+    pub fn render_universe(universe: String);
+}
 
 #[component]
 pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
@@ -14,8 +20,6 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
         <div id="universe-content">
         </div>
 
-        <script src="/assets/js/universe.js" />
-
         <Suspense
             fallback=move || view! {}
         >
@@ -24,6 +28,9 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                 Some(res) => {
                     if let Ok(content) = res {
                         if !content.is_empty() {
+                            #[cfg(feature = "hydrate")]
+                            render_universe(content);
+
                             view! {}.into_view()
                         } else {
                             view! {}.into_view()
