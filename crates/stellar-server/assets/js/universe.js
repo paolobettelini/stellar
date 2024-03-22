@@ -21,11 +21,8 @@ export function render_universe(universe){
 
     let json = JSON.parse(universe);
 
-    console.log("rendering 1")
     renderCourses(json.courses);
-    console.log("rendering 2")
     renderDependencies(json.dependencies);
-    console.log("rendering 3")
 }
 
 function renderCourses(courses) {

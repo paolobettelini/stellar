@@ -12,7 +12,7 @@ pub fn PageRenderer(page: ReadSignal<String>) -> impl IntoView {
         <script src="/assets/js/load-pdf.js" />
         <script src="/assets/js/utils.js" />
         <script src="/assets/js/snippet.js" />
-
+        
         <Suspense
             fallback=move || view! {
                 <Skeleton text=true/>
