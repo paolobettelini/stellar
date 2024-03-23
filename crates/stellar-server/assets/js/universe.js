@@ -36,6 +36,7 @@ function renderCourse(course) {
     let div = document.createElement('div');
 
     title.innerHTML = course.name;
+    title.target = "_blank"; // Temporary because leptos doesn't know about this <a>
     let titleId = `course-${course.id}`;
     title.id = titleId; // course-<id>;
     title.href = `/course/${course.id}`;
