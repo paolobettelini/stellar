@@ -127,7 +127,7 @@ async fn process_cmd(
 
             // Add generated snippet to HTML page
             if let Some(id) = &processor.current_id {
-                let snippet = format!("<snippet>{id}</snippet>\n");
+                let snippet = format!("<stellar-snippet>{id}</stellar-snippet>\n");
                 processor.html_page.push_str(&snippet);
             }
 
@@ -152,12 +152,12 @@ async fn process_cmd(
         }
         Include(id) => {
             // Add snippet id to HTML page
-            let snippet = format!("<snippet>{id}</snippet>\n");
+            let snippet = format!("<stellar-snippet>{id}</stellar-snippet>\n");
             processor.html_page.push_str(&snippet);
         }
         Plain(text) => {
-            // TODO: maybe you need to replace \\ with <br> ?
             // Add snippet id to HTML page
+            processor.html_page.push_str("<br>");
             processor.html_page.push_str(&text);
         }
     }

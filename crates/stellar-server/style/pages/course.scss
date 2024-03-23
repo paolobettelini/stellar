@@ -1,0 +1,25 @@
+.course-container {
+    height: 100vh;
+
+    display: flex;
+    overflow: hidden;
+}
+.course-body {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-flow: column;
+
+    margin-left: 50px;
+}
+.course-topbar {
+    margin-right: 50px;
+    margin-bottom: 0px;
+}
+.course-content {
+    height: 100%;
+    overflow-y: scroll;
+
+    /*background-color: rebeccapurple;*/
+}

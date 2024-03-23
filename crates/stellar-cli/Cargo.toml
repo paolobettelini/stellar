@@ -16,5 +16,5 @@ tokio = "1.29.1"
 
 stellar-import = { path = "../stellar-import" }
 stellar-generate = { path = "../stellar-generate" }
-stellar-server = { path = "../stellar-server" }
+stellar-server = { path = "../stellar-server", features = ["ssr"]}
 stellar-compile = { path = "../stellar-compile" }
