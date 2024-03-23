@@ -3,6 +3,7 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 use crate::data::ServerData;
 use futures::TryStreamExt;
 use std::path::{Path, PathBuf};
+use mime_guess::from_path;
 
 // TODO: Move the following routes to leptos server functions
 
@@ -67,19 +68,8 @@ async fn snippet_complementary_service(
     log::debug!("Reading file: {file:?}");
 
     let content = std::fs::read(file).unwrap();
-    // TODO this is temporary
-    // use mime_guess::from_path;
-    let content_type = if file_name.ends_with("html") {
-        "text/html"
-    } else if file_name.ends_with("wasm") {
-        "application/wasm"
-    } else if file_name.ends_with("js") {
-        "text/javascript"
-    } else if file_name.ends_with("css") {
-        "text/css"
-    } else {
-        panic!("Content type not implemented");
-    };
 
-    HttpResponse::Ok().content_type(content_type).body(content)
+    HttpResponse::Ok()
+        .content_type(from_path(file_name).first_or_octet_stream().as_ref())
+        .body(content)
 }

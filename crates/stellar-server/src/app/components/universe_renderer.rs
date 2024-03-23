@@ -99,7 +99,7 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                                         style:left=move || format!("{}%", left)
                                         style:top=move || format!("{}%", top)
                                         style:background-color=move || format!("{}", color1)
-                                        style:box-shadow=move || format!("0 0 10px {}83", color2)
+                                        style:box-shadow=move || format!("0 0 10px {}", color2)
                                         style:border=move || format!("2px solid {}", color3)
                                     >{course.name}</a>
                                 }
