@@ -31,7 +31,7 @@ icondata_fa = "0.0.10"
 icondata_ai = "0.0.10"
 icondata = "0.3.0"
 serde = "1.0.197"
-web-sys = "0.3.69"
+web-sys = { version = "0.3.69", features = ["CanvasRenderingContext2d"] }
 
 [features]
 hydrate = [

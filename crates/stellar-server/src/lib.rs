@@ -10,9 +10,9 @@ pub use server::*;
 
 pub(crate) mod app;
 #[cfg(feature = "ssr")]
-pub(crate) mod routes;
-#[cfg(feature = "ssr")]
 pub(crate) mod assets;
+#[cfg(feature = "ssr")]
+pub(crate) mod routes;
 
 #[cfg(feature = "ssr")]
 mod data;

@@ -3,13 +3,13 @@ use leptos_meta::*;
 use leptos_router::*;
 use thaw::*;
 
+mod api;
 mod components;
 mod pages;
-mod api;
 
+pub use api::*;
 pub use components::*;
 pub use pages::*;
-pub use api::*;
 
 #[component]
 pub fn App() -> impl IntoView {

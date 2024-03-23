@@ -1,9 +1,9 @@
 #![cfg(feature = "ssr")]
 
-use rust_embed::RustEmbed;
-use mime_guess::from_path;
-use std::path::Path;
 use actix_web::HttpResponse;
+use mime_guess::from_path;
+use rust_embed::RustEmbed;
+use std::path::Path;
 
 #[cfg(not(debug_assertions))]
 #[derive(RustEmbed)]

@@ -1,9 +1,9 @@
 #![cfg(feature = "ssr")]
 
 use crate::app::App;
-use crate::routes::*;
 use crate::assets::handle_static_file;
-use actix_web::{web, App, HttpServer, get, Responder};
+use crate::routes::*;
+use actix_web::{get, web, App, HttpServer, Responder};
 use std::net::IpAddr;
 use std::path::PathBuf;
 use stellar_database::*;
@@ -74,14 +74,12 @@ pub async fn start_server(
             //.service(static_files)
             // Leptos
             .service(favicon)
-            
             // /pkg/<path> -> <site_root>/pkg/<path>
             //.service(Files::new("/pkg", format!("{site_root}/pkg")))
             .service(static_assets)
             // /assets/<path> -> <site_root>/<path>
             //.service(Files::new("/assets", site_root))
             .service(static_pkg)
-            
             .leptos_routes_with_context(
                 leptos_options.to_owned(),
                 routes.to_owned(),
@@ -98,7 +96,6 @@ pub async fn start_server(
     Ok(())
 }
 
-
 #[get("/assets/{_:.*}")]
 async fn static_assets(path: web::Path<String>) -> impl Responder {
     handle_static_file(path.as_str())
@@ -110,7 +107,7 @@ async fn static_pkg(path: web::Path<String>) -> impl Responder {
 
     let path = path.as_str();
     let full_path = format!("{}/{}", site_pkg, path);
-    
+
     handle_static_file(&full_path)
 }
 

@@ -18,10 +18,7 @@ enum Page {
 }
 
 #[component]
-pub fn Navbar(
-    page_sig: RwSignal<String>,
-    set_title: WriteSignal<String>,
-) -> impl IntoView {
+pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> impl IntoView {
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
 

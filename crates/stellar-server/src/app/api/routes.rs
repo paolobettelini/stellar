@@ -64,9 +64,7 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     let file_name = format!("{page}.html");
     log::info!("Reading file: {file_name:?}");
     // TODO pre-create path
-    let file = &Path::new(&data.data_folder)
-        .join("pages")
-        .join(&file_name);
+    let file = &Path::new(&data.data_folder).join("pages").join(&file_name);
     let content = {
         if let Ok(v) = std::fs::read_to_string(file) {
             v

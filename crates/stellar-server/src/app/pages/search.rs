@@ -1,5 +1,5 @@
-use leptos::*;
 use crate::app::query_snippet;
+use leptos::*;
 
 #[component]
 pub fn SearchPage() -> impl IntoView {
@@ -53,9 +53,9 @@ pub fn SearchPage() -> impl IntoView {
                 />
             "Universes"
         </label>
-    
+
         <br />
-    
+
         <input
             type="text"
             autocomplete="off"
@@ -63,8 +63,7 @@ pub fn SearchPage() -> impl IntoView {
             id="searchbox"
         />
         <div id="results">
-            
+
         </div>
     }
-
 }
