@@ -42,9 +42,6 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> imp
                             let json = res.unwrap();
                             let course: Course = serde_json::from_str(&json).unwrap();
 
-                            // Flag to set the first page
-                            let mut first_page_found = false;
-
                             set_title.set(course.title);
 
                             course.pages.into_iter()
@@ -62,10 +59,9 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> imp
                                     };
                                     let id_clone = id.clone();
 
-                                    /*if !first_page_found {
+                                    /*if page_sig() == "" {
                                         if let Some(id) = id.clone() {
-                                            page_sig.update(id.to_string());
-                                            first_page_found = true;
+                                            page_sig.set(id.to_string());
                                         }
                                     }*/
 

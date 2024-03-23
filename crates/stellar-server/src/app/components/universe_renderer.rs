@@ -1,10 +1,8 @@
-use crate::app::get_universe_json;
-use crate::app::Universe;
-use leptos::html::*;
-use leptos::*;
+use crate::app::{get_universe_json, Universe};
+use leptos::{html::*, *};
 use thaw::*;
-use wasm_bindgen::prelude::*;
-use web_sys::CanvasRenderingContext2d;
+use wasm_bindgen::{prelude::*, JsCast};
+use web_sys::{window, CanvasRenderingContext2d, Document, HtmlCanvasElement};
 
 #[component]
 pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
@@ -50,8 +48,6 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                             ctx.set_stroke_style(&JsValue::from_str("red"));
                             ctx.set_line_width(3.0);
 
-                            use wasm_bindgen::JsCast;
-                            use web_sys::{window, Document, HtmlCanvasElement};
                             let window = window().unwrap();
                             let document = window.document().unwrap();
 
@@ -93,6 +89,7 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                                 let color1 = course.color.unwrap_or(String::from("#3498db"));
                                 let color2 = color1.clone();
                                 let color3 = color1.clone();
+
 
                                 view! {
                                     <a
