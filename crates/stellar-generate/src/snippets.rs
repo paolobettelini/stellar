@@ -157,8 +157,9 @@ async fn process_cmd(
         }
         Plain(text) => {
             // Add snippet id to HTML page
-            processor.html_page.push_str("<br>");
+            processor.html_page.push_str("<p>");
             processor.html_page.push_str(&text);
+            processor.html_page.push_str("</p>");
         }
     }
 }

@@ -42,7 +42,10 @@ impl Cmd {
             Self::SetGlobalID(s) => s.push_str(arg),
             Self::StartSnippet(s) => s.push_str(arg),
             Self::Include(s) => s.push_str(arg),
-            Self::Plain(s) => s.push_str(arg),
+            Self::Plain(s) => {
+                s.push_str(" ");
+                s.push_str(arg);
+            },
             Self::AddSection(s) => s.push_str(arg),
             Self::AddSubSection(s) => s.push_str(arg),
             Self::AddSubSubSection(s) => s.push_str(arg),
