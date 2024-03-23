@@ -46,15 +46,15 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
 
                             canvas.set_width(canvas_container.client_width() as u32);
                             canvas.set_height(canvas_container.client_height() as u32);
-        
+
                             ctx.set_stroke_style(&JsValue::from_str("red"));
                             ctx.set_line_width(3.0);
-        
+
                             use wasm_bindgen::JsCast;
                             use web_sys::{window, Document, HtmlCanvasElement};
                             let window = window().unwrap();
                             let document = window.document().unwrap();
-                            
+
                             for dependency in &universe.dependencies {
                                 let from = document
                                     .get_element_by_id(&format!("course-{}", dependency.from))
@@ -63,19 +63,19 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                                 let to = document
                                     .get_element_by_id(&format!("course-{}", dependency.to))
                                     .unwrap();
-                                
+
                                 let rect_a = from.get_bounding_client_rect();
                                 let point_a = (
                                     rect_a.x() + rect_a.width(),
                                     rect_a.y() + rect_a.height() * 0.5,
                                 );
-                            
+
                                 let rect_b = to.get_bounding_client_rect();
                                 let point_b = (
                                     rect_b.x(),
                                     rect_b.y() + rect_b.height() * 0.5,
                                 );
-                            
+
                                 ctx.begin_path();
                                 ctx.move_to(point_a.0, point_a.1);
                                 ctx.line_to(point_b.0, point_b.1);
