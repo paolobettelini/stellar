@@ -1,3 +1,5 @@
+var snippet_index_counter = 0;
+
 class SnippetElement extends HTMLElement {
     static observedAttributes = [];
   
@@ -9,7 +11,7 @@ class SnippetElement extends HTMLElement {
         // Render snippet
         let snippetName = this.innerHTML;
         this.innerHTML = "";
-        let index = Math.random() + ""; // TODO use a counter
+        let index = ++snippet_index_counter;
 
         postData(`/snippet/${snippetName}`)
         .then(response => {
@@ -33,10 +35,6 @@ class SnippetElement extends HTMLElement {
                     let textLayerId = `tl${index}`;
                     canvas.id = canvasId;
                     textLayer.id = textLayerId;
-
-                    // Does not work
-                    //let col2 = document.querySelector(':root').style.getPropertyValue('--col2');
-                    //console.log(col2);
 
                     this.appendChild(canvas);
                     this.appendChild(textLayer);
