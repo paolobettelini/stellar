@@ -21,10 +21,16 @@ enum Page {
 pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> impl IntoView {
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
+    let page = move || params.with(|params| params.get("page").cloned());
 
     let once = create_resource(course, get_course_json);
 
     // TODO: show hamburger only if an optional signal is passed
+
+    // Render parameter specified page
+    if let Some(v) = page() {
+        page_sig.set(v);
+    }
 
     view! {
         <div id="navbar">
@@ -59,11 +65,12 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> imp
                                     };
                                     let id_clone = id.clone();
 
-                                    /*if page_sig() == "" {
+                                    // Render first page
+                                    if page_sig() == "" {
                                         if let Some(id) = id.clone() {
-                                            page_sig.set(id.to_string());
+                                            //page_sig.set(id.to_string());
                                         }
-                                    }*/
+                                    }
 
                                     view! {
                                         <span
