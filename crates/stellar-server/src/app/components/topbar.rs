@@ -16,6 +16,7 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
                 </i>
                 <i id="topbar-search">
                     <a
+                        style="color: inherit"
                         href="/search"
                         rel="external" >
                         <Icon icon=icondata::ImSearch/>
