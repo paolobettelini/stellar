@@ -37,7 +37,7 @@ pub fn SearchPage() -> impl IntoView {
                 name="searchtype"
                 value="snippet"
                 on:click=move |_| set_query_type.set(QueryType::Snippet)
-                checked/> // default
+                />
             "Snippets"
         </label>
         <br />
@@ -70,7 +70,7 @@ pub fn SearchPage() -> impl IntoView {
                 name="searchtype"
                 value="universe"
                 on:click=move |_| set_query_type.set(QueryType::Universe)
-                />
+                checked /> // default
             "Universes"
         </label>
 
@@ -92,15 +92,22 @@ pub fn SearchPage() -> impl IntoView {
                     Some(res) => {
                         let content = res.unwrap();
                         let results = serde_json::from_str::<Vec<QueryEntry>>(&content).unwrap();
-
+                        let query_type = match query_type() {
+                            QueryType::Snippet => "snippet",
+                            QueryType::Page => "page",
+                            QueryType::Course => "course",
+                            QueryType::Universe => "universe",
+                        };
+                        
                         results.into_iter()
-                            .map(|entry| {
-
-                                view! {
-                                    <a>{entry.id}</a>
-                                    <br />
-                                }
-                            }).collect_view()
+                        .map(|entry| {
+                            let link = format!("/{}/{}", query_type, entry.id);
+                            view! {
+                                <a
+                                    href=link
+                                >{entry.id}</a>
+                                <br />
+                            }}).collect_view()
                     }
                 }}
             </Suspense>
