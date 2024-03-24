@@ -100,14 +100,15 @@ pub fn SearchPage() -> impl IntoView {
                         };
                         
                         results.into_iter()
-                        .map(|entry| {
-                            let link = format!("/{}/{}", query_type, entry.id);
-                            view! {
-                                <a
-                                    href=link
-                                >{entry.id}</a>
-                                <br />
-                            }}).collect_view()
+                            .map(|entry| {
+                                let link = format!("/{}/{}", query_type, entry.id);
+                                view! {
+                                    <a
+                                        href=link
+                                        rel="external"
+                                    >{entry.id}</a>
+                                    <br />
+                                }}).collect_view()
                     }
                 }}
             </Suspense>

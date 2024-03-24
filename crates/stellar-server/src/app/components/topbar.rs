@@ -15,7 +15,11 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
                     <Icon icon=icondata::FaBarsSolid/>
                 </i>
                 <i id="topbar-search">
-                    <Icon icon=icondata::ImSearch/>
+                    <a
+                        href="/search"
+                        rel="external" >
+                        <Icon icon=icondata::ImSearch/>
+                    </a>
                 </i>
                 <i
                     id="topbar-theme"
