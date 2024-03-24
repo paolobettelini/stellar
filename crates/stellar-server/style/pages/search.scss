@@ -11,23 +11,23 @@
     overflow-y: auto;
 }
 
-h1 {
+#search-container h1 {
     text-align: center;
     margin-bottom: 20px;
 }
 
-.radio-group {
+#search-container .radio-group {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
 }
 
-label {
+#search-container label {
     display: block;
     margin-right: 20px;
 }
 
-input[type="text"] {
+#search-container input[type="text"] {
     width: calc(100% - 42px);
     padding: 10px;
     margin-top: 10px;
@@ -36,13 +36,13 @@ input[type="text"] {
     border-radius: 5px;
 }
 
-#results {
+#search-container #results {
     margin-top: 20px;
     overflow-y: auto;
     width: 100%;
 }
 
-#results a {
+#search-container #results a {
     display: block;
     margin-bottom: 10px;
 }
