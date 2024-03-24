@@ -21,3 +21,8 @@ pub struct Dependency {
     pub from: String,
     pub to: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct QueryEntry {
+    pub id: String,
+}
