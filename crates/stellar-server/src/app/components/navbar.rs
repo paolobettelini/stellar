@@ -66,11 +66,11 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> imp
                                     let id_clone = id.clone();
 
                                     // Render first page
-                                    if page_sig() == "" {
+                                    /*if page_sig() == "" {
                                         if let Some(id) = id.clone() {
                                             //page_sig.set(id.to_string());
                                         }
-                                    }
+                                    }*/
 
                                     view! {
                                         <span

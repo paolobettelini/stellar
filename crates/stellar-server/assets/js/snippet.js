@@ -51,6 +51,7 @@ class SnippetElement extends HTMLElement {
 
                     // Handle <script> because they dont't work
                     nodeScriptReplace(this);
+                    nodeStyleReplace(this);
                 }
             });
         });
