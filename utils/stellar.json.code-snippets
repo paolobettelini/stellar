@@ -1,0 +1,75 @@
+// Code snippets for stellar
+// Code/User/snippets/stellar.json.code-snippets
+
+{
+	"Stellar Snippet": {
+	  "prefix": ["snippet"],
+	  "body": ["\\begin{snippet}{${1:id}}\n\t${2:body}\n\\end{snippet}"],
+	  "description": "Stellar command"
+	},
+	"Stellar Definition": {
+	  "prefix": ["sdefinition"],
+	  "body": ["\\begin{snippetdefinition}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetdefinition}"],
+	  "description": "Stellar command"
+	},
+	"Stellar Theorem": {
+	  "prefix": ["stheorem"],
+	  "body": ["\\begin{snippettheorem}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippettheorem}"],
+	  "description": "Stellar command"
+	},
+	"Stellar Corollary": {
+	  "prefix": ["scorollary"],
+	  "body": ["\\begin{snippetcorollary}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetcorollary}"],
+	  "description": "Stellar command"
+	},
+	"Stellar Lemma": {
+	  "prefix": ["scorollary"],
+	  "body": ["\\begin{snippetlemma}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetlemma}"],
+	  "description": "Stellar command"
+	},
+	"Stellar Proposition": {
+	  "prefix": ["sproposition"],
+	  "body": ["\\begin{snippetproposition}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetproposition}"],
+	  "description": "Stellar command"
+	},
+	"Stellar Example": {
+		"prefix": ["sexample"],
+		"body": ["\\begin{snippetexample}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetexample}"],
+		"description": "Stellar command"
+	},
+	"Stellar Note": {
+		"prefix": ["snote"],
+		"body": ["\\begin{snippetnote}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetnote}"],
+		"description": "Stellar command"
+	},
+	"Stellar Axiom": {
+		"prefix": ["saxiom"],
+		"body": ["\\begin{snippetaxiom}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetaxiom}"],
+		"description": "Stellar command"
+	},
+	"Stellar Proof": {
+		"prefix": ["sproof"],
+		"body": ["\\begin{snippetproof}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetproof}"],
+		"description": "Stellar command"
+	},
+	"Stellar Exercise": {
+		"prefix": ["sexercise"],
+		"body": ["\\begin{snippetexercise}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetexercise}"],
+		"description": "Stellar command"
+	},
+	"Stellar Solution": {
+		"prefix": ["ssolution"],
+		"body": ["\\begin{snippetsolution}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetsolution}"],
+		"description": "Stellar command"
+	},
+	"Stellar Character": {
+		"prefix": ["scharacter"],
+		"body": ["\\begin{snippetcharacter}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetcharacter}"],
+		"description": "Stellar command"
+	},
+	"Stellar Summary": {
+		"prefix": ["ssummary"],
+		"body": ["\\begin{snippetsummary}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetsummary}"],
+		"description": "Stellar command"
+	},
+}
