@@ -1,6 +1,6 @@
-# Progress so far
+# Stellar
 
-https://github.com/paolobettelini/notes-v2/assets/59686810/4fd20827-c80c-477b-b0d3-f3f16391a0ff
+Check out my [notes](https://github.com/paolobettelini/notes) repository using stellar.
 
 # Compile
 ```bash
