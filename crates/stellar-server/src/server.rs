@@ -30,7 +30,7 @@ pub async fn start_server(
     // Generate leptos options
     let cargo_toml = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.toml"));
     let mut leptos_options = match leptos_config::get_config_from_str(cargo_toml) {
-        Ok(file) => file.leptos_options,
+        Ok(file) => file,
         Err(err) => {
             log::error!("{:#?}", err);
             panic!("Error in leptos config file")
