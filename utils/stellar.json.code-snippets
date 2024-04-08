@@ -1,4 +1,3 @@
-// Code snippets for stellar
 // Code/User/snippets/stellar.json.code-snippets
 
 {
@@ -9,12 +8,12 @@
 	},
 	"Stellar Definition": {
 	  "prefix": ["sdefinition"],
-	  "body": ["\\begin{snippetdefinition}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetdefinition}"],
+	  "body": ["\\begin{snippetdefinition}{${1:id}-definizione}{${2:name}}\n\t${3:body}\n\\end{snippetdefinition}"],
 	  "description": "Stellar command"
 	},
 	"Stellar Theorem": {
 	  "prefix": ["stheorem"],
-	  "body": ["\\begin{snippettheorem}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippettheorem}"],
+	  "body": ["\\begin{snippettheorem}{${1:id}-theorem}{${2:name}}\n\t${3:body}\n\\end{snippettheorem}"],
 	  "description": "Stellar command"
 	},
 	"Stellar Corollary": {
@@ -23,7 +22,7 @@
 	  "description": "Stellar command"
 	},
 	"Stellar Lemma": {
-	  "prefix": ["scorollary"],
+	  "prefix": ["slemma"],
 	  "body": ["\\begin{snippetlemma}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetlemma}"],
 	  "description": "Stellar command"
 	},
@@ -34,7 +33,7 @@
 	},
 	"Stellar Example": {
 		"prefix": ["sexample"],
-		"body": ["\\begin{snippetexample}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetexample}"],
+		"body": ["\\begin{snippetexample}{${1:id}-example}{${2:name}}\n\t${3:body}\n\\end{snippetexample}"],
 		"description": "Stellar command"
 	},
 	"Stellar Note": {
@@ -49,17 +48,17 @@
 	},
 	"Stellar Proof": {
 		"prefix": ["sproof"],
-		"body": ["\\begin{snippetproof}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetproof}"],
+		"body": ["\\begin{snippetproof}{${1:id}-proof}{${2:name}}\n\t${3:body}\n\\end{snippetproof}"],
 		"description": "Stellar command"
 	},
 	"Stellar Exercise": {
 		"prefix": ["sexercise"],
-		"body": ["\\begin{snippetexercise}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetexercise}"],
+		"body": ["\\begin{snippetexercise}{${1:id}-ex}{${2:name}}\n\t${3:body}\n\\end{snippetexercise}"],
 		"description": "Stellar command"
 	},
 	"Stellar Solution": {
 		"prefix": ["ssolution"],
-		"body": ["\\begin{snippetsolution}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetsolution}"],
+		"body": ["\\begin{snippetsolution}{${1:id}-sol}{${2:name}}\n\t${3:body}\n\\end{snippetsolution}"],
 		"description": "Stellar command"
 	},
 	"Stellar Character": {

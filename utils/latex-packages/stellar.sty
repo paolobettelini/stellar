@@ -88,6 +88,14 @@
 \definecolor{notefr}{HTML}{6f6f6f}
 \definecolor{proofbg}{HTML}{f9effb} % TODO: change colors
 \definecolor{prooffr}{HTML}{a74eb4} % TODO: change colors
+\definecolor{exercisebg}{HTML}{f9effb} % TODO: change colors
+\definecolor{exercisefr}{HTML}{a74eb4} % TODO: change colors
+\definecolor{solutionbg}{HTML}{FFFAF8} % TODO: change colors
+\definecolor{solutionfr}{HTML}{983b0f} % TODO: change colors
+\definecolor{characterbg}{HTML}{d5d9e0}
+\definecolor{characterfr}{HTML}{2a3547}
+\definecolor{summarybg}{HTML}{F2F2F9}
+\definecolor{summaryfr}{HTML}{00007B}
 
 \customsentence{Theorem}{Theorem}{theorembg}{theoremfr}
 \customsentence{Corollary}{Corollary}{corollarybg}{corollaryfr}
@@ -98,6 +106,10 @@
 \customsentence{Definition}{Definition}{definitionbg}{definitionfr}
 \customsentence{Axiom}{Axiom}{definitionbg}{definitionfr}
 \customsentence{Proof}{Proof}{proofbg}{prooffr}
+\customsentence{Exercise}{Exercise}{exercisebg}{exercisefr}
+\customsentence{Solution}{Solution}{solutionbg}{solutionfr}
+\customsentence{Character}{Character}{characterbg}{characterfr}
+\customsentence{Summary}{Summary}{summarybg}{summaryfr}
 
 %%%%% \begin{stheorem} and such
 
@@ -136,6 +148,22 @@
 \newenvironment{sproof}[1]
 {\vspace{-0.35cm}\begin{Proof}{#1}{}}
 {\end{Proof}}
+
+\newenvironment{sexercise}[1]
+{\vspace{-0.35cm}\begin{Exercise}{#1}{}}
+{\end{Exercise}}
+
+\newenvironment{ssolution}[1]
+{\vspace{-0.35cm}\begin{Solution}{#1}{}}
+{\end{Solution}}
+
+\newenvironment{scharacter}[1]
+{\vspace{-0.35cm}\begin{Character}{#1}{}}
+{\end{Character}}
+
+\newenvironment{ssummary}[1]
+{\vspace{-0.35cm}\begin{Summary}{#1}{}}
+{\end{Summary}}
 
 %%%%% \begin{snippettheorem} and such
 
@@ -191,4 +219,28 @@
 {\begin{snippet}{#1}
 \begin{sproof}{#2}}
 {\end{sproof}
+\end{snippet}}
+
+\newenvironment{snippetexercise}[2]
+{\begin{snippet}{#1}
+\begin{sexercise}{#2}}
+{\end{sexercise}
+\end{snippet}}
+
+\newenvironment{snippetsolution}[2]
+{\begin{snippet}{#1}
+\begin{ssolution}{#2}}
+{\end{ssolution}
+\end{snippet}}
+
+\newenvironment{snippetcharacter}[2]
+{\begin{snippet}{#1}
+\begin{scharacter}{#2}}
+{\end{scharacter}
+\end{snippet}}
+
+\newenvironment{snippetsummary}[2]
+{\begin{snippet}{#1}
+\begin{ssummary}{#2}}
+{\end{ssummary}
 \end{snippet}}
