@@ -71,4 +71,9 @@
 		"body": ["\\begin{snippetsummary}{${1:id}}{${2:name}}\n\t${3:body}\n\\end{snippetsummary}"],
 		"description": "Stellar command"
 	},
+	"Stellar Document": {
+		"prefix": ["sdocument"],
+		"body": ["\\documentclass[preview]{standalone}\n\n\\usepackage{amsmath}\n\\usepackage{amssymb}\n\\usepackage{stellar}\n\n\\hypersetup{\n\tcolorlinks=true,\n\tlinkcolor=black,\n\turlcolor=blue,\n\tpdftitle={Stellar},\n\tpdfpagemode=FullScreen,\n}\n\n\\begin{document}\n\n\\title{Stellar}\n\\id{${1:id}}\n\\genpage\n\n\n\n\\end{document}"],
+		"description": "Stellar document"
+	},
 }
