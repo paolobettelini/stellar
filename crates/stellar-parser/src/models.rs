@@ -26,7 +26,7 @@ pub enum Cmd {
     SetGenCourse(bool),
     StartSnippet(String),
     EndSnippet,
-    Include(String),
+    Include((String, Option<String>)),
     Plain(String),
     AddSection(String),
     AddSubSection(String),
@@ -41,7 +41,11 @@ impl Cmd {
             Self::SetGlobalTitle(s) => s.push_str(arg),
             Self::SetGlobalID(s) => s.push_str(arg),
             Self::StartSnippet(s) => s.push_str(arg),
-            Self::Include(s) => s.push_str(arg),
+            Self::Include(s) => {
+                if let Some(ref mut params) = &mut s.1 {
+                    params.push_str(arg)
+                }
+            },
             Self::Plain(s) => {
                 s.push_str(" ");
                 s.push_str(arg);

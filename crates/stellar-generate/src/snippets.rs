@@ -150,9 +150,15 @@ async fn process_cmd(
             let snippet = format!("<h3>{title}</h3>\n");
             processor.html_page.push_str(&snippet);
         }
-        Include(id) => {
+        Include((id, params)) => {
             // Add snippet id to HTML page
-            let snippet = format!("<stellar-snippet>{id}</stellar-snippet>\n");
+            
+            let snippet = if let Some(params) = params {
+                format!("<stellar-snippet params=\"{params}\">{id}</stellar-snippet>\n")
+            } else {
+                format!("<stellar-snippet>{id}</stellar-snippet>\n")
+            };
+            
             processor.html_page.push_str(&snippet);
         }
         Plain(text) => {

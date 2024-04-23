@@ -125,8 +125,8 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
         let v = parse_gen_course(line)?;
         Cmd::SetGenCourse(v)
     } else if line.starts_with(INCLUDE) {
-        let id = parse_include(line)?;
-        Cmd::Include(id)
+        let cmd = parse_include(line)?;
+        Cmd::Include(cmd)
     } else if line.starts_with(PLAIN) {
         let text = parse_plain(line)?;
         Cmd::Plain(text)
@@ -169,9 +169,18 @@ fn parse_gen_course(line: &str) -> Option<bool> {
     Some(v)
 }
 
-fn parse_include(line: &str) -> Option<String> {
-    let id = &line[(INCLUDE.len() + 1)..];
-    Some(id.to_string())
+/// Option<(id, Option<params>)>
+fn parse_include(line: &str) -> Option<(String, Option<String>)> {
+    let text = &line[(INCLUDE.len() + 1)..];
+
+    if let Some(pos) = text.find(' ') {
+        let id = &text[..pos];
+        let params = &text[pos + 1..];
+        Some((id.to_string(), Some(params.to_string())))
+    } else {
+        // no parameters
+        Some((text.to_string(), None))
+    }
 }
 
 fn parse_plain(line: &str) -> Option<String> {

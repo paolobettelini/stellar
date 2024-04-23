@@ -52,7 +52,6 @@ class SnippetElement extends HTMLElement {
                     if (paramsRaw != null) {
                         let paramMap = extractParameterMap(paramsRaw);
                         content = injectParameters(paramMap, content);
-                        console.log(content)
                     }
 
                     this.innerHTML = content;
@@ -83,6 +82,7 @@ function extractParameterMap(paramsRaw) {
 
             // TODO: consider escape char '\' for '=' and '|'
             // Note that this is going to break the injection
+            // Also, the " characters should be escaped
         }
     });
 
@@ -93,7 +93,6 @@ function injectParameters(paramMap, content) {
     // Example: popoulate with parameters #{param1|fallback_value}
 
     const placeholderPattern = /#\{([^|]+)\|([^\}]+)\}/g;
-    console.log(paramMap);
 
     return content.replace(placeholderPattern, (_match, key, fallback) => {
       return paramMap.hasOwnProperty(key) ? paramMap[key] : fallback;

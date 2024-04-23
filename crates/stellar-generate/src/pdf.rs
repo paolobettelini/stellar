@@ -26,7 +26,7 @@ pub fn generate_pdf(input: &PathBuf, output: &PathBuf, data: &PathBuf) -> anyhow
                 doc.push(&*include(data, id));
             }
             EndSnippet => {}
-            Include(id) => {
+            Include((id, _)) => {
                 doc.push(&*include(data, id));
             }
             Plain(text) => {
