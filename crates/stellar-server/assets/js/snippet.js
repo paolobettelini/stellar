@@ -47,6 +47,14 @@ class SnippetElement extends HTMLElement {
                 } else if (contentType == 'text/html') {
                     const decoder = new TextDecoder();
                     let content = decoder.decode(buffer);
+
+                    let paramsRaw = this.getAttribute('params');
+                    if (paramsRaw != null) {
+                        let paramMap = extractParameterMap(paramsRaw);
+                        content = injectParameters(paramMap, content);
+                        console.log(content)
+                    }
+
                     this.innerHTML = content;
 
                     // Handle <script> because they dont't work
@@ -56,6 +64,40 @@ class SnippetElement extends HTMLElement {
             });
         });
     }
+}
+
+function extractParameterMap(paramsRaw) {
+    // Example: "param1=Hello World!|param2|Hello World 2|width=500px"
+
+    let parts = paramsRaw.split('|');
+    let paramMap = {};
+
+    parts.forEach((part) => {
+        const keyValueIndex = part.indexOf('=');
+    
+        if (keyValueIndex !== -1) {
+            const key = part.slice(0, keyValueIndex).trim();
+            const value = part.slice(keyValueIndex + 1).trim();
+
+            paramMap[key] = value;
+
+            // TODO: consider escape char '\' for '=' and '|'
+            // Note that this is going to break the injection
+        }
+    });
+
+    return paramMap;
+}
+
+function injectParameters(paramMap, content) {
+    // Example: popoulate with parameters #{param1|fallback_value}
+
+    const placeholderPattern = /#\{([^|]+)\|([^\}]+)\}/g;
+    console.log(paramMap);
+
+    return content.replace(placeholderPattern, (_match, key, fallback) => {
+      return paramMap.hasOwnProperty(key) ? paramMap[key] : fallback;
+    });
 }
 
 customElements.define("stellar-snippet", SnippetElement);
