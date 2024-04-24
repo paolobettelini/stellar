@@ -16,7 +16,13 @@ class SnippetElement extends HTMLElement {
         postData(`/snippet/${snippetName}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Request failed with status: ' + response.status);
+                // Display error
+                let p = document.createElement('p');
+                p.innerHTML = `Error while loading snippet <b>${snippetName}</b>. Status: ${response.status}`;
+                p.style.padding = '20px';
+                p.style.backgroundColor = 'red'
+                this.appendChild(p);
+                // throw new Error('Request failed with status: ' + response.status);
             }
 
             let arrayBuffer = response.arrayBuffer();
