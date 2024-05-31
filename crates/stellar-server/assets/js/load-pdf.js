@@ -81,7 +81,10 @@ function setupAnnotations(page, viewport, container) {
             );
 
             element.style.left = `${rect[0]}px`;
-            element.style.top = `${rect[1]}px`;
+            // No clue as to why I have to multiply this one
+            // The 13.5 comes from page_renderer.css
+            // but it seems to be wrong
+            element.style.top = `${rect[1] * viewport.scale - 13.5}px`;
             element.style.width = `${rect[2] - rect[0]}px`;
             element.style.height = `${rect[3] - rect[1]}px`;
             element.style.position = 'absolute';
