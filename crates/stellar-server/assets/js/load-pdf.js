@@ -76,17 +76,23 @@ function setupAnnotations(page, viewport, container) {
         annotationsData.forEach(function(data) {
             let element = document.createElement('a');
 
+            /*let view = page.view;
+            let rect = pdfjsLib.Util.normalizeRect([
+                data.rect[0],
+                view[3] - data.rect[1] + view[1],
+                data.rect[2],
+                view[3] - data.rect[3] + view[1]
+            ]);*/
             let rect = pdfjsLib.Util.normalizeRect(
                 viewport.convertToViewportRectangle(data.rect)
             );
 
             element.style.left = `${rect[0]}px`;
             // No clue as to why I have to multiply this one
-            // The 13.5 comes from page_renderer.css
-            // but it seems to be wrong
-            element.style.top = `${rect[1] * viewport.scale - 13.5}px`;
-            element.style.width = `${rect[2] - rect[0]}px`;
-            element.style.height = `${rect[3] - rect[1]}px`;
+            element.style.top = `${rect[1] * scale}px`;
+            element.style.width = `${(rect[2] - rect[0])}px`;
+            element.style.height = `${(rect[3] - rect[1])}px`;
+
             element.style.position = 'absolute';
             element.style.border = "5px solid green";
 
