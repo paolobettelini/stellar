@@ -58,7 +58,7 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
             })
 
             // Render annotations on textLayer
-            //setupAnnotations(page, viewport, textLayerDiv)
+            setupAnnotations(page, viewport, textLayerDiv)
         });
     }, function (reason) {
         // PDF loading error
@@ -73,41 +73,41 @@ function setupAnnotations(page, viewport, container) {
     let promise = page.getAnnotations().then(function (annotationsData) {
         viewport = viewport.clone({ dontFlip: true });
 
-        for (let i = 0; i < annotationsData.length; i++) {
-            var data = annotationsData[i];
-
-            let rect = data.rect; // [x1, y1, x2, y2]
-            //    (x1, y1) is the lower-left corner of the rectangle.
-            //    (x2, y2) is the upper-right corner of the rectangle.
-            let view = page.view;
-            rect = pdfjsLib.Util.normalizeRect([
-                rect[0],
-                view[3] - rect[1] + view[1],
-                rect[2],
-                view[3] - rect[3] + view[1]]);
-
+        annotationsData.forEach(function(data) {
             let element = document.createElement('a');
+
+            let rect = pdfjsLib.Util.normalizeRect(
+                viewport.convertToViewportRectangle(data.rect)
+            );
+
+            element.style.left = `${rect[0]}px`;
+            element.style.top = `${rect[1]}px`;
+            element.style.width = `${rect[2] - rect[0]}px`;
+            element.style.height = `${rect[3] - rect[1]}px`;
             element.style.position = 'absolute';
-            element.style.left = rect[0] * scale + "px";
-            element.style.top = rect[1] * scale + "px";
-            element.style.width = (rect[2] - rect[0]) * scale + "px";
-            element.style.height = (rect[3] - rect[1]) * scale + "px";
-            
+            element.style.border = "5px solid green";
+
+            // Add specific handling based on annotation type
+            /*if (data.subtype === 'Link' && data.url) {
+                element.style.cursor = 'pointer';
+                element.onclick = () => window.open(data.url);
+                element.title = data.url;
+            }*/
+
             // floating snippet on hover
+            console.log(data);
             if (data.url == undefined && data.unsafeUrl.includes("/snippet/")) {
                 let url = data.unsafeUrl.split('.pdf')[0];
                 data.url = url;
 
+                console.log(url)
                 element.classList.add("floating-snippet")
             }
 
             element.href = data.url;
 
-            // Debug:
-            // element.style.border = "1px solid black";
-
-            container.append(element);
-        }
+            container.appendChild(element);
+        });
     });
 
     return promise;

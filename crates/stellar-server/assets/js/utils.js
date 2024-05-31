@@ -43,13 +43,13 @@ function nodeScriptIs(node) {
 
 function nodeStyleReplace(node) {
     if ( nodeStyleIs(node) === true ) {
-            node.parentNode.replaceChild( nodeStyleClone(node) , node );
+        node.parentNode.replaceChild( nodeStyleClone(node) , node );
     }
     else {
-            var i = -1, children = node.childNodes;
-            while ( ++i < children.length ) {
-                  nodeStyleReplace( children[i] );
-            }
+        var i = -1, children = node.childNodes;
+        while ( ++i < children.length ) {
+                nodeStyleReplace( children[i] );
+        }
     }
 
     return node;
@@ -60,7 +60,7 @@ function nodeStyleClone(node){
 
     var i = -1, attrs = node.attributes, attr;
     while ( ++i < attrs.length ) {                                    
-          style.setAttribute( (attr = attrs[i]).name, attr.value );
+        style.setAttribute( (attr = attrs[i]).name, attr.value );
     }
     return style;
 }

@@ -7,6 +7,12 @@ class SnippetElement extends HTMLElement {
         super();
     }
   
+    /* TODO:
+        <ref snippet="text1">text2</ref>
+        ->
+        <a href="/snippet/text1" class="floating-snippet">text2</a>
+    */
+
     connectedCallback() {
         // Render snippet
         let snippetName = this.innerHTML;
