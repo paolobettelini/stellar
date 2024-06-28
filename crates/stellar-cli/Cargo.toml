@@ -8,13 +8,12 @@ name = "stellar-cli"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.0.29", features = ["derive"] }
-log = "0.4.19"
-env_logger = "0.10.0"
-anyhow = "1.0.72"
-tokio = "1.29.1"
+clap = { version = "4.5.8", features = ["derive"] }
+log = "0.4.22"
+env_logger = "0.11.3"
+anyhow = "1.0.86"
+tokio = "1.38.0"
 
 stellar-import = { path = "../stellar-import" }
 stellar-generate = { path = "../stellar-generate" }
 stellar-server = { path = "../stellar-server", features = ["ssr"]}
-stellar-compile = { path = "../stellar-compile" }

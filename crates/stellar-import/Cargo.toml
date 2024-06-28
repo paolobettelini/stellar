@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.72"
-log = "0.4.19"
+anyhow = "1.0.86"
+log = "0.4.22"
 
 stellar-database = { path = "../stellar-database" }
 stellar-utils = { path = "../stellar-utils" }

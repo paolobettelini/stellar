@@ -20,8 +20,6 @@ pub enum Command {
     Import(ImportArgs),
     /// Help message for web.
     Web(WebArgs),
-    /// Import message for compile.
-    Compile(CompileArgs),
 }
 
 #[derive(Debug, Args)]
@@ -35,28 +33,13 @@ pub struct ImportArgs {
     pub import: Option<Vec<PathBuf>>,
 }
 
-#[derive(Parser, Debug)]
-pub struct GenerateArgs {
-    #[clap(subcommand)]
-    pub command: GenerateCommand,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum GenerateCommand {
-    /// Help message for snippets
-    Snippets(GenSnippetsArgs),
-
-    /// Help message for PDF
-    Pdf(GenPdfArgs),
-}
-
 #[derive(Debug, Args)]
-pub struct GenSnippetsArgs {
+pub struct GenerateArgs {
     /// Generate data from a PDF file
     #[arg(short = 'i', long)]
     pub input: PathBuf,
 
-    /// Output for generated data (uncompiled .tex files)
+    /// Output for generated data
     #[arg(short = 'o', long)]
     pub data_output: PathBuf,
 
@@ -86,21 +69,6 @@ pub struct GenSnippetsArgs {
 }
 
 #[derive(Debug, Args)]
-pub struct GenPdfArgs {
-    /// Generate a PDF with snippets from a PDF file
-    #[arg(short = 'i', long)]
-    pub input: PathBuf,
-
-    /// Output for the generated PDF
-    #[arg(short = 'o', long)]
-    pub output: PathBuf,
-
-    /// Data folder to read snippets
-    #[arg(short, long)]
-    pub data: PathBuf,
-}
-
-#[derive(Debug, Args)]
 pub struct WebArgs {
     /// Listening address
     #[arg(short, long, default_value_t = default_address())]
@@ -117,13 +85,6 @@ pub struct WebArgs {
     /// MongoDB Connection URL
     #[arg(short, short, long)]
     pub connection_url: String,
-}
-
-#[derive(Debug, Args)]
-pub struct CompileArgs {
-    /// Path to compile
-    #[arg(short, long)]
-    pub path: PathBuf,
 }
 
 fn default_address() -> IpAddr {
