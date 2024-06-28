@@ -6,7 +6,15 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+use crate::crop_pdf;
+use crate::CropPdfData;
 use stellar_import as import;
+
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::thread::JoinHandle;
+use std::time::Duration;
+use std::sync::mpsc::{self, Sender, Receiver};
 
 use serde_json::json;
 
@@ -32,7 +40,7 @@ struct CropDimension {
 
 pub async fn generate_snippets(
     input: &PathBuf,
-    output: &PathBuf,
+    output: &Path,
     client: Option<ClientHandler>,
     top_offset: f64,
     bottom_offset: f64,
@@ -67,8 +75,29 @@ pub async fn generate_snippets(
         left_margin,
         right_margin,
     };
+
+    // Channel to send the crop PDFs jobs
+    let (tx, rx) = mpsc::channel();
+    let rx = Arc::new(Mutex::new(rx));
+
+    // Spawn worker threads to crop the PDFs
+    let mut handles: Vec<JoinHandle<()>> = Vec::new();
+    let num_threads = num_cpus::get();
+    for _ in 0..num_threads {
+        let rx = Arc::clone(&rx);
+        let handle = thread::spawn(move || crate::crop_worker(rx));
+        handles.push(handle);
+    }
+
     for cmd in commands {
-        process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim).await;
+        process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim, tx.clone()).await;
+    }
+
+    drop(tx);
+
+    // Wait until all jobs are done
+    for handle in handles {
+        handle.join().expect("Failed to join worker thread");
     }
 
     finalize(&mut processor, &pages_dir, &courses_dir);
@@ -83,6 +112,7 @@ async fn process_cmd(
     snippets_dir: &Path,
     client: &Option<ClientHandler>,
     dim: &CropDimension,
+    tx: Sender<CropPdfData>,
 ) {
     match &cmd.cmd {
         SetGlobalTitle(title) => {
@@ -109,17 +139,20 @@ async fn process_cmd(
             let page = cmd.page - 1;
             let y1 = processor.current_coords.unwrap().1 + dim.top_offset;
             let y2 = cmd.coords.1 + dim.bottom_offset;
-            crop_pdf(
-                input,
-                &output,
-                page,
+
+            let data = CropPdfData {
+                input: input.to_path_buf(),
+                output: output.to_path_buf(),
+                page_num: page,
                 y1,
                 y2,
-                dim.left_margin,
-                dim.right_margin,
-            );
+                left_margin: dim.left_margin,
+                right_margin: dim.right_margin,
+                snippet_id: snippet_id.to_string(),
+            };
 
-            log::info!("Saving snippet: {snippet_id}");
+            // Send Data so that the cropping is executed in parallel.
+            tx.send(data).expect("Failed to send data");
 
             if let Some(ref client) = client {
                 let _ = import::import_snippet_with_client(client, &output).await;
@@ -204,38 +237,6 @@ fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) 
         if res.is_err() {
             log::error!("Couldn't write file {}", &filename);
         }
-    }
-}
-
-fn crop_pdf(
-    input: &Path,
-    output: &Path,
-    page_num: u16,
-    y1: f64,
-    y2: f64,
-    left_margin: Option<f64>,
-    right_margin: Option<f64>,
-) {
-    let input = &input.to_str().map(|s| s.to_string()).unwrap_or_default();
-    let output = &output.to_str().map(|s| s.to_string()).unwrap_or_default();
-
-    let right_margin = if let Some(v) = right_margin { v } else { 0.0 };
-    let left_margin = if let Some(v) = left_margin { v } else { 0.0 };
-
-    let res = Command::new("pdfcrop.py")
-        .arg(input)
-        .arg(output)
-        .arg(y1.to_string())
-        .arg(y2.to_string())
-        .arg(right_margin.to_string())
-        .arg(left_margin.to_string())
-        .arg(page_num.to_string())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
-        .status();
-
-    if let Err(e) = res {
-        log::error!("pdfcrop error: {e:?}");
     }
 }
 
