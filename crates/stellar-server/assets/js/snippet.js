@@ -15,65 +15,68 @@ class SnippetElement extends HTMLElement {
 
     connectedCallback() {
         // Render snippet
+        setTimeout(() => { // the /snippet page doesn't work without this 0 delay. Why?
+
         let snippetName = this.innerHTML;
         this.innerHTML = "";
         let index = ++snippet_index_counter;
 
         postData(`/snippet/${snippetName}`)
-        .then(response => {
-            if (!response.ok) {
-                // Display error
-                let p = document.createElement('p');
-                p.innerHTML = `Error while loading snippet <b>${snippetName}</b>. Status: ${response.status}`;
-                p.style.padding = '20px';
-                p.style.backgroundColor = 'red'
-                this.appendChild(p);
-                // throw new Error('Request failed with status: ' + response.status);
-            }
-
-            let arrayBuffer = response.arrayBuffer();
-            arrayBuffer.then(buffer => {
-                //let buffer = new Uint8Array(arrayBuffer);
-                let contentType = response.headers.get('content-type');
-        
-                if (contentType == 'application/pdf') {
-                    // Load PDF
-                    let canvas = document.createElement('canvas');
-        
-                    let textLayer = document.createElement('div');
-                    textLayer.classList.add('textLayer');
-
-                    let canvasId = `pdf${index}`;
-                    let textLayerId = `tl${index}`;
-                    canvas.id = canvasId;
-                    textLayer.id = textLayerId;
-
-                    this.appendChild(canvas);
-                    this.appendChild(textLayer);
-                    loadPDF(buffer, canvasId, textLayerId,
-                        () => {
-                            // Apply filter
-                            //let theme = localStorage.getItem('theme');
-                            //applyFilter(canvas, theme);
-                        });
-                } else if (contentType == 'text/html') {
-                    const decoder = new TextDecoder();
-                    let content = decoder.decode(buffer);
-
-                    let paramsRaw = this.getAttribute('params');
-                    if (paramsRaw != null) {
-                        let paramMap = extractParameterMap(paramsRaw);
-                        content = injectParameters(paramMap, content);
-                    }
-
-                    this.innerHTML = content;
-
-                    // Handle <script> because they dont't work
-                    nodeScriptReplace(this);
-                    nodeStyleReplace(this);
+            .then(response => {
+                if (!response.ok) {
+                    // Display error
+                    let p = document.createElement('p');
+                    p.innerHTML = `Error while loading snippet {<b>${snippetName}</b>}. Status: ${response.status}`;
+                    p.style.padding = '20px';
+                    p.style.backgroundColor = 'red'
+                    this.appendChild(p);
+                    // throw new Error('Request failed with status: ' + response.status);
                 }
+
+                let arrayBuffer = response.arrayBuffer();
+                arrayBuffer.then(buffer => {
+                    //let buffer = new Uint8Array(arrayBuffer);
+                    let contentType = response.headers.get('content-type');
+            
+                    if (contentType == 'application/pdf') {
+                        // Load PDF
+                        let canvas = document.createElement('canvas');
+            
+                        let textLayer = document.createElement('div');
+                        textLayer.classList.add('textLayer');
+
+                        let canvasId = `pdf${index}`;
+                        let textLayerId = `tl${index}`;
+                        canvas.id = canvasId;
+                        textLayer.id = textLayerId;
+
+                        this.appendChild(canvas);
+                        this.appendChild(textLayer);
+                        loadPDF(buffer, canvasId, textLayerId,
+                            () => {
+                                // Apply filter
+                                //let theme = localStorage.getItem('theme');
+                                //applyFilter(canvas, theme);
+                            });
+                    } else if (contentType == 'text/html') {
+                        const decoder = new TextDecoder();
+                        let content = decoder.decode(buffer);
+
+                        let paramsRaw = this.getAttribute('params');
+                        if (paramsRaw != null) {
+                            let paramMap = extractParameterMap(paramsRaw);
+                            content = injectParameters(paramMap, content);
+                        }
+
+                        this.innerHTML = content;
+
+                        // Handle <script> because they dont't work
+                        nodeScriptReplace(this);
+                        nodeStyleReplace(this);
+                    }
+                });
             });
-        });
+        }, 0);
     }
 }
 

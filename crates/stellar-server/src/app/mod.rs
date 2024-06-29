@@ -36,6 +36,8 @@ pub fn App() -> impl IntoView {
                 <main>
                     <Routes>
                         <Route path="/" view=HomePage/>
+                        <Route path="/snippet/:snippet" view=SnippetPage/>
+                        <Route path="/page/:page" view=PagePage/>
                         <Route path="/course/:course" view=CoursePage/>
                         <Route path="/course/:course/:page" view=CoursePage/>
                         <Route path="/universe/:universe" view=UniversePage/>
