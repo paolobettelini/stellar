@@ -22,10 +22,8 @@ use serde_json::json;
 #[derive(Debug, Default)]
 struct DocProcessor {
     html_page: String,
-    global_title: String,
     global_id: String,
     gen_page: bool,
-    gen_course: bool,
     current_coords: Option<(f64, f64)>,
     current_id: Option<String>,
     current_page: Option<u16>,
@@ -66,9 +64,6 @@ pub async fn generate_snippets(
     let filename = strip_filename(&filename);
     let file_id = title_to_id(&filename);
     processor.global_id = file_id;
-
-    // Set default global title using the file name
-    processor.global_title = filename;
 
     let dim = CropDimension {
         top_offset,
@@ -116,14 +111,10 @@ async fn process_cmd(
     tx: Sender<CropPdfData>,
 ) {
     match &cmd.cmd {
-        SetGlobalTitle(title) => {
-            processor.global_title = title.to_string();
-        }
         SetGlobalID(id) => {
             processor.global_id = id.to_string();
         }
         SetGenPage(gen_page) => processor.gen_page = *gen_page,
-        SetGenCourse(gen_course) => processor.gen_course = *gen_course,
         StartSnippet(id) => {
             processor.current_coords = Some(cmd.coords);
             processor.current_page = Some(cmd.page);
@@ -214,26 +205,6 @@ fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) 
 
         log::info!("Writing file: {filename}");
         let res = fs::write(file_path, &processor.html_page);
-
-        if res.is_err() {
-            log::error!("Couldn't write file {}", &filename);
-        }
-    }
-
-    if processor.gen_course {
-        let filename = format!("{file_id}.json");
-        let file_path = courses_dir.join(&filename);
-
-        let json_course = json!({
-            "title": "Course title",
-            "pages": [
-                [1, processor.global_title, file_id]
-            ],
-        });
-        let json_course = serde_json::to_string_pretty(&json_course).unwrap();
-
-        log::info!("Writing file: {filename}");
-        let res = fs::write(file_path, json_course);
 
         if res.is_err() {
             log::error!("Couldn't write file {}", &filename);

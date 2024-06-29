@@ -7,10 +7,8 @@ pub struct DocumentCmd {
 
 #[derive(Debug)]
 pub enum Cmd {
-    SetGlobalTitle(String),
     SetGlobalID(String),
     SetGenPage(bool),
-    SetGenCourse(bool),
     StartSnippet(String),
     EndSnippet,
     Include((String, Option<String>)),
@@ -25,7 +23,6 @@ impl Cmd {
     /// Adds a string to the command argument
     pub fn inject_additional_arguments(&mut self, arg: &str) {
         match self {
-            Self::SetGlobalTitle(s) => s.push_str(arg),
             Self::SetGlobalID(s) => s.push_str(arg),
             Self::StartSnippet(s) => s.push_str(arg),
             Self::Include(s) => {

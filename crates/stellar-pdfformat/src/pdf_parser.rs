@@ -5,7 +5,6 @@ const GLOBAL_ID: &str = "!id";
 const SNIPPET: &str = "!snippet";
 const END_SNIPPET: &str = "!endsnippet";
 const GEN_PAGE: &str = "!gen-page";
-const GEN_COURSE: &str = "!gen-course";
 const INCLUDE: &str = "!include";
 const PLAIN: &str = "!plain";
 const GLOBAL_TITLE: &str = "!title";
@@ -121,18 +120,12 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
     } else if line.starts_with(GEN_PAGE) {
         let v = parse_gen_page(line)?;
         Cmd::SetGenPage(v)
-    } else if line.starts_with(GEN_COURSE) {
-        let v = parse_gen_course(line)?;
-        Cmd::SetGenCourse(v)
     } else if line.starts_with(INCLUDE) {
         let cmd = parse_include(line)?;
         Cmd::Include(cmd)
     } else if line.starts_with(PLAIN) {
         let text = parse_plain(line)?;
         Cmd::Plain(text)
-    } else if line.starts_with(GLOBAL_TITLE) {
-        let title = parse_global_title(line)?;
-        Cmd::SetGlobalTitle(title)
     } else if line.starts_with(GLOBAL_ID) {
         let id = parse_global_id(line)?;
         Cmd::SetGlobalID(id)
@@ -163,12 +156,6 @@ fn parse_gen_page(line: &str) -> Option<bool> {
     Some(v)
 }
 
-fn parse_gen_course(line: &str) -> Option<bool> {
-    let v = &line[(GEN_COURSE.len() + 1)..];
-    let v: bool = v.parse().ok()?;
-    Some(v)
-}
-
 /// Option<(id, Option<params>)>
 fn parse_include(line: &str) -> Option<(String, Option<String>)> {
     let text = &line[(INCLUDE.len() + 1)..];
@@ -186,11 +173,6 @@ fn parse_include(line: &str) -> Option<(String, Option<String>)> {
 fn parse_plain(line: &str) -> Option<String> {
     let text = &line[(PLAIN.len() + 1)..];
     Some(text.to_string())
-}
-
-fn parse_global_title(line: &str) -> Option<String> {
-    let id = &line[(GLOBAL_TITLE.len() + 1)..];
-    Some(id.to_string())
 }
 
 fn parse_global_id(line: &str) -> Option<String> {
