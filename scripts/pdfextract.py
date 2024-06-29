@@ -37,9 +37,9 @@ def extract_text_from_pdf(pdf_file):
 
                 if text.startswith("!"):
                     # Clean characters.
-                    # TODO: ' needs to ne replace, but the other characters should be supported
+                    # TODO: ' needs to be replace, but the other characters should be supported
 
-                    clean_text = text.replace('’', '\'').replace('ﬀ', 'ff').replace('ô', 'o')
+                    clean_text = text.replace('’', '\'').replace('ﬀ', 'ff').replace('ô', 'o').replace("”", "\"").replace("“", "\"")
                     # Print "x y page_number [text]"
                     print(f'{x} {y} {page_number} [{clean_text}]')
 

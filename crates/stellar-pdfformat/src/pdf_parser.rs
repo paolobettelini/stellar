@@ -116,7 +116,8 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
         let id = parse_start_snippet(line)?;
         Cmd::StartSnippet(id)
     } else if line.starts_with(END_SNIPPET) {
-        Cmd::EndSnippet
+        let v = parse_endsnippet(line);
+        Cmd::EndSnippet(v)
     } else if line.starts_with(GEN_PAGE) {
         let v = parse_gen_page(line)?;
         Cmd::SetGenPage(v)
@@ -167,6 +168,15 @@ fn parse_include(line: &str) -> Option<(String, Option<String>)> {
     } else {
         // no parameters
         Some((text.to_string(), None))
+    }
+}
+
+fn parse_endsnippet(line: &str) -> Option<String> {
+    if line.len() == END_SNIPPET.len() {
+        None
+    } else {
+        let text = &line[(END_SNIPPET.len() + 1)..];
+        Some(text.to_string())
     }
 }
 

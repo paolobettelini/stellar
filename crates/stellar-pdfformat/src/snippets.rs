@@ -7,6 +7,7 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+use std::io::Write;
 use crate::crop_pdf;
 use crate::CropPdfData;
 use stellar_import as import;
@@ -120,7 +121,7 @@ async fn process_cmd(
             processor.current_page = Some(cmd.page);
             processor.current_id = Some(id.to_string());
         }
-        EndSnippet => {
+        EndSnippet(meta) => {
             let snippet_id = processor.current_id.clone().unwrap();
 
             let output = snippets_dir.join(&snippet_id);
@@ -154,6 +155,14 @@ async fn process_cmd(
             if let Some(id) = &processor.current_id {
                 let snippet = format!("<stellar-snippet>{id}</stellar-snippet>\n");
                 processor.html_page.push_str(&snippet);
+            }
+
+            // Generate meta.json
+            if let Some(meta) = meta {
+                let mut output = snippets_dir.join(&snippet_id);
+                output.push("meta.json");
+                let mut file = fs::File::create(output).expect("Failed to save meta file");
+                file.write_all(meta.as_bytes()).expect("Failed to save meta file");
             }
 
             processor.current_coords = None;
