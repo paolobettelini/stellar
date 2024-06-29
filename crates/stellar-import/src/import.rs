@@ -214,6 +214,7 @@ pub async fn import_page_with_client(client: &ClientHandler, file: &Path) -> any
             log::info!("Importing page: {file_name}");
             let page = Page {
                 id: file_name.to_string(),
+                snippets: vec![], // TODO
             };
             client.insert_page(&page, None).await?;
         }
@@ -229,6 +230,7 @@ pub async fn import_course_with_client(client: &ClientHandler, file: &Path) -> a
             log::info!("Importing course: {file_name}");
             let course = Course {
                 id: file_name.to_string(),
+                pages: vec![], // TODO
             };
             client.insert_course(&course, None).await?;
         }
@@ -247,6 +249,8 @@ pub async fn import_universe_with_client(
             log::info!("Importing universe: {file_name}");
             let universe = Universe {
                 id: file_name.to_string(),
+                courses: vec![], // TODO
+                dependencies: vec![], // TODO
             };
             client.insert_universe(&universe, None).await?;
         }

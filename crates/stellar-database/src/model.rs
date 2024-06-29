@@ -8,29 +8,24 @@ pub struct Snippet {
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Page {
     pub id: String,
+    pub snippets: Vec<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Course {
     pub id: String,
+    pub pages: Vec<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Universe {
     pub id: String,
+    pub courses: Vec<String>,
+    pub dependencies: Vec<Dependency>,
 }
 
-/*
-#[derive(Debug)]
-pub struct Course {
-    pub id: String,
-    pub pages: Vec<Page>,
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+pub struct Dependency {
+    pub from: String,
+    pub to: String,
 }
-
-#[derive(Debug)]
-pub struct Page {
-    pub id: String,
-    pub level: u8,
-    pub title: String,
-}
-*/

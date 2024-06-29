@@ -26,6 +26,31 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
     Ok(json)
 }
 
+#[server]
+pub async fn get_snippet_meta_json(snippet: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    let data = expect_context::<ServerData>();
+
+    let file_name = format!("{snippet}.json");
+    log::info!("Reading file: {file_name:?}"); // debug
+                                               // TODO pre-create path
+    let file = &Path::new(&data.data_folder)
+        .join("snippets")
+        .join(&snippet)
+        .join("meta.json");
+
+    let json = {
+        if let Ok(v) = std::fs::read_to_string(file) {
+            v
+        } else {
+            log::debug!("Could not find meta file: {file_name}");
+            String::from("")
+        }
+    };
+
+    Ok(json)
+}
+
 // POST /universe/{universe}
 #[server]
 pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError> {
