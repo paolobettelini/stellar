@@ -19,3 +19,18 @@ pub struct Course {
 pub struct Universe {
     pub id: String,
 }
+
+/*
+#[derive(Debug)]
+pub struct Course {
+    pub id: String,
+    pub pages: Vec<Page>,
+}
+
+#[derive(Debug)]
+pub struct Page {
+    pub id: String,
+    pub level: u8,
+    pub title: String,
+}
+*/

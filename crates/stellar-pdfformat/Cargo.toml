@@ -1,5 +1,5 @@
 [package]
-name = "stellar-generate"
+name = "stellar-pdfformat"
 version = "0.1.0"
 edition = "2021"
 

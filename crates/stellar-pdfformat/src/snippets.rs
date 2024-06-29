@@ -1,6 +1,7 @@
-use stellar_parser::pdf_parser::*;
-use stellar_parser::{Cmd::*, *};
 use import::ClientHandler;
+use crate::Cmd::*;
+use crate::DocumentCmd;
+use crate::pdf_extract;
 use std::process::{Command, Stdio};
 use std::{
     fs,

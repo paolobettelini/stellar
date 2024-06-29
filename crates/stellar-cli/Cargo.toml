@@ -15,5 +15,5 @@ anyhow = "1.0.86"
 tokio = "1.38.0"
 
 stellar-import = { path = "../stellar-import" }
-stellar-generate = { path = "../stellar-generate" }
+stellar-pdfformat = { path = "../stellar-pdfformat" }
 stellar-server = { path = "../stellar-server", features = ["ssr"]}

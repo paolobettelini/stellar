@@ -1,7 +1,7 @@
 use args::*;
 use clap::Parser;
 
-use stellar_generate as generate;
+use stellar_pdfformat as pdfformat;
 use stellar_import as import;
 use stellar_server as web;
 
@@ -49,7 +49,7 @@ pub async fn parse_generate_cmd(args: &GenerateArgs) -> anyhow::Result<()> {
     let left_margin = args.left_margin;
     let right_margin = args.right_margin;
 
-    generate::generate_snippets(
+    pdfformat::generate_snippets(
         input,
         output,
         client,

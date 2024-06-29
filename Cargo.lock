@@ -3124,8 +3124,8 @@ dependencies = [
  "clap",
  "env_logger",
  "log",
- "stellar-generate",
  "stellar-import",
+ "stellar-pdfformat",
  "stellar-server",
  "tokio",
 ]
@@ -3137,22 +3137,6 @@ dependencies = [
  "anyhow",
  "mongodb",
  "serde",
-]
-
-[[package]]
-name = "stellar-generate"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "log",
- "num_cpus",
- "serde",
- "serde_json",
- "stellar-import",
- "stellar-parser",
- "stellar-utils",
- "tokio",
- "uuid",
 ]
 
 [[package]]
@@ -3173,6 +3157,22 @@ dependencies = [
  "log",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "stellar-pdfformat"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "log",
+ "num_cpus",
+ "serde",
+ "serde_json",
+ "stellar-import",
+ "stellar-parser",
+ "stellar-utils",
+ "tokio",
+ "uuid",
 ]
 
 [[package]]
