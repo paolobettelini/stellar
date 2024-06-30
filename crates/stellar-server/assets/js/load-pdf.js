@@ -68,31 +68,25 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
 
 function setupAnnotations(page, viewport, container) {
     let promise = page.getAnnotations().then(function (annotationsData) {
-        viewport = viewport.clone({ dontFlip: true });
+        viewport = viewport.clone({});
 
         annotationsData.forEach(function(data) {
             let element = document.createElement('a');
 
-            /*let view = page.view;
-            let rect = pdfjsLib.Util.normalizeRect([
-                data.rect[0],
-                view[3] - data.rect[1] + view[1],
-                data.rect[2],
-                view[3] - data.rect[3] + view[1]
-            ]);*/
             let rect = pdfjsLib.Util.normalizeRect(
                 viewport.convertToViewportRectangle(data.rect)
             );
-            console.log(viewport)
 
             element.style.left = `${rect[0]}px`;
             // No clue as to why this should work
-            element.style.top = `${viewport.height-rect[1] -34}px`;
+            element.style.top = `${rect[1]}px`;
             element.style.width = `${(rect[2] - rect[0])}px`;
             element.style.height = `${(rect[3] - rect[1])}px`;
 
             element.style.position = 'absolute';
-            element.style.border = "1px solid green";
+            
+            // DEBUG:
+            //element.style.border = "1px solid green";
 
             // floating snippet on hover
             console.log(data.unsafeUrl);
