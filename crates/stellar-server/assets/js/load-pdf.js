@@ -90,7 +90,7 @@ function setupAnnotations(page, viewport, container) {
 
             element.style.left = `${rect[0]}px`;
             // No clue as to why this should work
-            element.style.top = `${viewport.height-rect[1] -32.5}px`;
+            element.style.top = `${viewport.height-rect[1] -34}px`;
             element.style.width = `${(rect[2] - rect[0])}px`;
             element.style.height = `${(rect[3] - rect[1])}px`;
 
@@ -98,12 +98,15 @@ function setupAnnotations(page, viewport, container) {
             //element.style.border = "5px solid green";
 
             // floating snippet on hover
-            console.log(data);
+            console.log(data.unsafeUrl);
             if (data.url == undefined && data.unsafeUrl.includes("/snippet/")) {
-                let url = data.unsafeUrl.split('.pdf')[0];
+                let str = data.unsafeUrl.split('.pdf')[0];
+                let url = str.split('|')[0];
+                let title = str.split('|')[1];
+                let id = url.split('/').pop();
+
                 data.url = url;
 
-                console.log(url)
                 element.classList.add("floating-snippet")
 
                 element.onmouseover = _ => {
@@ -111,10 +114,16 @@ function setupAnnotations(page, viewport, container) {
                 };
 
                 element.href = data.url;
+
+                if (title == undefined) {
+                    element.title = `ID: ${id}\nClick to see definition`;
+                } else {
+                    element.title = `${title}\nID: ${id}\nClick to see definition`;
+                }
             }
 
             // Normal link
-            if (data.subtype === 'Link' && data.url) {
+            else if (data.subtype === 'Link' && data.url) {
                 element.style.cursor = 'pointer';
                 element.onclick = () => window.open(data.url);
                 element.title = data.url;
