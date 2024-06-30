@@ -27,6 +27,20 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
 }
 
 #[server]
+pub async fn get_snippet_references(snippet: String) -> Result<Option<Vec<String>>, ServerFnError> {
+    use crate::data::ServerData;
+    let data = expect_context::<ServerData>();
+
+    let mut res = data.client.query_snippet(&snippet).await.unwrap();
+
+    if let Some(snippet) = res {
+        return Ok(snippet.references);
+    }
+
+    Ok(None)
+}
+
+#[server]
 pub async fn get_snippet_meta_json(snippet: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     let data = expect_context::<ServerData>();

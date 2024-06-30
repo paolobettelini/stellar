@@ -10,3 +10,4 @@ anyhow = "1.0.86"
 log = "0.4.22"
 serde_json = "1.0.118"
 serde = { version = "1.0.203", features = [ "derive" ] }
+lopdf = "0.32.0"

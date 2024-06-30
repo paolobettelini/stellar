@@ -11,3 +11,4 @@ log = "0.4.22"
 
 stellar-database = { path = "../stellar-database" }
 stellar-utils = { path = "../stellar-utils" }
+stellar-parser = { path = "../stellar-parser" }

@@ -195,12 +195,23 @@ pub async fn import_universes_with_client(
 pub async fn import_snippet_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
-            let file_name = remove_extension(file_name);
+            let id = remove_extension(file_name);
             log::info!("Importing snippet: {file_name}");
-            let snippet = Snippet {
-                id: file_name.to_string(),
+
+            let snippet_path = file.join(format!("{}.pdf", &id));
+            let references = stellar_parser::parse_snippet_references(&snippet_path).unwrap_or(vec![]);
+
+            let references = if references.len() == 0 {
+                None
+            } else {
+                Some(references)
             };
-            client.insert_snippet(&snippet, None).await?;
+
+            let snippet = Snippet {
+                id: id.to_string(),
+                references,
+            };
+            client.insert_snippet(&snippet).await?;
         }
     }
 
@@ -216,7 +227,7 @@ pub async fn import_page_with_client(client: &ClientHandler, file: &Path) -> any
                 id: file_name.to_string(),
                 snippets: vec![], // TODO
             };
-            client.insert_page(&page, None).await?;
+            client.insert_page(&page).await?;
         }
     }
 
@@ -232,7 +243,7 @@ pub async fn import_course_with_client(client: &ClientHandler, file: &Path) -> a
                 id: file_name.to_string(),
                 pages: vec![], // TODO
             };
-            client.insert_course(&course, None).await?;
+            client.insert_course(&course).await?;
         }
     }
 
@@ -252,7 +263,7 @@ pub async fn import_universe_with_client(
                 courses: vec![], // TODO
                 dependencies: vec![], // TODO
             };
-            client.insert_universe(&universe, None).await?;
+            client.insert_universe(&universe).await?;
         }
     }
 

@@ -6,6 +6,7 @@ use crate::app::{Navbar, PageRenderer, Topbar};
 use crate::app::SnippetsRenderer;
 use crate::app::SnippetLibraries;
 use crate::app::get_snippet_meta_json;
+use crate::app::get_snippet_references;
 
 #[component]
 pub fn SnippetPage() -> impl IntoView {
@@ -13,7 +14,8 @@ pub fn SnippetPage() -> impl IntoView {
     let snippet = move || params.with(|params| params.get("snippet").cloned().unwrap_or_default());
     let content = format!("<stellar-snippet>{}</stellar-snippet>", &snippet().to_string());
 
-    let once = create_resource(snippet, get_snippet_meta_json);
+    let once1 = create_resource(snippet, get_snippet_meta_json);
+    let once2 = create_resource(snippet, get_snippet_references);
 
     // TODO: prova a togliere il setTimeout
 
@@ -27,7 +29,7 @@ pub fn SnippetPage() -> impl IntoView {
                 <Skeleton text=true/>
             }
         >
-            {move || match once.get() {
+            {move || match once1.get() {
                 None => view! {}.into_view(),
                 Some(res) => {
                     if res.is_err() {
@@ -69,6 +71,35 @@ pub fn SnippetPage() -> impl IntoView {
                     }
 
                     view!{ }.into_view()
+                }
+            }}
+        </Suspense>
+
+        <Suspense
+            fallback=move || view! {
+                <Skeleton text=true/>
+            }
+        >
+            {move || match once2.get() {
+                None => view! {}.into_view(),
+                Some(res) => {
+                    if let Ok(Some(references)) = res {
+                        view! {
+                            <h2>References:</h2>
+                            <ul>
+                                {references.clone().into_iter()
+                                    .map(|id| {
+                                        let href = format!("/snippet/{}", &id);
+                                        view! {
+                                            <li><h2><a href=href>{id}</a></h2></li>
+                                        }.into_view()
+                                    })
+                                    .collect::<Vec<_>>()}
+                            </ul>
+                        }.into_view()
+                    } else {
+                        view!{ <p>No references</p> }.into_view()
+                    }
                 }
             }}
         </Suspense>

@@ -1,4 +1,4 @@
-use mongodb::{Cursor, IndexModel, Client, options::{IndexOptions, ClientOptions, InsertOneOptions}};
+use mongodb::{Cursor, IndexModel, Client, options::{IndexOptions, ReplaceOptions, ClientOptions, InsertOneOptions}};
 use mongodb::bson::{doc};
 use anyhow::Result;
 
@@ -31,6 +31,7 @@ impl ClientHandler {
         self.create_index::<Snippet>("id", SNIPPETS_COLLECTION).await?;
         self.create_index::<Page>("id", PAGES_COLLECTION).await?;
         self.create_index::<Course>("id", COURSES_COLLECTION).await?;
+        self.create_index::<Universe>("id", UNIVERSES_COLLECTION).await?;
 
         Ok(())
     }
@@ -51,42 +52,42 @@ impl ClientHandler {
         Ok(())
     }
 
-    pub async fn insert_snippet(&self, snippet: &Snippet, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+    pub async fn insert_snippet(&self, snippet: &Snippet) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
         let filter = doc! { "id": &snippet.id }; 
-        if collection.find_one(filter, None).await?.is_none() {
-            collection.insert_one(snippet, options).await?;
-        }
+
+        let options = ReplaceOptions::builder().upsert(true).build();
+        collection.replace_one(filter.clone(), snippet, options).await?;
 
         Ok(())
     }
 
-    pub async fn insert_page(&self, page: &Page, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+    pub async fn insert_page(&self, page: &Page) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
         let filter = doc! { "id": &page.id }; 
-        if collection.find_one(filter, None).await?.is_none() {
-            collection.insert_one(page, options).await?;
-        }
+
+        let options = ReplaceOptions::builder().upsert(true).build();
+        collection.replace_one(filter.clone(), page, options).await?;
 
         Ok(())
     }
 
-    pub async fn insert_course(&self, course: &Course, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+    pub async fn insert_course(&self, course: &Course) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
         let filter = doc! { "id": &course.id }; 
-        if collection.find_one(filter, None).await?.is_none() {
-            collection.insert_one(course, options).await?;
-        }
+
+        let options = ReplaceOptions::builder().upsert(true).build();
+        collection.replace_one(filter.clone(), course, options).await?;
 
         Ok(())
     }
 
-    pub async fn insert_universe(&self, universe: &Universe, options: impl Into<Option<InsertOneOptions>>) -> anyhow::Result<()> {
+    pub async fn insert_universe(&self, universe: &Universe) -> anyhow::Result<()> {
         let collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
         let filter = doc! { "id": &universe.id }; 
-        if collection.find_one(filter, None).await?.is_none() {
-            collection.insert_one(universe, options).await?;
-        }
+
+        let options = ReplaceOptions::builder().upsert(true).build();
+        collection.replace_one(filter.clone(), universe, options).await?;
 
         Ok(())
     }
@@ -96,6 +97,13 @@ impl ClientHandler {
         let filter = doc! { "id": {"$regex": keyword} };
 
         Ok(collection.find(filter, None).await?)
+    }
+
+    pub async fn query_snippet(&self, id: &str) -> anyhow::Result<Option<Snippet>> {
+        let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
+        let filter = doc! { "id": id };
+
+        Ok(collection.find_one(filter, None).await?)
     }
 
     pub async fn query_pages(&self, keyword: &str) -> anyhow::Result<Cursor<Page>> {
