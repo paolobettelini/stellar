@@ -31,3 +31,17 @@ cargo leptos watch -- web ...
 ```
 Do not use `--port` or `--address` in development,
 set those values in the `Cargo.toml` instead.
+
+# Issues with cropping PDFs
+```bash
+wget https://archive.archlinux.org/packages/p/python-pymupdf/python-pymupdf-1.23.21-1-x86_64.pkg.tar.zst
+sudo pacman -U python-pymupdf-1.23.21-1-x86_64.pkg.tar.zst
+
+wget https://archive.archlinux.org/packages/p/python-mupdf/python-mupdf-1.23.9-4-x86_64.pkg.tar.zst
+sudo pacman -U python-mupdf-1.23.9-4-x86_64.pkg.tar.zst
+
+wget https://archive.archlinux.org/packages/l/libmupdf/libmupdf-1.23.9-4-x86_64.pkg.tar.zst
+sudo pacman -U libmupdf-1.23.9-4-x86_64.pkg.tar.zst
+
+paru -S python311 # use this version
+```

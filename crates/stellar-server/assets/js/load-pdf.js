@@ -86,22 +86,16 @@ function setupAnnotations(page, viewport, container) {
             let rect = pdfjsLib.Util.normalizeRect(
                 viewport.convertToViewportRectangle(data.rect)
             );
+            console.log(viewport)
 
             element.style.left = `${rect[0]}px`;
-            // No clue as to why I have to multiply this one
-            element.style.top = `${rect[1] * scale}px`;
+            // No clue as to why this should work
+            element.style.top = `${viewport.height-rect[1] -32.5}px`;
             element.style.width = `${(rect[2] - rect[0])}px`;
             element.style.height = `${(rect[3] - rect[1])}px`;
 
             element.style.position = 'absolute';
-            element.style.border = "5px solid green";
-
-            // Add specific handling based on annotation type
-            /*if (data.subtype === 'Link' && data.url) {
-                element.style.cursor = 'pointer';
-                element.onclick = () => window.open(data.url);
-                element.title = data.url;
-            }*/
+            //element.style.border = "5px solid green";
 
             // floating snippet on hover
             console.log(data);
@@ -111,9 +105,24 @@ function setupAnnotations(page, viewport, container) {
 
                 console.log(url)
                 element.classList.add("floating-snippet")
+
+                element.onmouseover = _ => {
+                    console.log("testing");
+                };
+
+                element.href = data.url;
             }
 
-            element.href = data.url;
+            // Normal link
+            if (data.subtype === 'Link' && data.url) {
+                element.style.cursor = 'pointer';
+                element.onclick = () => window.open(data.url);
+                element.title = data.url;
+                element.href = data.url;
+            }
+
+            
+
 
             container.appendChild(element);
         });
