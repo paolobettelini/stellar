@@ -1,8 +1,5 @@
 // Loaded via <script> tag, create shortcut to access PDF.js exports.
-var pdfjsLib = window['pdfjs-dist/build/pdf'];
-
-// The workerSrc property shall be specified.
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
+//var pdfjsLib = window['pdfjs-dist/build/pdf'];
 
 //console.log(PDFViewerApplication);
 //pdfjsLib.preferences.set('enableWebGL', true)
@@ -49,12 +46,12 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
                 textLayerDiv.style.left = canvas.offsetLeft + 'px';
                 textLayerDiv.style.top = canvas.offsetTop + 'px';
 
-                pdfjsLib.renderTextLayer({
+                const textLayer = new pdfjsLib.TextLayer({
                     textContentSource: textContent,
                     container: textLayerDiv,
                     viewport: viewport,
-                    textDivs: []
                 });
+                /*await*/ textLayer.render();
             })
 
             // Render annotations on textLayer
@@ -95,7 +92,7 @@ function setupAnnotations(page, viewport, container) {
             element.style.height = `${(rect[3] - rect[1])}px`;
 
             element.style.position = 'absolute';
-            //element.style.border = "5px solid green";
+            element.style.border = "1px solid green";
 
             // floating snippet on hover
             console.log(data.unsafeUrl);
