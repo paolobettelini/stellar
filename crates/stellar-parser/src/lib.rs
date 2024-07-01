@@ -21,7 +21,7 @@ pub fn parse_snippet_references(snippet_path: &Path) -> anyhow::Result<Vec<Strin
                 }
 
                 if link.contains("/snippet/") {
-                    let id = link.replace("/snippet/", "");
+                    let id = link.replace("/snippet/", "").replace(".pdf", "");
                     result.insert(id);
                 }
 
