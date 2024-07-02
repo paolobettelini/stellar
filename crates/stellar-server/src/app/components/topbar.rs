@@ -1,28 +1,22 @@
 use leptos::*;
 use thaw::*;
+use wasm_bindgen::prelude::*;
+use web_sys::window;
+
+#[wasm_bindgen(inline_js = r#"
+export function setBodyClass(className) {
+    document.body.className = className;
+}
+"#)]
+extern "C" {
+    fn setBodyClass(className: &str);
+}
 
 #[component]
 pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
-    let theme = use_context::<RwSignal<Theme>>().unwrap();
     let (themes_hidden, set_themes_hidden) = create_signal(true);
 
     // https://carlosted.github.io/icondata/
-
-    let set_dark_theme = move |_| {
-        theme.update(|theme| {
-            theme.common.color_primary = "#c8c9db".to_string();
-            theme.common.background_color = "#161923".to_string();
-
-            // TODO: set the class "theme-dark" to body
-
-            /*.theme-dark {
-                --col1: #c8c9db; /* Text */
-                --col2: #161923; /* Background */
-                --col3: #2c2d41; /* Nav Background */
-                --col4: #286f96; /* Colored Text */
-            }*/
-        });
-    };
 
     view! {
         <div id="top-bar">
@@ -50,8 +44,9 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
                     id="theme-list"
                     style:display=move || if themes_hidden() { "none" } else { "block" }
                 >
-                    <Button on_click=move |_| theme.set(Theme::light())>"Light"</Button>
-                    <Button on_click=set_dark_theme>"Dark"</Button>
+                    // TODO: set LocalStorage and re-render page
+                    <Button on_click=move |_| setBodyClass("theme-light")>"Light"</Button>
+                    <Button on_click=move |_| setBodyClass("theme-dark")>"Dark"</Button>
                 </ul>
             </div>
 

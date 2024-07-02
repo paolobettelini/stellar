@@ -1,14 +1,16 @@
 #top-bar {
 	padding: 16px 0px 6px 0px;
-
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-
 	font-family: "Computer Modern Serif", serif;
 	border-width: 0 0 2px 0;
 	border-style: solid;
-	border-color: rgba(18, 18, 18, 100%);
+
+	/*border-color: rgba(18, 18, 18, 100%);*/
+	border-color: var(--col1);
+	color: var(--col1);
+
 	border-radius: 0;
 }
   
@@ -17,6 +19,7 @@
 }
 
 #top-bar-icons {
+	color: var(--col1);
 	flex: 1;
 	display: flex;
 	gap: 24px;
@@ -52,6 +55,6 @@
 	border: 1px solid black;
 	display: none;
 	z-index: 1000;
-	/*background: var(--col2); */
+	background: var(--col2);
 	top: 50px;
 }

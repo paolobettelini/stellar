@@ -8,7 +8,6 @@ function applyFilter(canvas, theme) {
     // Assume it's theme-light
     // TODO fix  (--col2)
     let hexColor = "#161923";
-    console.log("THEME");
     
     const diffR = 255 - parseInt(hexColor.slice(1, 3), 16);
     const diffG = 255 - parseInt(hexColor.slice(3, 5), 16);

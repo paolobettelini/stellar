@@ -16,11 +16,9 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    let theme = create_rw_signal(Theme::light());
-    provide_context(theme);
-
     view! {
         <Stylesheet id="leptos" href="/pkg/stellar.css"/>
+        <script src="/assets/js/init.js" />
 
         // Computer Modern (LaTeX)
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css" />
@@ -28,24 +26,19 @@ pub fn App() -> impl IntoView {
         // sets the document title
         <Title text="Stellar"/>
 
-        // content for this welcome page
-        <ThemeProvider theme>
-            <GlobalStyle />
-
-            <Router>
-                <main>
-                    <Routes>
-                        <Route path="/" view=HomePage/>
-                        <Route path="/snippet/:snippet" view=SnippetPage/>
-                        <Route path="/page/:page" view=PagePage/>
-                        <Route path="/course/:course" view=CoursePage/>
-                        <Route path="/course/:course/:page" view=CoursePage/>
-                        <Route path="/universe/:universe" view=UniversePage/>
-                        <Route path="/search" view=SearchPage/>
-                        <Route path="/*any" view=NotFound/>
-                    </Routes>
-                </main>
-            </Router>
-        </ThemeProvider>
+        <Router>
+            <main>
+                <Routes>
+                    <Route path="/" view=HomePage/>
+                    <Route path="/snippet/:snippet" view=SnippetPage/>
+                    <Route path="/page/:page" view=PagePage/>
+                    <Route path="/course/:course" view=CoursePage/>
+                    <Route path="/course/:course/:page" view=CoursePage/>
+                    <Route path="/universe/:universe" view=UniversePage/>
+                    <Route path="/search" view=SearchPage/>
+                    <Route path="/*any" view=NotFound/>
+                </Routes>
+            </main>
+        </Router>
     }
 }

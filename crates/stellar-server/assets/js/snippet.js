@@ -55,8 +55,7 @@ class SnippetElement extends HTMLElement {
                         loadPDF(buffer, canvasId, textLayerId,
                             () => {
                                 // Apply filter
-                                //let theme = localStorage.getItem('theme');
-                                let theme = 'theme-dark';
+                                let theme = localStorage.getItem('theme');
                                 applyFilter(canvas, theme);
                             });
                     } else if (contentType == 'text/html') {

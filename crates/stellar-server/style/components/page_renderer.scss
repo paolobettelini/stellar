@@ -1,5 +1,5 @@
 body {
-  /*background-color: white;*/
+  background-color: var(--col2);
 }
 
 #inner-content {
@@ -9,10 +9,10 @@ body {
 }
 
 #inner-content, h1, h2, h3, h4, h5, h6 {
-  /*color: black;*/
+  color: var(--col1);
 }
 
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-  /*color: black;*/
+  color: var(--col1);
   text-decoration: none;
 }

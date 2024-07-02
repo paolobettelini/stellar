@@ -18,7 +18,7 @@
     border-radius: 10px;
     padding: 10px;
     text-decoration: none;
-    color: #fff; /* Text color */
+    color: var(--col1); /* Text color */
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.7); /* Box shadow */
     overflow: hidden;
     transition: border-radius 0.3s ease-in-out, left 0.3s ease-in-out;

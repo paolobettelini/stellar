@@ -7,7 +7,7 @@
     width: 400px;
     
     height: 100%;
-    background-color: rgb(245, 245, 245); /* col 3 */
+    background-color: var(--col3);
     z-index: 10;
     transition: transform 0.3s ease-in-out;
     overflow-y: auto; /* Add overflow-y property with value auto */
@@ -28,12 +28,12 @@
 }
 
 #navbar a {
-    color: black; /* col 1*/
+    color: var(--col1);
     text-decoration: none;
 }
 
 .nav-title {
-    color: black; /* col 1*/
+    color: var(--col1);
     margin-top: 10px;
     margin-bottom: 10px;
     font-size: 1.5em;
@@ -41,12 +41,12 @@
 }
 
 .nav-title:hover:not(.empty-nav-title) {
-    color: blue; /* col 4*/
+    color: var(--col4);
     cursor: pointer;
 }
 
 .nav-title.active {
-    color: blue; /* col 4*/
+    color: var(--col4);
 }
 
 .nav-title-level-2 {
