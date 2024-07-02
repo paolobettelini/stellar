@@ -12,9 +12,23 @@ extern "C" {
     fn setBodyClass(className: &str);
 }
 
+#[wasm_bindgen(inline_js = r#"
+export function setLocalStorageTheme(theme) {
+    localStorage.setItem('theme', theme);
+}
+"#)]
+extern "C" {
+    fn setLocalStorageTheme(theme: &str);
+}
+
 #[component]
 pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
     let (themes_hidden, set_themes_hidden) = create_signal(true);
+
+    let set_theme = |theme| {
+        setLocalStorageTheme(theme);
+        setBodyClass(theme);
+    };
 
     // https://carlosted.github.io/icondata/
 
@@ -45,8 +59,8 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
                     style:display=move || if themes_hidden() { "none" } else { "block" }
                 >
                     // TODO: set LocalStorage and re-render page
-                    <Button on_click=move |_| setBodyClass("theme-light")>"Light"</Button>
-                    <Button on_click=move |_| setBodyClass("theme-dark")>"Dark"</Button>
+                    <Button on_click=move |_| set_theme("theme-light")>"Light"</Button>
+                    <Button on_click=move |_| set_theme("theme-dark")>"Dark"</Button>
                 </ul>
             </div>
 
