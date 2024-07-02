@@ -56,7 +56,8 @@ class SnippetElement extends HTMLElement {
                             () => {
                                 // Apply filter
                                 //let theme = localStorage.getItem('theme');
-                                //applyFilter(canvas, theme);
+                                let theme = 'theme-dark';
+                                applyFilter(canvas, theme);
                             });
                     } else if (contentType == 'text/html') {
                         const decoder = new TextDecoder();

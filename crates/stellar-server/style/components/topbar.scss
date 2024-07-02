@@ -51,6 +51,7 @@
 	padding: 15px;
 	border: 1px solid black;
 	display: none;
-	background: var(--col2);
+	z-index: 1000;
+	/*background: var(--col2); */
 	top: 50px;
 }

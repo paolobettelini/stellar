@@ -45,3 +45,7 @@ sudo pacman -U libmupdf-1.23.9-4-x86_64.pkg.tar.zst
 
 paru -S python311 # use this version
 ```
+Lock the packages version in `/etc/pacman.conf`
+```
+IgnorePkg = libmupdf python-mupdf python-pymupdf
+```

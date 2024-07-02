@@ -107,9 +107,9 @@ function setupAnnotations(page, viewport, container) {
                 element.href = data.url;
 
                 if (title == undefined) {
-                    element.title = `ID: ${id}\nClick to see definition`;
+                    element.title = `ID: ${id}\nClick to see source`;
                 } else {
-                    element.title = `${title}\nID: ${id}\nClick to see definition`;
+                    element.title = `${title}\nID: ${id}\nClick to see source`;
                 }
             }
 

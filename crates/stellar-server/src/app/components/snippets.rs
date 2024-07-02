@@ -16,6 +16,7 @@ pub fn SnippetLibraries() -> impl IntoView {
             import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs';
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs';
         </script>
+        <script src="/assets/js/filter.js" />
         <script src="/assets/js/load-pdf.js" />
         <script src="/assets/js/utils.js" />
         <script src="/assets/js/snippet.js" />

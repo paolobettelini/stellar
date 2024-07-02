@@ -8,6 +8,22 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
 
     // https://carlosted.github.io/icondata/
 
+    let set_dark_theme = move |_| {
+        theme.update(|theme| {
+            theme.common.color_primary = "#c8c9db".to_string();
+            theme.common.background_color = "#161923".to_string();
+
+            // TODO: set the class "theme-dark" to body
+
+            /*.theme-dark {
+                --col1: #c8c9db; /* Text */
+                --col2: #161923; /* Background */
+                --col3: #2c2d41; /* Nav Background */
+                --col4: #286f96; /* Colored Text */
+            }*/
+        });
+    };
+
     view! {
         <div id="top-bar">
             <div id="top-bar-icons">
@@ -35,7 +51,7 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
                     style:display=move || if themes_hidden() { "none" } else { "block" }
                 >
                     <Button on_click=move |_| theme.set(Theme::light())>"Light"</Button>
-                    <Button on_click=move |_| theme.set(Theme::dark())>"Dark"</Button>
+                    <Button on_click=set_dark_theme>"Dark"</Button>
                 </ul>
             </div>
 
