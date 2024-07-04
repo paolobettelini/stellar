@@ -48,7 +48,7 @@
 	},
 	"Stellar Proof": {
 		"prefix": ["sproof"],
-		"body": ["\\begin{snippetproof}{${1:id}-proof}{${2:name}}\n\t${3:body}\n\\end{snippetproof}"],
+		"body": ["\\begin{snippetproof}{${1:id}-proof}{${2:ref-id}}{${3:name}}\n\t${4:body}\n\\end{snippetproof}"],
 		"description": "Stellar command"
 	},
 	"Stellar Exercise": {
