@@ -3184,11 +3184,11 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 
 [[package]]
 name = "stellar"
-version = "0.2.1"
+version = "0.3.0"
 
 [[package]]
 name = "stellar-cli"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -3202,7 +3202,7 @@ dependencies = [
 
 [[package]]
 name = "stellar-database"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "mongodb",
@@ -3211,7 +3211,7 @@ dependencies = [
 
 [[package]]
 name = "stellar-import"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "log",
@@ -3222,7 +3222,7 @@ dependencies = [
 
 [[package]]
 name = "stellar-parser"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "log",
@@ -3233,7 +3233,7 @@ dependencies = [
 
 [[package]]
 name = "stellar-pdfformat"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "log",
@@ -3249,7 +3249,7 @@ dependencies = [
 
 [[package]]
 name = "stellar-server"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "actix-files",
  "actix-web",
@@ -3278,7 +3278,7 @@ dependencies = [
 
 [[package]]
 name = "stellar-utils"
-version = "0.1.0"
+version = "0.3.0"
 
 [[package]]
 name = "stringprep"
