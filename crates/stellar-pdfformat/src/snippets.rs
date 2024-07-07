@@ -46,7 +46,7 @@ pub async fn generate_snippets(
     bottom_offset: f64,
     left_margin: Option<f64>,
     right_margin: Option<f64>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<(bool, u32)> { // (Page was imported, number of imported snippets)
     let out_folder = Path::new(output);
     let snippets_dir = out_folder.join("snippets");
     let pages_dir = out_folder.join("pages");
@@ -86,8 +86,13 @@ pub async fn generate_snippets(
         handles.push(handle);
     }
 
+    let mut imported_snippets = 0;
     for cmd in commands {
-        process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim, tx.clone()).await;
+        let res = process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim, tx.clone()).await;
+
+        if res {
+            imported_snippets += 1;
+        }
     }
 
     drop(tx);
@@ -97,9 +102,9 @@ pub async fn generate_snippets(
         handle.join().expect("Failed to join worker thread");
     }
 
-    finalize(&mut processor, &pages_dir, &courses_dir);
+    let page_imported = finalize(&mut processor, &pages_dir, &courses_dir, &client).await;
 
-    Ok(())
+    Ok((page_imported, imported_snippets))
 }
 
 async fn process_cmd(
@@ -110,7 +115,7 @@ async fn process_cmd(
     client: &Option<&ClientHandler>,
     dim: &CropDimension,
     tx: Sender<CropPdfData>,
-) {
+) -> bool { // true if a snippet has been imported
     match &cmd.cmd {
         SetGlobalID(id) => {
             processor.global_id = id.to_string();
@@ -147,8 +152,14 @@ async fn process_cmd(
             // Send Data so that the cropping is executed in parallel.
             tx.send(data).expect("Failed to send data");
 
+            let mut snippet_imported = false;
             if let Some(ref client) = client {
-                let _ = import::import_snippet_with_client(client, &output).await;
+                let res = import::import_snippet_with_client(client, &output).await;
+                
+                if res.is_ok() {
+                    // Snippet has been imported
+                    snippet_imported = true;
+                }
             }
 
             // Add generated snippet to HTML page
@@ -168,6 +179,8 @@ async fn process_cmd(
             processor.current_coords = None;
             processor.current_page = None;
             processor.current_id = None;
+
+            return snippet_imported;
         }
         AddSection(title) => {
             // Add title to HTML page
@@ -202,9 +215,11 @@ async fn process_cmd(
             processor.html_page.push_str("</p>");
         }
     }
+
+    false
 }
 
-fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) {
+async fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path, client: &Option<&ClientHandler>) -> bool {
     // Generate page
     let file_id = &processor.global_id;
 
@@ -213,12 +228,20 @@ fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path) 
         let file_path = pages_dir.join(&filename);
 
         log::info!("Writing file: {filename}");
-        let res = fs::write(file_path, &processor.html_page);
+        let res = fs::write(&file_path, &processor.html_page);
 
-        if res.is_err() {
+        return if res.is_err() {
             log::error!("Couldn't write file {}", &filename);
-        }
+            false
+        } else if let Some(ref client) = client {
+            let res = import::import_page_with_client(client, &file_path).await;
+            res.is_ok()
+        } else {
+            false
+        };
     }
+
+    false
 }
 
 fn create_if_necessary(path: &Path) {
