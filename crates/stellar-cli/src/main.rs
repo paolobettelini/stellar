@@ -52,7 +52,7 @@ pub async fn parse_generate_cmd(args: &GenerateArgs) -> anyhow::Result<()> {
     pdfformat::generate_snippets(
         input,
         output,
-        &client,
+        client.as_ref(),
         top_offset,
         bottom_offset,
         left_margin,

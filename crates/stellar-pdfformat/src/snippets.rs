@@ -41,7 +41,7 @@ struct CropDimension {
 pub async fn generate_snippets(
     input: &PathBuf,
     output: &Path,
-    client: &Option<ClientHandler>,
+    client: Option<&ClientHandler>,
     top_offset: f64,
     bottom_offset: f64,
     left_margin: Option<f64>,
@@ -87,7 +87,7 @@ pub async fn generate_snippets(
     }
 
     for cmd in commands {
-        process_cmd(input, &mut processor, &cmd, &snippets_dir, client, &dim, tx.clone()).await;
+        process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim, tx.clone()).await;
     }
 
     drop(tx);
@@ -107,7 +107,7 @@ async fn process_cmd(
     processor: &mut DocProcessor,
     cmd: &DocumentCmd,
     snippets_dir: &Path,
-    client: &Option<ClientHandler>,
+    client: &Option<&ClientHandler>,
     dim: &CropDimension,
     tx: Sender<CropPdfData>,
 ) {
