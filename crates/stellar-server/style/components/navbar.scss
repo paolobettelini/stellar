@@ -1,30 +1,32 @@
 #navbar {
-    /*position: fixed;*/
     top: 0;
     left: 0;
-
-    /*width: var(--sidebar-width);*/
     width: 400px;
-    
     height: 100%;
     background-color: var(--col3);
     z-index: 10;
     transition: transform 0.3s ease-in-out;
-    overflow-y: auto; /* Add overflow-y property with value auto */
+    overflow-y: auto;
     max-height: 100vh;
     line-height: normal;
+    transform: translateX(0); /* Visible by default */
 }
 
-/* Navbar Animation */
-#navbar.retracted {
-    transform: translateX(-100%);
+#navbar.hidden {
+    transform: translateX(-100%); /* Hidden state */
+}
+
+/* Media query to hide the navbar by default under a certain screen size */
+@media (max-width: 768px) {
+    #navbar {
+        transform: translateX(-100%);
+    }
 }
 
 #navbar-content {
     display: flex;
     flex-direction: column;
     padding: 20px;
-
 }
 
 #navbar a {

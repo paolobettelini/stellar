@@ -18,7 +18,7 @@ enum Page {
 }
 
 #[component]
-pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> impl IntoView {
+pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden: ReadSignal<bool>) -> impl IntoView {
     let params = use_params_map();
     let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
     let page = move || params.with(|params| params.get("page").cloned());
@@ -32,8 +32,10 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>) -> imp
         page_sig.set(v);
     }
 
+    let navbar_class = move || if hidden() { "hidden" } else { "" };
+
     view! {
-        <div id="navbar">
+        <div id="navbar" class=navbar_class>
             <img style="padding-left: 10px; padding-top: 10px" src="/assets/logo.png" width="64px" height="64px" />
             <div id="navbar-content">
                 <Suspense

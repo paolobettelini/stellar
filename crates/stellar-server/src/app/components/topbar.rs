@@ -22,7 +22,7 @@ extern "C" {
 }
 
 #[component]
-pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
+pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -> impl IntoView {
     let (themes_hidden, set_themes_hidden) = create_signal(true);
 
     let set_theme = |theme| {
@@ -35,14 +35,13 @@ pub fn Topbar(title: ReadSignal<String>) -> impl IntoView {
     view! {
         <div id="top-bar">
             <div id="top-bar-icons">
-                <i>
+                <i on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
                     <Icon icon=icondata::FaBarsSolid/>
                 </i>
                 <i id="topbar-search">
                     <a
                         style="color: inherit"
-                        href="/search"
-                        rel="external" >
+                        href="/search" >
                         <Icon icon=icondata::ImSearch/>
                     </a>
                 </i>

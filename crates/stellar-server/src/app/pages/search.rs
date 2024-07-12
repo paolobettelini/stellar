@@ -103,7 +103,6 @@ pub fn SearchPage() -> impl IntoView {
                                     view! {
                                         <a
                                             href=link
-                                            rel="external"
                                         >{entry.id}</a>
                                     }}).collect_view()
                         }
