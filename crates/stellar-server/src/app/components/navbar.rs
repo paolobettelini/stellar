@@ -32,6 +32,14 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
         page_sig.set(v);
     }
 
+    // Render first page of the course logic
+    let (first_page, set_first_page) = create_signal(None::<String>);
+    create_effect(move |_| {
+        if let Some(id) = first_page() {
+            page_sig.set(id.clone());
+        }
+    });
+
     let navbar_class = move || if hidden() { "hidden" } else { "" };
 
     view! {
@@ -66,13 +74,14 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
                                         "".to_string()
                                     };
                                     let id_clone = id.clone();
+                                    let id_clone2 = id.clone();
 
                                     // Render first page
-                                    /*if page_sig() == "" {
-                                        if let Some(id) = id.clone() {
-                                            //page_sig.set(id.to_string());
+                                    if first_page.get_untracked().is_none() {
+                                        if let Some(id) = id_clone2.clone() {
+                                            set_first_page.set(Some(id.to_string()));
                                         }
-                                    }*/
+                                    }
 
                                     view! {
                                         <span

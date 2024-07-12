@@ -98,10 +98,11 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
         return Ok(String::from(""));
     }
 
-    let data = expect_context::<ServerData>();
-
     let file_name = format!("{page}.html");
     log::info!("Reading file: {file_name:?}");
+
+    let data = expect_context::<ServerData>();
+
     // TODO pre-create path
     let file = &Path::new(&data.data_folder).join("pages").join(&file_name);
     let content = {

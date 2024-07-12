@@ -102,6 +102,7 @@ pub fn SearchPage() -> impl IntoView {
                                     let link = format!("/{}/{}", query_type, entry.id);
                                     view! {
                                         <a
+                                            rel="external"
                                             href=link
                                         >{entry.id}</a>
                                     }}).collect_view()

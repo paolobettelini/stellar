@@ -95,6 +95,7 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                                     <a
                                         id=title_id
                                         href=title_href
+                                        rel="external"
                                         style="position: absolute"
                                         style:left=move || format!("{}%", left)
                                         style:top=move || format!("{}%", top)
