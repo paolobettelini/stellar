@@ -9,10 +9,6 @@ pub fn CoursePage() -> impl IntoView {
     let (title, set_title) = create_signal("".to_string());
     let (navbar_hidden, set_navbar_hidden) = create_signal(false);
 
-    /*let toggle_navbar = move || {
-        set_navbar_hidden.update(|v| *v = !*v);
-    };*/
-
     view! {
         <div class="course-container">
             <Navbar page_sig set_title hidden=navbar_hidden />

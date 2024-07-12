@@ -7,7 +7,6 @@ const END_SNIPPET: &str = "!endsnippet";
 const GEN_PAGE: &str = "!gen-page";
 const INCLUDE: &str = "!include";
 const PLAIN: &str = "!plain";
-const GLOBAL_TITLE: &str = "!title";
 const SECTION: &str = "!section";
 const SUBSECTION: &str = "!subsection";
 const SUBSUBSECTION: &str = "!subsubsection";

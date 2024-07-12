@@ -1,0 +1,317 @@
+\documentclass[a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{lib}
+\usepackage{fullpage}
+\usepackage{dirtree}
+\usepackage{xcolor}
+\usepackage{parskip}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdftitle={Stellar - Documentazione},
+    pdfpagemode=FullScreen,
+}
+
+\title{%
+    Stellar \\
+    \phantom{} \\
+    \Large Courseware environment \\
+    \Large Documentation
+}
+
+\author{Paolo Bettelini}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\pagebreak
+
+\part{Stellar}
+
+\section{Introduction}
+
+\section{Data structure}
+
+\dirtree{%
+.1 data/.
+.2 snippets/.
+.2 pages/.
+.2 courses/.
+.2 universes/.
+}
+
+\pagebreak
+
+\section{PDF Stellar Format}
+
+\subsection{Format commands}
+
+Stellar is able to interpret special PDFs with certain text commands written in the page.
+This is referred to as \texttt{PDF Stellar Format}.
+The file represents a Stellar page containing snippets, or just a collection of snippets.
+Stellar will crop the PDF into multiple pieces to generate every snippet individually,
+and is also able to generate the corresponding page containing them.
+
+\bgroup{}
+\def\arraystretch{1.5}
+\begin{center}
+    \begin{tabular}{ |p{4.5cm}|p{8cm}| }
+        \hline
+        \multicolumn{2}{|c|}{\textbf{PDF Stellar Format commands}} \\
+        \hline
+        \textbf{Command} & \textbf{Description} \\
+        \hline
+        \texttt{!id <ID>} & Set the ID of this page. \\
+        \hline
+        \texttt{!snippet <ID>} & Start a PDF snippet here. \\
+        \hline
+        \texttt{!endsnippet <JSON meta>} & End the current snippet here. The JSON metadata is optional. \\
+        \hline
+        \texttt{!gen-page <bool>} & Set to true to generate the HTML page for this PDF. \\
+        \hline
+        \texttt{!include <ID> <Params>} & Include a snippet here given its ID. The parameters string is optional. \\
+        \hline
+        \texttt{!plain} & Write plain HTML to the page here. \\
+        \hline
+        \texttt{!section} & Add a level 1 heading \texttt{<h1>}. \\
+        \hline
+        \texttt{!subsection} & Add a level 2 heading \texttt{<h2>}. \\
+        \hline
+        \texttt{!subsubsection} & Add a level 3 heading \texttt{<h3>}. \\
+        \hline
+    \end{tabular}
+\end{center}
+\egroup{}
+
+Furthermore, it is possible to reference another snippet by adding an annotation
+with a link of the form \texttt{/snippet/snippet-id} or \texttt{/snippet/snippet-id|Label}.
+
+Stellar will crop the PDF between \texttt{!snippet} amd \texttt{!endsnippet}.
+
+\pagebreak
+
+\subsection{\LaTeX Package}
+
+The file \texttt{stellar.sty} provides the \LaTeX package \texttt{stellar}, which
+implements PDF Stellar Format.
+
+\subsubsection{Usage}
+
+In order to use the package is it necessary to use the following documentclass:
+\begin{lstlisting}[style=boxed, style=LaTeX]
+    \documentclass[preview]{standalone}
+\end{lstlisting}
+and import the \texttt{stellar} package
+\begin{lstlisting}[style=boxed, style=LaTeX]
+    \usepackage{stellar}
+\end{lstlisting}
+
+The command \lstinline[style=LaTeX]{\title} needs to be inserted within the \texttt{document}.
+The commands \lstinline[style=LaTeX]{\section}, \lstinline[style=LaTeX]{\subsection} and
+\lstinline[style=LaTeX]{\subsubsection} can be used normally as their behavior is overwritten by the package.
+
+The commands \lstinline[style=LaTeX]{\id}, \lstinline[style=LaTeX]{\genpage}
+and \lstinline[style=LaTeX]{\plain} are available.
+
+It is possible to reference another snippet by using the \lstinline[style=LaTeX]{\snippetref} command:
+\begin{lstlisting}[style=boxed, style=LaTeX]
+    \snippetref[snippet-identifier][Some text].
+\end{lstlisting}
+
+A snippet can be included using the following command:
+\begin{lstlisting}[style=boxed, style=LaTeX]
+    \includesnpt{snippet-identifier}
+    \includesnpt[param1=value1|param2=value2]{snippet-identifier}
+\end{lstlisting}
+
+Snippets can be created using environments. A plain snippet can be created as follows:
+\begin{lstlisting}[style=boxed, style=LaTeX]
+    \begin{snippet}{snippet-identifier}
+        % snippet content
+    \end{snippet}
+\end{lstlisting}
+
+There are other types of snippets such as the following
+
+\begin{lstlisting}[style=boxed, style=LaTeX]
+    \begin{snippetdefinition}{snippet-definition1}{Definition 1}
+        % snippet content
+    \end{snippetdefinition}
+
+    \begin{snippettheorem}{snippet-theorem1}{Theorem 1}
+        % snippet content
+    \end{snippettheorem}
+
+    \begin{snippetproof}{snippet-proof1}{snippet-theorem1}{Proof 1}
+        % snippet content
+    \end{snippetproof}
+\end{lstlisting}
+
+\pagebreak
+
+\subsubsection{Example}
+
+\begin{lstlisting}[style=boxed, style=LaTeX]
+\documentclass[preview]{standalone}
+
+\usepackage{stellar}
+
+\begin{document}
+
+\id{page-identifier}
+\genpage
+
+\section{Section 1}
+
+\subsection{Subsection 1}
+
+\begin{snippetdefinition}{snippet1-definition}{Some definition}
+    This is some definition
+\end{snippetdefinition}
+
+\subsection{Subsection 2}
+
+\section{Section 2}
+
+\begin{snippetdefinition}{snippet2-definition}{Some definition}
+    This is some definition, the sequel
+\end{snippetdefinition}
+
+\includesnpt{snippet2-definition}
+
+\begin{snippet}{text-snippet}[\{"meta": "json"\}]
+    Some text as a snippet!
+\end{snippet}
+
+\end{document}
+\end{lstlisting}
+
+\pagebreak
+
+\section{Metadata}
+
+A snippet may contain a \texttt{metadata.json} file containing some metadata properties.
+
+\subsection{JSON structure}
+
+\bgroup{}
+\def\arraystretch{1.5}
+\begin{center}
+    \begin{tabular}{ |p{3cm}|p{4cm}|p{5cm}| }
+        \hline
+        \multicolumn{3}{|c|}{\textbf{Metadata fields}} \\
+        \hline
+        \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+        \hline
+        \texttt{generalizations} & Array of snippet IDs & Mathematical generalizations. \\
+        \hline
+        \texttt{requires} & Array of snippet IDs & Necessary libraries. \\
+        \hline
+        \texttt{default-params} & Params string & Default parameters for snippet. \\
+        \hline
+    \end{tabular}
+\end{center}
+\egroup{}
+
+\subsection{Example}
+
+\begin{lstlisting}[style=boxed, style=json]
+    {
+        "default-params": "width=70%|src=https://youtu.be/dQw4w9WgXcQ&",
+        "requires": ["some-lib-snippet"],
+    }
+\end{lstlisting}
+
+\pagebreak
+
+\part{\LaTeX-driven implementation}
+
+\section{Structure}
+
+\dirtree{%
+.1 source/.
+.2 latex/.
+.2 courses/.
+.2 pages/.
+.2 snippets/.
+.2 universes/.
+}
+
+\pagebreak
+
+\section{Snippet build scripts}
+
+By default, snippets in the \texttt{snippets/} folder are just copied to the \texttt{data/} folder by the compiler.
+However, it is possible to add a custom build script \texttt{build.py} to the snippet directory to implement
+custom behavior.
+The build script will receive a single parameter representing the target folder where the files need to be written to.
+
+\subsection{Example}
+
+The following is an example build script to compile a Rust \href{https://github.com/nannou-org/nannou}{nannou} project to wasm.
+
+\begin{lstlisting}[style=boxed, style=Python]
+import sys
+import subprocess
+import os
+import shutil
+
+# This build script compiles a nannou project into a snippet
+
+def main():
+    target_folder = sys.argv[1]
+    
+    try:
+        # Execute wasm-pack build --release
+        subprocess.run(["wasm-pack", "build", "--release"], check=True)
+        
+        # Change directory to website
+        os.chdir("website")
+        
+        # Execute npm install
+        subprocess.run(["npm", "install"], check=True)
+        
+        # Execute npm run build
+        subprocess.run(["npm", "run", "build"], check=True)
+        
+        # Generate snippet folder
+        dist_folder = "dist"
+        target_files = os.listdir(dist_folder)
+        
+        # Remove "dist/index.js"
+        index_file_path = os.path.join(dist_folder, "index.js")
+        if os.path.exists(index_file_path):
+            os.remove(index_file_path)
+        
+        # Move all files from "dist" to target_folder
+        for file_name in target_files:
+            file_path = os.path.join(dist_folder, file_name)
+            if os.path.isfile(file_path):
+                shutil.move(file_path, target_folder)
+        
+        # Remove the "dist" directory
+        shutil.rmtree(dist_folder, ignore_errors=True)
+        
+        print(f"Successfully moved files to {target_folder}")
+    
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while executing: {e.cmd}")
+        print(f"Return code: {e.returncode}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
+        sys.exit(1)
+
+    if __name__ == "__main__":
+        main()
+\end{lstlisting}
+
+\end{document}
