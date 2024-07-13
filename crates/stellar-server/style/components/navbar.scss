@@ -1,7 +1,11 @@
+body {
+    --sidebar-width: 400px;
+}
+
 #navbar {
     top: 0;
     left: 0;
-    width: 400px;
+    width: var(--sidebar-width);
     height: 100%;
     background-color: var(--col3);
     z-index: 10;
@@ -9,14 +13,20 @@
     overflow-y: auto;
     max-height: 100vh;
     line-height: normal;
+
+    position: absolute;
 }
 
 #navbar.hidden {
-    position: absolute;
-    left: -400px;
+    left: calc(-1 * var(--sidebar-width));
+}
+
+.course-container {
+    margin-left: var(--sidebar-width);
 }
 
 .retracted {
+    margin-left: 0px;
 }
 
 /* Media query to hide the navbar by default under a certain screen size */

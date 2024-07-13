@@ -1,6 +1,6 @@
 .course-container {
     height: 100vh;
-
+    transition: margin-left 0.3s ease-in-out;
     display: flex;
     overflow: hidden;
 }
