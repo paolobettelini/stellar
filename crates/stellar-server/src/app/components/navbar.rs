@@ -40,10 +40,8 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
         }
     });
 
-    let navbar_class = move || if hidden() { "hidden" } else { "" };
-
     view! {
-        <div id="navbar" class=navbar_class>
+        <div id="navbar" class:hidden=move || hidden()>
             <img style="padding-left: 10px; padding-top: 10px" src="/assets/logo.png" width="64px" height="64px" />
             <div id="navbar-content">
                 <Suspense

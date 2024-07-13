@@ -5,15 +5,18 @@
     height: 100%;
     background-color: var(--col3);
     z-index: 10;
-    transition: transform 0.3s ease-in-out;
+    transition: left 0.3s ease-in-out;
     overflow-y: auto;
     max-height: 100vh;
     line-height: normal;
-    transform: translateX(0); /* Visible by default */
 }
 
 #navbar.hidden {
-    transform: translateX(-100%); /* Hidden state */
+    position: absolute;
+    left: -400px;
+}
+
+.retracted {
 }
 
 /* Media query to hide the navbar by default under a certain screen size */

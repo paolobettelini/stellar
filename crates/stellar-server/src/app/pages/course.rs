@@ -10,7 +10,7 @@ pub fn CoursePage() -> impl IntoView {
     let (navbar_hidden, set_navbar_hidden) = create_signal(false);
 
     view! {
-        <div class="course-container">
+        <div class="course-container" class:retracted=move || navbar_hidden()>
             <Navbar page_sig set_title hidden=navbar_hidden />
 
             <div class="course-body">
