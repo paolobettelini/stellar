@@ -1,6 +1,7 @@
 use leptos::*;
 use leptos_router::*;
 use thaw::*;
+use wasm_bindgen::prelude::*;
 
 use crate::app::get_course_json;
 
@@ -15,6 +16,15 @@ struct Course {
 enum Page {
     Empty((u8, String)),
     Ref((u8, String, String)),
+}
+
+#[wasm_bindgen(inline_js = r#"
+export function getPageWidth() {
+    return window.innerWidth;
+}
+"#)]
+extern "C" {
+    fn getPageWidth() -> i32;
 }
 
 #[component]
@@ -40,8 +50,17 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
         }
     });
 
+    let (full_navbar, set_full_navbar) = create_signal(true);
+    // If the navbar is set to be shown, set it to full mode (for small screens)
+    create_effect(move |_| {
+        let _ = hidden();
+        if getPageWidth() < 768 { // ??? I have to click the hamburger two times?
+            set_full_navbar.set(true);
+        }
+    });
+
     view! {
-        <div id="navbar" class:hidden=move || hidden()>
+        <div id="navbar" class:hidden=move || hidden() class:full=move || full_navbar()>
             <img style="padding-left: 10px; padding-top: 10px" src="/assets/logo.png" width="64px" height="64px" />
             <div id="navbar-content">
                 <Suspense
@@ -96,6 +115,11 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
                                                 if let Some(id) = &id {
                                                     // Update page
                                                     page_sig.set(id.to_string());
+                                                }
+
+                                                // If the screen is small close full navbar
+                                                if getPageWidth() <= 768 {
+                                                    set_full_navbar.set(false)
                                                 }
                                             }
                                             id=id_str

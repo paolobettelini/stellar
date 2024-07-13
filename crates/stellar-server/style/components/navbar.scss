@@ -32,7 +32,35 @@ body {
 /* Media query to hide the navbar by default under a certain screen size */
 @media (max-width: 768px) {
     #navbar {
-        transform: translateX(-100%);
+        left: 0;
+        width: 80%;
+        padding-left: 10%;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    #navbar.full + .course-body {
+        display: none;
+    }
+
+    #navbar.hidden:not(.full) {
+        display: none;
+    }
+
+    #navbar:not(.full) {
+        display: none;
+    }
+
+    #navbar:not(.full) + .course-body {
+        display: flex;
+    }
+
+    .course-container {
+        margin-left: 0px;
+    }
+
+    #navbar.hidden {
+        left: 0;
     }
 }
 

@@ -30,7 +30,7 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
         setBodyClass(theme);
     };
 
-    // https://carlosted.github.io/icondata/
+    // https://carloskiki.github.io/icondata/
 
     view! {
         <div id="top-bar">
