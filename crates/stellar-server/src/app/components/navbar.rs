@@ -101,7 +101,7 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
                                     }
 
                                     view! {
-                                        <span
+                                        <a
                                             class="nav-title"
                                             class={lvl_class}
                                             class=("empty-nav-title", id_is_none)
@@ -122,10 +122,10 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
                                                     set_full_navbar.set(false)
                                                 }
                                             }
-                                            id=id_str
-                                            >
+                                            href=""
+                                            id=id_str>
                                             {title}
-                                        </span>
+                                        </a>
                                     }
                                 })
                                 .collect_view()

@@ -48,6 +48,12 @@
 	opacity: 100%;
 }
 
+#top-bar-icons a {
+	text-decoration: inherit;
+    color: inherit;
+    cursor: inherit;
+}
+
 #theme-list {
 	list-style-type: none; /* Remove bullets */
 	position: absolute;

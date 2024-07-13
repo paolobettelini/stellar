@@ -35,8 +35,8 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
     view! {
         <div id="top-bar">
             <div id="top-bar-icons">
-                <i on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
-                    <Icon icon=icondata::FaBarsSolid/>
+                <i id="topbar-hamburger" on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
+                    <a href=""><Icon icon=icondata::FaBarsSolid/></a>
                 </i>
                 <i id="topbar-search">
                     <a
@@ -51,7 +51,7 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
                         set_themes_hidden.update(|v| *v = !*v)
                     }
                 >
-                    <Icon icon=icondata::FaPaintbrushSolid/>
+                    <a href=""><Icon icon=icondata::FaPaintbrushSolid/></a>
                 </i>
                 <ul
                     id="theme-list"

@@ -81,15 +81,19 @@ body {
     margin-bottom: 10px;
     font-size: 1.5em;
     font-family: "Open Sans", sans-serif, monospace;
+
+    /* Don't know if needed for mobile 
+    display: inline-block;
+    touch-action: manipulation;*/
 }
 
 .nav-title:hover:not(.empty-nav-title) {
-    color: var(--col4);
+    color: var(--col4) !important;
     cursor: pointer;
 }
 
 .nav-title.active {
-    color: var(--col4);
+    color: var(--col4) !important;
 }
 
 .nav-title-level-2 {
