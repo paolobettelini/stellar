@@ -90,26 +90,27 @@ function setupAnnotations(page, viewport, container) {
 
             // floating snippet on hover
             console.log(data.unsafeUrl);
-            if (data.url == undefined && data.unsafeUrl.includes("/snippet/")) {
-                let str = data.unsafeUrl.split('.pdf')[0];
-                let url = str.split('|')[0];
-                let title = str.split('|')[1];
-                let id = url.split('/').pop();
-
-                data.url = url;
-
-                element.classList.add("floating-snippet")
-
-                element.onmouseover = _ => {
-                    console.log("testing");
-                };
-
-                element.href = data.url;
-
-                if (title == undefined) {
-                    element.title = `ID: ${id}\nClick to see source`;
-                } else {
-                    element.title = `${title}\nID: ${id}\nClick to see source`;
+            if (data.url == undefined) {
+                if (data.unsafeUrl.startsWith("/snippet/")) {
+                    let str = data.unsafeUrl.split('.pdf')[0];
+                    let url = str.split('|')[0];
+                    let title = str.split('|')[1];
+                    let id = url.split('/').pop();
+    
+                    data.url = url;
+    
+                    element.href = data.url;
+    
+                    if (title == undefined) {
+                        element.title = `ID: ${id}\nClick to see source`;
+                    } else {
+                        element.title = `${title}\nID: ${id}\nClick to see source`;
+                    }
+                } else if (data.unsafeUrl.startsWith("|")) {
+                    let str = data.unsafeUrl.split('.pdf')[0];
+                    let label = str.substr(1);
+                    element.title = label;
+                    element.href = "";
                 }
             }
 
@@ -120,9 +121,6 @@ function setupAnnotations(page, viewport, container) {
                 element.title = data.url;
                 element.href = data.url;
             }
-
-            
-
 
             container.appendChild(element);
         });
