@@ -223,9 +223,12 @@ pub async fn import_page_with_client(client: &ClientHandler, file: &Path) -> any
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
             log::info!("Importing page: {file_name}");
+
+            let snippets = stellar_parser::parse_page_snippets(&file).unwrap_or(vec![]);
+
             let page = Page {
                 id: file_name.to_string(),
-                snippets: vec![], // TODO
+                snippets,
             };
             client.insert_page(&page).await?;
         }
