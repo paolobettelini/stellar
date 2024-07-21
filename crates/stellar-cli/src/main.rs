@@ -24,6 +24,7 @@ async fn main() -> anyhow::Result<()> {
         Command::Generate(args) => parse_generate_cmd(&args).await?,
         Command::Import(args) => parse_import_args(&args).await?,
         Command::Web(args) => parse_web_args(&args).await?,
+        Command::Check(args) => parse_check_args(&args).await?,
     }
 
     Ok(())
@@ -84,6 +85,49 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
         args.data.clone(),
     )
     .await?;
+
+    Ok(())
+}
+
+pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
+    let all_operations = !(args.existences || args.autoreferentiality || args.linearity);
+    let all_elements = !(args.snippets || args.pages || args.courses || args.universes);
+    
+    if args.existences || all_operations {
+        if args.snippets || all_elements {
+            log::info!("Checking existence of snippet references in snippets");
+        }
+
+        if args.pages || all_elements {
+            log::info!("Checking existence of snippets in pages");
+        }
+
+        if args.courses || all_elements {
+            log::info!("Checking existence of pages in courses");
+        }
+
+        if args.universes || all_elements {
+            log::info!("Checking existence of courses in universes");
+        }
+    }
+
+    if args.autoreferentiality {
+        log::info!("Checking snippets autoreferentiality");
+    }
+
+    if args.linearity || all_operations {
+        if args.pages || all_elements {
+            log::info!("Checking snippets linearity in pages");
+        }
+
+        if args.courses || all_elements {
+            log::info!("Checking snippets linearity in courses");
+        }
+
+        if args.universes || all_elements {
+            log::info!("Checking snippets linearity in universes");
+        }
+    }
 
     Ok(())
 }

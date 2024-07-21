@@ -1,4 +1,4 @@
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, ArgGroup, Parser, Subcommand};
 use std::{
     net::{IpAddr, Ipv4Addr},
     path::PathBuf,
@@ -20,6 +20,8 @@ pub enum Command {
     Import(ImportArgs),
     /// Help message for web.
     Web(WebArgs),
+    /// Help message for check.
+    Check(CheckArgs),
 }
 
 #[derive(Debug, Args)]
@@ -85,6 +87,51 @@ pub struct WebArgs {
     /// MongoDB Connection URL
     #[arg(short, short, long)]
     pub connection_url: String,
+}
+
+#[derive(Debug, Args)]
+#[command(group(
+    ArgGroup::new("exitences_or_linearity")
+        .required(false)
+        .args(["existences", "linearity"]),
+))]
+#[command(group(
+    ArgGroup::new("exitences_or_autoreferentiality")
+        .required(false)
+        .args(["existences", "autoreferentiality"]),
+))]
+pub struct CheckArgs {
+    /// Check only existance of references
+    /// E.g. existance for courses checks whether the pages exist
+    #[arg(short, long)]
+    pub existences: bool,
+
+    /// Check only snippets self-reference
+    #[arg(short, long)]
+    pub autoreferentiality: bool,
+
+    /// Check only snippets linearity
+    #[arg(short, long)]
+    pub linearity: bool,
+
+    // REQUIRES existences or autoreferentiality
+    /// Check only snippets
+    #[arg(long, requires = "exitences_or_autoreferentiality")]
+    pub snippets: bool,
+
+    // REQUIRES existences or linearity
+    /// Check only pages
+    #[arg(long, requires = "exitences_or_linearity")]
+    pub pages: bool,
+
+    // REQUIRES existences or linearity
+    /// Check only courses
+    #[arg(long, requires = "exitences_or_linearity")]
+    pub courses: bool,
+
+    /// Check only universes
+    #[arg(long, requires = "exitences_or_linearity")]
+    pub universes: bool,
 }
 
 fn default_address() -> IpAddr {

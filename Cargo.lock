@@ -3253,6 +3253,10 @@ name = "stellar"
 version = "0.3.0"
 
 [[package]]
+name = "stellar-check"
+version = "0.1.0"
+
+[[package]]
 name = "stellar-cli"
 version = "0.3.0"
 dependencies = [
