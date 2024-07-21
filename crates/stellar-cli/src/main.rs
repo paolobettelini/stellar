@@ -97,22 +97,25 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     let all_elements = !(args.snippets || args.pages || args.courses || args.universes);
 
     let mut self_reference_count = 0;
+    let mut not_existent_snippets_count = 0;
+    let mut not_existent_pages_count = 0;
+    let mut not_existent_courses_count = 0;
     
     if args.existences || all_operations {
         if args.snippets || all_elements {
-            check::check_snippet_existences(&client).await?;
+            not_existent_snippets_count += check::check_snippet_existences(&client).await?;
         }
 
         if args.pages || all_elements {
-            check::check_page_existences(&client).await?;
+            not_existent_snippets_count += check::check_page_existences(&client).await?;
         }
 
         if args.courses || all_elements {
-            check::check_course_existences(&client).await?;
+            not_existent_pages_count += check::check_course_existences(&client).await?;
         }
 
         if args.universes || all_elements {
-            check::check_universe_existences(&client).await?;
+            not_existent_courses_count += check::check_universe_existences(&client).await?;
         }
     }
 
@@ -136,6 +139,18 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
 
     if args.autoreferentiality || all_operations {
         log::info!("Found {} self-reference(s)", self_reference_count);
+    }
+
+    if args.snippets || args.pages || all_elements {
+        log::info!("Found {} non-existent snippets", not_existent_snippets_count);
+    }
+
+    if args.courses || all_elements {
+        log::info!("Found {} non-existent pages", not_existent_pages_count);
+    }
+
+    if args.universes || all_elements {
+        log::info!("Found {} non-existent courses", not_existent_courses_count);
     }
 
     Ok(())

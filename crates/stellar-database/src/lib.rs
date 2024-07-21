@@ -126,4 +126,32 @@ impl ClientHandler {
 
         Ok(collection.find(filter, None).await?)
     }
+
+    pub async fn snippet_exists(&self, id: &str) -> Result<bool> {
+        let collection = self.client.database(DATABASE).collection::<Snippet>(SNIPPETS_COLLECTION);
+        let filter = doc! { "id": id };
+        let count = collection.count_documents(filter, None).await?;
+        Ok(count > 0)
+    }
+
+    pub async fn page_exists(&self, id: &str) -> Result<bool> {
+        let collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
+        let filter = doc! { "id": id };
+        let count = collection.count_documents(filter, None).await?;
+        Ok(count > 0)
+    }
+
+    pub async fn course_exists(&self, id: &str) -> Result<bool> {
+        let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+        let filter = doc! { "id": id };
+        let count = collection.count_documents(filter, None).await?;
+        Ok(count > 0)
+    }
+
+    pub async fn universe_exists(&self, id: &str) -> Result<bool> {
+        let collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
+        let filter = doc! { "id": id };
+        let count = collection.count_documents(filter, None).await?;
+        Ok(count > 0)
+    }
 }
