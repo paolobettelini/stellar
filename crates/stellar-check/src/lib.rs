@@ -1,10 +1,11 @@
 use futures::TryStreamExt;
-
+use std::collections::HashMap;
 use stellar_database::ClientHandler;
+use std::rc::Rc;
 use stellar_database as database;
 
 pub async fn check_autoreferentiality(client: &ClientHandler) -> anyhow::Result<u32> {
-    log::info!("Checking autoreferentiality in snippets");
+    log::debug!("Checking autoreferentiality in snippets");
 
     let mut cursor = client.query_snippets(".*").await?;
     let mut self_references = 0;
@@ -25,7 +26,7 @@ pub async fn check_autoreferentiality(client: &ClientHandler) -> anyhow::Result<
 }
 
 pub async fn check_snippet_existences(client: &ClientHandler) -> anyhow::Result<u32> {
-    log::info!("Checking existence of snippets in snippets references");
+    log::debug!("Checking existence of snippets in snippets references");
 
     let mut cursor = client.query_snippets(".*").await?;
     let mut not_existent_count = 0;
@@ -46,7 +47,7 @@ pub async fn check_snippet_existences(client: &ClientHandler) -> anyhow::Result<
 }
 
 pub async fn check_page_existences(client: &ClientHandler) -> anyhow::Result<u32> {
-    log::info!("Checking existence of snippet in pages");
+    log::debug!("Checking existence of snippet in pages");
 
     let mut cursor = client.query_pages(".*").await?;
     let mut not_existent_count = 0;
@@ -65,7 +66,7 @@ pub async fn check_page_existences(client: &ClientHandler) -> anyhow::Result<u32
 }
 
 pub async fn check_course_existences(client: &ClientHandler) -> anyhow::Result<u32> {
-    log::info!("Checking existence of pages in courses");
+    log::debug!("Checking existence of pages in courses");
 
     let mut cursor = client.query_courses(".*").await?;
     let mut not_existent_count = 0;
@@ -84,7 +85,7 @@ pub async fn check_course_existences(client: &ClientHandler) -> anyhow::Result<u
 }
 
 pub async fn check_universe_existences(client: &ClientHandler) -> anyhow::Result<u32> {
-    log::info!("Checking existence of courses in universes");
+    log::debug!("Checking existence of courses in universes");
 
     let mut cursor = client.query_universes(".*").await?;
     let mut not_existent_count = 0;
@@ -102,17 +103,61 @@ pub async fn check_universe_existences(client: &ClientHandler) -> anyhow::Result
     Ok(not_existent_count)
 }
 
-pub async fn check_pages_linearity(client: &ClientHandler) -> anyhow::Result<()> {
-    log::info!("Checking snippets linearity in pages");
-    Ok(())
+pub async fn check_pages_linearity(client: &ClientHandler) -> anyhow::Result<u32> {
+    log::debug!("Checking snippets linearity in pages");
+
+    let mut cursor = client.query_pages(".*").await?;
+    let mut not_linear_count = 0;
+
+    while let Some(page) = cursor.try_next().await? {
+        let mut referenced_snippets = HashMap::new();
+
+        for snippet_id in page.snippets {
+            let res = client.query_snippet(&snippet_id).await;
+
+            // if you put this after the hashset insert
+            // autoreferences are included
+            if let Some(id) = referenced_snippets.get(&snippet_id) {
+                log::warn!("Page {}: snippet {} is referenced by {} before defining it",
+                &page.id, &snippet_id, &*id);
+            }
+
+            // Add references to hashset
+            if let Ok(snippet) = res {
+                if let Some(snippet) = snippet {
+                    if let Some(references) = snippet.references {
+                        // allocate less memory
+                        let snippet = Rc::new(snippet_id.clone());
+                        
+                        for reference in references {
+                            referenced_snippets.insert(reference, snippet.clone());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(not_linear_count)
 }
 
-pub async fn check_courses_linearity(client: &ClientHandler) -> anyhow::Result<()> {
-    log::info!("Checking snippets linearity in courses");
-    Ok(())
+pub async fn check_courses_linearity(client: &ClientHandler) -> anyhow::Result<u32> {
+    log::debug!("Checking snippets linearity in courses");
+
+    //let mut cursor = client.query_pages(".*").await?;
+    let mut not_linear_count = 0;
+
+    //while let Some(page) = cursor.try_next().await? {
+
+    //}
+
+    Ok(not_linear_count)
 }
 
-pub async fn check_universes_linearity(client: &ClientHandler) -> anyhow::Result<()> {
-    log::info!("Checking snippets linearity in universes");
-    Ok(())
+pub async fn check_universes_linearity(client: &ClientHandler) -> anyhow::Result<u32> {
+    log::debug!("Checking snippets linearity in universes");
+
+    let mut not_linear_count = 0;
+
+    Ok(not_linear_count)
 }
