@@ -3255,6 +3255,12 @@ version = "0.3.0"
 [[package]]
 name = "stellar-check"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "futures",
+ "log",
+ "stellar-database",
+]
 
 [[package]]
 name = "stellar-cli"
@@ -3264,6 +3270,7 @@ dependencies = [
  "clap",
  "env_logger",
  "log",
+ "stellar-check",
  "stellar-import",
  "stellar-pdfformat",
  "stellar-server",

@@ -4,3 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.86"
+log = "0.4.22"
+futures = "0.3.30"
+
+stellar-database = { path = "../stellar-database" }

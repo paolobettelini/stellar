@@ -4,6 +4,7 @@ use clap::Parser;
 use stellar_pdfformat as pdfformat;
 use stellar_import as import;
 use stellar_server as web;
+use stellar_check as check;
 
 mod args;
 
@@ -90,43 +91,51 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
 }
 
 pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
+    let client = import::get_client(&args.connection_url).await?;
+
     let all_operations = !(args.existences || args.autoreferentiality || args.linearity);
     let all_elements = !(args.snippets || args.pages || args.courses || args.universes);
+
+    let mut self_reference_count = 0;
     
     if args.existences || all_operations {
         if args.snippets || all_elements {
-            log::info!("Checking existence of snippet references in snippets");
+            check::check_snippet_existences(&client).await?;
         }
 
         if args.pages || all_elements {
-            log::info!("Checking existence of snippets in pages");
+            check::check_page_existences(&client).await?;
         }
 
         if args.courses || all_elements {
-            log::info!("Checking existence of pages in courses");
+            check::check_course_existences(&client).await?;
         }
 
         if args.universes || all_elements {
-            log::info!("Checking existence of courses in universes");
+            check::check_universe_existences(&client).await?;
         }
     }
 
-    if args.autoreferentiality {
-        log::info!("Checking snippets autoreferentiality");
+    if args.autoreferentiality || all_operations {
+        self_reference_count += check::check_autoreferentiality(&client).await?;
     }
 
     if args.linearity || all_operations {
         if args.pages || all_elements {
-            log::info!("Checking snippets linearity in pages");
+            check::check_pages_linearity(&client).await?;
         }
 
         if args.courses || all_elements {
-            log::info!("Checking snippets linearity in courses");
+            check::check_courses_linearity(&client).await?;
         }
 
         if args.universes || all_elements {
-            log::info!("Checking snippets linearity in universes");
+            check::check_universes_linearity(&client).await?;
         }
+    }
+
+    if args.autoreferentiality || all_operations {
+        log::info!("Found {} self-reference(s)", self_reference_count);
     }
 
     Ok(())

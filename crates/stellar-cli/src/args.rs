@@ -101,6 +101,10 @@ pub struct WebArgs {
         .args(["existences", "autoreferentiality"]),
 ))]
 pub struct CheckArgs {
+    /// MongoDB connection URL
+    #[arg(short, long)]
+    pub connection_url: String,
+
     /// Check only existance of references
     /// E.g. existance for courses checks whether the pages exist
     #[arg(short, long)]
