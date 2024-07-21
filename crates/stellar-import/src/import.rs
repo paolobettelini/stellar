@@ -3,6 +3,8 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+use serde_json::Value;
+use serde::Deserialize;
 use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 use stellar_database::{model::*, *};
 
@@ -238,13 +240,35 @@ pub async fn import_page_with_client(client: &ClientHandler, file: &Path) -> any
 }
 
 pub async fn import_course_with_client(client: &ClientHandler, file: &Path) -> anyhow::Result<()> {
+    #[derive(Deserialize)]
+    pub struct JsonCourse {
+        pub title: String,
+        pub pages: Vec<serde_json::Value>,
+    }
+
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
             log::info!("Importing course: {file_name}");
+
+            let json = std::fs::read_to_string(file)?;
+            let deserialized: JsonCourse = serde_json::from_str(&json)?;
+
+            let mut pages = vec![];
+            for page in deserialized.pages {
+                if let Value::Array(array) = page {
+                    if array.len() >= 3 {
+                        if let Value::String(id) = &array[2] { // take the id
+                            pages.push(id.clone());
+                        }
+                    }
+                }
+            }
+
             let course = Course {
                 id: file_name.to_string(),
-                pages: vec![], // TODO
+                title: deserialized.title,
+                pages,
             };
             client.insert_course(&course).await?;
         }
@@ -257,14 +281,39 @@ pub async fn import_universe_with_client(
     client: &ClientHandler,
     file: &Path,
 ) -> anyhow::Result<()> {
+    #[derive(Deserialize)]
+    pub struct JsonUniverse {
+        pub title: String,
+        pub courses: Vec<JsonUniverseCourse>,
+        pub dependencies: Vec<Dependency>,
+    }
+
+    #[derive(Deserialize)]
+    pub struct JsonUniverseCourse {
+        pub name: String,
+        pub id: String,
+        pub x: i32,
+        pub y: i32,
+    }
+
     if let Some(file_name) = file.file_name() {
         if let Some(file_name) = file_name.to_str() {
             let file_name = remove_extension(file_name);
             log::info!("Importing universe: {file_name}");
+
+            let json = std::fs::read_to_string(file)?;
+            let deserialized: JsonUniverse = serde_json::from_str(&json)?;
+
+            let mut courses = vec![];
+            for course in deserialized.courses {
+                courses.push(course.id);
+            }
+
             let universe = Universe {
                 id: file_name.to_string(),
-                courses: vec![], // TODO
-                dependencies: vec![], // TODO
+                title: deserialized.title,
+                dependencies: deserialized.dependencies,
+                courses: courses,
             };
             client.insert_universe(&universe).await?;
         }

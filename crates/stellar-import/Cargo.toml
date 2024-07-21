@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.86"
 log = "0.4.22"
+serde_json = "1.0.120"
+serde = "1.0.203"
 
 stellar-database = { path = "../stellar-database" }
 stellar-utils = { path = "../stellar-utils" }
