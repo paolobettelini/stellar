@@ -94,32 +94,18 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     let client = import::get_client(&args.connection_url).await?;
 
     let all_operations = !(args.existences || args.autoreferentiality || args.linearity);
-    let all_elements = !(args.snippets || args.pages || args.courses || args.universes);
 
     let mut self_reference_count = 0;
     let mut not_existent_snippets_count = 0;
     let mut not_existent_pages_count = 0;
     let mut not_existent_courses_count = 0;
-    let mut not_linear_in_pages_count = 0;
-    let mut not_linear_in_courses_count = 0;
-    let mut not_linear_in_universes_count = 0;
+    let mut not_linear_count = 0;
 
     if args.existences || all_operations {
-        if args.snippets || all_elements {
-            not_existent_snippets_count += check::check_snippet_existences(&client).await?;
-        }
-
-        if args.pages || all_elements {
-            not_existent_snippets_count += check::check_page_existences(&client).await?;
-        }
-
-        if args.courses || all_elements {
-            not_existent_pages_count += check::check_course_existences(&client).await?;
-        }
-
-        if args.universes || all_elements {
-            not_existent_courses_count += check::check_universe_existences(&client).await?;
-        }
+        not_existent_snippets_count += check::check_snippet_existences(&client).await?;
+        not_existent_snippets_count += check::check_page_existences(&client).await?;
+        not_existent_pages_count += check::check_course_existences(&client).await?;
+        not_existent_courses_count += check::check_universe_existences(&client).await?;
     }
 
     if args.autoreferentiality || all_operations {
@@ -127,17 +113,7 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     }
 
     if args.linearity || all_operations {
-        if args.pages || all_elements {
-            not_linear_in_pages_count += check::check_pages_linearity(&client).await?;
-        }
-
-        if args.courses || all_elements {
-            not_linear_in_courses_count += check::check_courses_linearity(&client).await?;
-        }
-
-        if args.universes || all_elements {
-            not_linear_in_universes_count += check::check_universes_linearity(&client).await?;
-        }
+        not_linear_count += check::check_linearity(&client).await?;
     }
 
     /* === LOG === */
@@ -147,43 +123,21 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     }
 
     if all_operations || args.existences {
-        if args.snippets || args.pages || all_elements {
-            log::info!(
-                "Found {} non-existent snippets",
-                not_existent_snippets_count
-            );
-        }
+        log::info!(
+            "Found {} non-existent snippets",
+            not_existent_snippets_count
+        );
 
-        if args.courses || all_elements {
-            log::info!("Found {} non-existent pages", not_existent_pages_count);
-        }
+        log::info!("Found {} non-existent pages", not_existent_pages_count);
 
-        if args.universes || all_elements {
-            log::info!("Found {} non-existent courses", not_existent_courses_count);
-        }
+        log::info!("Found {} non-existent courses", not_existent_courses_count);
     }
 
     if all_operations || args.linearity {
-        if args.pages || all_elements {
-            log::info!(
-                "Found {} non-linear snippets in page contexts",
-                not_linear_in_pages_count
-            );
-        }
-
-        if args.courses || all_elements {
-            log::info!(
-                "Found {} non-linear snippets in course contexts",
-                not_linear_in_courses_count
-            );
-        }
-
-        if args.universes || all_elements {
-            log::info!(
-                "Found {} non-linear snippets in universe contexts",
-                not_linear_in_universes_count
-            );
-        }
+        log::info!(
+            "Found {} non-linear snippets",
+            not_linear_count
+        );
     }
 
     Ok(())

@@ -127,11 +127,25 @@ impl ClientHandler {
         Ok(collection.find(filter, None).await?)
     }
 
+    pub async fn query_course(&self, id: &str) -> anyhow::Result<Option<Course>> {
+        let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+        let filter = doc! { "id": id };
+
+        Ok(collection.find_one(filter, None).await?)
+    }
+
     pub async fn query_universes(&self, keyword: &str) -> anyhow::Result<Cursor<Universe>> {
         let collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
         let filter = doc! { "id": {"$regex": keyword} };
 
         Ok(collection.find(filter, None).await?)
+    }
+    
+    pub async fn query_universe(&self, id: &str) -> anyhow::Result<Option<Universe>> {
+        let collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
+        let filter = doc! { "id": id };
+
+        Ok(collection.find_one(filter, None).await?)
     }
 
     pub async fn snippet_exists(&self, id: &str) -> Result<bool> {
@@ -186,6 +200,48 @@ impl ClientHandler {
             Ok(pages_containing_snippet)
         } else {
             Ok(Vec::new())
+        }
+    }
+
+    pub async fn get_courses_containing_snippet(&self, snippet_id: &str, universe_id: &str) -> Result<Vec<Course>> {
+        // Retrieve the universe document by the given universe ID
+        let universe_collection = self.client.database(DATABASE).collection::<Universe>(UNIVERSES_COLLECTION);
+        let universe_filter = doc! { "id": universe_id };
+        let universe = universe_collection.find_one(universe_filter, None).await?;
+
+        if let Some(universe) = universe {
+            let mut courses_containing_snippet = Vec::new();
+
+            // Retrieve the course documents by the list of course IDs in the universe
+            let course_collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+            let page_collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
+
+            for course_id in universe.courses {
+                let course_filter = doc! { "id": &course_id };
+                if let Some(course) = course_collection.find_one(course_filter, None).await? {
+                    let mut contains_snippet = false;
+
+                    // Retrieve the page documents by the list of page IDs in the course
+                    for page_id in &course.pages {
+                        let page_filter = doc! { "id": page_id };
+                        if let Some(page) = page_collection.find_one(page_filter, None).await? {
+                            // Check if the page contains the given snippet ID
+                            if page.snippets.contains(&snippet_id.to_string()) {
+                                contains_snippet = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if contains_snippet {
+                        courses_containing_snippet.push(course);
+                    }
+                }
+            }
+
+            Ok(courses_containing_snippet)
+        } else {
+            Ok(Vec::new()) // Return an empty vector if the universe is not found
         }
     }
 }

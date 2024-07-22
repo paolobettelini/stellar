@@ -1,4 +1,4 @@
-use clap::{ArgGroup, Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use std::{
     net::{IpAddr, Ipv4Addr},
     path::PathBuf,
@@ -90,16 +90,6 @@ pub struct WebArgs {
 }
 
 #[derive(Debug, Args)]
-#[command(group(
-    ArgGroup::new("exitences_or_linearity")
-        .required(false)
-        .args(["existences", "linearity"]),
-))]
-#[command(group(
-    ArgGroup::new("exitences_or_autoreferentiality")
-        .required(false)
-        .args(["existences", "autoreferentiality"]),
-))]
 pub struct CheckArgs {
     /// MongoDB connection URL
     #[arg(short, long)]
@@ -117,25 +107,6 @@ pub struct CheckArgs {
     /// Check only snippets linearity
     #[arg(short, long)]
     pub linearity: bool,
-
-    // REQUIRES existences or autoreferentiality
-    /// Check only snippets
-    #[arg(long, requires = "exitences_or_autoreferentiality")]
-    pub snippets: bool,
-
-    // REQUIRES existences or linearity
-    /// Check only pages
-    #[arg(long, requires = "exitences_or_linearity")]
-    pub pages: bool,
-
-    // REQUIRES existences or linearity
-    /// Check only courses
-    #[arg(long, requires = "exitences_or_linearity")]
-    pub courses: bool,
-
-    /// Check only universes
-    #[arg(long, requires = "exitences_or_linearity")]
-    pub universes: bool,
 }
 
 fn default_address() -> IpAddr {
