@@ -113,6 +113,13 @@ impl ClientHandler {
         Ok(collection.find(filter, None).await?)
     }
 
+    pub async fn query_page(&self, id: &str) -> anyhow::Result<Option<Page>> {
+        let collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
+        let filter = doc! { "id": id };
+
+        Ok(collection.find_one(filter, None).await?)
+    }
+
     pub async fn query_courses(&self, keyword: &str) -> anyhow::Result<Cursor<Course>> {
         let collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
         let filter = doc! { "id": {"$regex": keyword} };
@@ -153,5 +160,32 @@ impl ClientHandler {
         let filter = doc! { "id": id };
         let count = collection.count_documents(filter, None).await?;
         Ok(count > 0)
+    }
+
+    pub async fn get_pages_containing_snippet(&self, snippet_id: &str, course_id: &str) -> Result<Vec<Page>> {
+        // Retrieve the course document by the given course ID
+        let course_collection = self.client.database(DATABASE).collection::<Course>(COURSES_COLLECTION);
+        let course_filter = doc! { "id": course_id };
+        let course = course_collection.find_one(course_filter, None).await?;
+
+        if let Some(course) = course {
+            let mut pages_containing_snippet = Vec::new();
+
+            // Retrieve the page documents by the list of page IDs in the course
+            let page_collection = self.client.database(DATABASE).collection::<Page>(PAGES_COLLECTION);
+            for page_id in course.pages {
+                let page_filter = doc! { "id": &page_id };
+                if let Some(page) = page_collection.find_one(page_filter, None).await? {
+                    // Check if the page contains the given snippet ID
+                    if page.snippets.contains(&snippet_id.to_string()) {
+                        pages_containing_snippet.push(page);
+                    }
+                }
+            }
+
+            Ok(pages_containing_snippet)
+        } else {
+            Ok(Vec::new())
+        }
     }
 }
