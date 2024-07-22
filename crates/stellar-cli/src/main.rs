@@ -1,10 +1,10 @@
 use args::*;
 use clap::Parser;
 
-use stellar_pdfformat as pdfformat;
-use stellar_import as import;
-use stellar_server as web;
 use stellar_check as check;
+use stellar_import as import;
+use stellar_pdfformat as pdfformat;
+use stellar_server as web;
 
 mod args;
 
@@ -100,7 +100,10 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     let mut not_existent_snippets_count = 0;
     let mut not_existent_pages_count = 0;
     let mut not_existent_courses_count = 0;
-    
+    let mut not_linear_in_pages_count = 0;
+    let mut not_linear_in_courses_count = 0;
+    let mut not_linear_in_universes_count = 0;
+
     if args.existences || all_operations {
         if args.snippets || all_elements {
             not_existent_snippets_count += check::check_snippet_existences(&client).await?;
@@ -125,32 +128,62 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
 
     if args.linearity || all_operations {
         if args.pages || all_elements {
-            check::check_pages_linearity(&client).await?;
+            not_linear_in_pages_count += check::check_pages_linearity(&client).await?;
         }
 
         if args.courses || all_elements {
-            check::check_courses_linearity(&client).await?;
+            not_linear_in_courses_count += check::check_courses_linearity(&client).await?;
         }
 
         if args.universes || all_elements {
-            check::check_universes_linearity(&client).await?;
+            not_linear_in_universes_count += check::check_universes_linearity(&client).await?;
         }
     }
+
+    /* === LOG === */
 
     if args.autoreferentiality || all_operations {
         log::info!("Found {} self-reference(s)", self_reference_count);
     }
 
-    if args.snippets || args.pages || all_elements {
-        log::info!("Found {} non-existent snippets", not_existent_snippets_count);
+    if all_operations || args.existences {
+        if args.snippets || args.pages || all_elements {
+            log::info!(
+                "Found {} non-existent snippets",
+                not_existent_snippets_count
+            );
+        }
+
+        if args.courses || all_elements {
+            log::info!("Found {} non-existent pages", not_existent_pages_count);
+        }
+
+        if args.universes || all_elements {
+            log::info!("Found {} non-existent courses", not_existent_courses_count);
+        }
     }
 
-    if args.courses || all_elements {
-        log::info!("Found {} non-existent pages", not_existent_pages_count);
-    }
+    if all_operations || args.linearity {
+        if args.pages || all_elements {
+            log::info!(
+                "Found {} non-linear snippets in page contexts",
+                not_linear_in_pages_count
+            );
+        }
 
-    if args.universes || all_elements {
-        log::info!("Found {} non-existent courses", not_existent_courses_count);
+        if args.courses || all_elements {
+            log::info!(
+                "Found {} non-linear snippets in course contexts",
+                not_linear_in_courses_count
+            );
+        }
+
+        if args.universes || all_elements {
+            log::info!(
+                "Found {} non-linear snippets in universe contexts",
+                not_linear_in_universes_count
+            );
+        }
     }
 
     Ok(())

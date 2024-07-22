@@ -187,21 +187,23 @@ pub async fn check_courses_linearity(client: &ClientHandler) -> anyhow::Result<u
                         // Check whether the snippet appears in a page
                         // whose index is greater than the current page's index (i.e. it is after)
                         for reference in references {
-                            let res = client.get_pages_containing_snippet(&reference, &course.id).await;
+                            let res = client
+                                .get_pages_containing_snippet(&reference, &course.id)
+                                .await;
 
                             if let Ok(containing_pages) = res {
                                 let mut min_index = None;
 
                                 for page in containing_pages {
                                     let index = course.pages.iter().position(|r| *r == page.id);
-    
+
                                     if let Some(index) = index
                                         && min_index.map_or(true, |v| v < index)
                                     {
                                         min_index = Some(index);
                                     }
                                 }
-    
+
                                 if let Some(index) = min_index
                                     && index > current_index
                                 {
