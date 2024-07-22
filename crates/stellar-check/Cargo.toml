@@ -9,3 +9,4 @@ log = "0.4.22"
 futures = "0.3.30"
 
 stellar-database = { path = "../stellar-database" }
+colored = "2.1.0"

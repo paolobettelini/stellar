@@ -1,5 +1,6 @@
 #![feature(let_chains)]
 
+use colored::*;
 use futures::TryStreamExt;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
@@ -18,7 +19,10 @@ pub async fn check_autoreferentiality(client: &ClientHandler) -> anyhow::Result<
             for reference in references {
                 if reference == snippet.id {
                     self_references += 1;
-                    log::warn!("Snippet {} has a self reference!", &snippet.id);
+                    log::warn!(
+                        "Snippet {} has a self reference!",
+                        &snippet.id.to_string().blue().bold().underline()
+                    );
                     break;
                 }
             }
@@ -41,8 +45,8 @@ pub async fn check_snippet_existences(client: &ClientHandler) -> anyhow::Result<
                     not_existent_count += 1;
                     log::warn!(
                         "Snippet {} references {}, but it does not exist!",
-                        &snippet.id,
-                        &reference
+                        &snippet.id.to_string().blue().bold().underline(),
+                        &reference.to_string().blue().bold().underline()
                     );
                     break;
                 }
@@ -65,8 +69,8 @@ pub async fn check_page_existences(client: &ClientHandler) -> anyhow::Result<u32
                 not_existent_count += 1;
                 log::warn!(
                     "Page {} contains {}, but it does not exist!",
-                    &page.id,
-                    &snippet
+                    &page.id.to_string().underline(),
+                    &snippet.to_string().blue().bold().underline()
                 );
                 break;
             }
@@ -88,8 +92,8 @@ pub async fn check_course_existences(client: &ClientHandler) -> anyhow::Result<u
                 not_existent_count += 1;
                 log::warn!(
                     "Course {} contains {}, but it does not exist!",
-                    &course.id,
-                    &page
+                    &course.id.to_string().underline(),
+                    &page.to_string().blue().bold().underline()
                 );
                 break;
             }
@@ -111,8 +115,8 @@ pub async fn check_universe_existences(client: &ClientHandler) -> anyhow::Result
                 not_existent_count += 1;
                 log::warn!(
                     "Universe {} contains {}, but it does not exist!",
-                    &universe.id,
-                    &course
+                    &universe.id.to_string().underline(),
+                    &course.to_string().blue().bold().underline()
                 );
                 break;
             }
@@ -284,12 +288,12 @@ async fn check_reference_linearity(
     let pages = client
         .get_pages_containing_snippet(&reference, &course.id)
         .await?;
-    for page in pages {
-        if let Some(index) = course_indexed_map.get(&page.id) {
-            if *index <= current_page_index {
+    for possible_container_page in pages {
+        if let Some(index) = course_indexed_map.get(&possible_container_page.id) {
+            if *index < current_page_index {
                 // The snippet has been defined before the current page, so it's fine
                 return Ok(true);
-            } else {
+            } else if &possible_container_page.id != &page.id {
                 defined_after_in_course = true;
             }
         }
@@ -306,10 +310,12 @@ async fn check_reference_linearity(
     let courses = client
         .get_courses_containing_snippet(&reference, &universe.id)
         .await?;
-    for course in courses {
-        if dependencies.contains(&course.id) {
+    for possible_container_course in &courses {
+        if dependencies.contains(&possible_container_course.id) {
             return Ok(true);
-        } else if universe_dependency_map.contains_key(&course.id) {
+        } else if &course.id != &possible_container_course.id // it's not the universe itself
+            && universe_dependency_map.contains_key(&possible_container_course.id)
+        {
             defined_after_in_universe = true;
         }
     }
@@ -340,23 +346,23 @@ async fn check_reference_linearity(
         if defined_after_in_universe {
             log::warn!(
                 "Universe {}: snippet {} is referenced by {} before being defined in another course",
-                &universe.id,
-                &reference,
-                &snippet.id,
+                &universe.id.to_string().underline(),
+                &reference.to_string().blue().bold().underline(),
+                &snippet.id.to_string().underline(),
             );
         } else if defined_after_in_course {
             log::warn!(
                 "Course {}: snippet {} is referenced by {} before being defined in another page",
-                &course.id,
-                &reference,
-                &snippet.id,
+                &course.id.to_string().underline(),
+                &reference.to_string().blue().bold().underline(),
+                &snippet.id.to_string().underline(),
             );
         } else if defined_after_in_page {
             log::warn!(
                 "Page {}: snippet {} is referenced by {} before being defined in the same page",
-                &page.id,
-                &reference,
-                &snippet.id,
+                &page.id.to_string().underline(),
+                &reference.to_string().blue().bold().underline(),
+                &snippet.id.to_string().underline(),
             );
         }
 

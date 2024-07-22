@@ -102,6 +102,7 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     let mut not_linear_count = 0;
 
     if args.existences || all_operations {
+        log::info!("Checking existance of IDs...");
         not_existent_snippets_count += check::check_snippet_existences(&client).await?;
         not_existent_snippets_count += check::check_page_existences(&client).await?;
         not_existent_pages_count += check::check_course_existences(&client).await?;
@@ -109,10 +110,12 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     }
 
     if args.autoreferentiality || all_operations {
+        log::info!("Checking autoreferentiality...");
         self_reference_count += check::check_autoreferentiality(&client).await?;
     }
 
     if args.linearity || all_operations {
+        log::info!("Checking linearity of snippets...");
         not_linear_count += check::check_linearity(&client).await?;
     }
 
