@@ -174,39 +174,40 @@ pub async fn check_courses_linearity(client: &ClientHandler) -> anyhow::Result<u
         for (current_index, current_page) in course.pages.clone().into_iter().enumerate() {
             let res = client.query_page(&current_page).await;
 
-            if let Ok(current_page) = res
-                && let Some(current_page) = current_page
-            {
+            if let Ok(Some(current_page)) = res {
                 for snippet_id in current_page.snippets {
                     let res = client.query_snippet(&snippet_id).await;
 
-                    if let Ok(snippet) = res
-                        && let Some(snippet) = snippet
+                    if let Ok(Some(snippet)) = res
                         && let Some(references) = snippet.references
                     {
-                        // Check whether the snippet appears in a page
-                        // whose index is greater than the current page's index (i.e. it is after)
+                        // Check whether the snippet references appear in a page
+                        // after the current one
                         for reference in references {
                             let res = client
                                 .get_pages_containing_snippet(&reference, &course.id)
                                 .await;
 
                             if let Ok(containing_pages) = res {
-                                let mut min_index = None;
+                                // This variable represents the value of whether the current snippet reference
+                                // has been found in a page before where it was reference (linearity satisfied).
+                                // If the snippet is found in the same page that's good enough.
+                                // (page linearity is checked elsewhere)
+                                let mut snippet_found_before = false;
+                                let mut snippet_found = false;
 
                                 for page in containing_pages {
                                     let index = course.pages.iter().position(|r| *r == page.id);
 
-                                    if let Some(index) = index
-                                        && min_index.map_or(true, |v| v < index)
-                                    {
-                                        min_index = Some(index);
+                                    if let Some(index) = index {
+                                        snippet_found = true;
+                                        if index <= current_index {
+                                            snippet_found_before = true;
+                                        }
                                     }
                                 }
 
-                                if let Some(index) = min_index
-                                    && index > current_index
-                                {
+                                if !snippet_found_before && snippet_found {
                                     log::warn!(
                                         "Course {}: snippet {} is referenced by {} before defining it",
                                         &course.id,
