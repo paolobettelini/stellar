@@ -84,6 +84,7 @@ function setupAnnotations(page, viewport, container) {
             element.style.height = `${(rect[3] - rect[1])}px`;
 
             element.style.position = 'absolute';
+            element.classList.add('snippet-link');
             
             // DEBUG:
             //element.style.border = "1px solid green";
