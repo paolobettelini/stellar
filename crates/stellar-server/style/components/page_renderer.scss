@@ -21,3 +21,9 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 .snippet-link:hover {
   background-color: red;
 }*/
+
+.snippet-link:hover {
+  /* This is very important, otherwise links might not be clickable 
+    or partially not clickable */
+  z-index: 1000;
+}
