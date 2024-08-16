@@ -1,5 +1,7 @@
 # Format Commands
 
+There following commands are to be written as text in the PDF.
+
 | Command                      | Description                                           |
 | ---------------------------- | ----------------------------------------------------- |
 | `!id <ID>`                   | Set the ID of this page.                              |
@@ -14,4 +16,4 @@
 
 Furthermore, it is possible to reference another snippet by adding an annotation with a link of the form `/snippet/snippet-id` or `/snippet/snippet-id|Label`.
 
-Stellar will crop the PDF between `!snippet` and `!endsnippet`.
+Stellar will crop the PDF between `!snippet` and `!endsnippet` commands (margins can be adjusted in the CLI parameters).

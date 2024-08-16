@@ -28,7 +28,7 @@
 
 \includesnpt{snippet2-definition}
 
-\begin{snippet}{text-snippet}[\{"meta": "json"\}]
+\begin{snippet}{text-snippet}[\{"meta": "json"\}] % will add a meta.json file
     Some text as a snippet!
 \end{snippet}
 
