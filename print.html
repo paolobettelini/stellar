@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="stellar.html"><strong aria-hidden="true">2.</strong> Stellar</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="data_structure.html"><strong aria-hidden="true">2.1.</strong> Data Structure</a></li><li class="chapter-item expanded "><a href="pdf_stellar_format.html"><strong aria-hidden="true">2.2.</strong> PDF Stellar Format</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="format_commands.html"><strong aria-hidden="true">2.2.1.</strong> Format Commands</a></li><li class="chapter-item expanded "><a href="latex_package.html"><strong aria-hidden="true">2.2.2.</strong> LaTeX Package</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">2.2.2.1.</strong> Usage</a></li><li class="chapter-item expanded "><a href="example.html"><strong aria-hidden="true">2.2.2.2.</strong> Example</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="metadata.html"><strong aria-hidden="true">2.3.</strong> Metadata</a></li></ol></li><li class="chapter-item expanded "><a href="latex_implementation.html"><strong aria-hidden="true">3.</strong> LaTeX-driven Implementation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="structure.html"><strong aria-hidden="true">3.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="snippet_build_scripts.html"><strong aria-hidden="true">3.2.</strong> Snippet Build Scripts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="example_script.html"><strong aria-hidden="true">3.2.1.</strong> Example Script</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="welcome.html"><strong aria-hidden="true">1.</strong> Welcome</a></li><li class="chapter-item expanded affix "><li class="part-title">Stellar</li><li class="chapter-item expanded "><a href="stellar_installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="stellar_introduction.html"><strong aria-hidden="true">3.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="stellar_snippets.html"><strong aria-hidden="true">3.1.</strong> Snippets</a></li><li class="chapter-item expanded "><a href="stellar_pages.html"><strong aria-hidden="true">3.2.</strong> Pages</a></li><li class="chapter-item expanded "><a href="stellar_courses.html"><strong aria-hidden="true">3.3.</strong> Courses</a></li><li class="chapter-item expanded "><a href="stellar_universes.html"><strong aria-hidden="true">3.4.</strong> Universes</a></li></ol></li><li class="chapter-item expanded "><a href="pdf_stellar_format.html"><strong aria-hidden="true">4.</strong> PDF Stellar Format</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="format_commands.html"><strong aria-hidden="true">4.1.</strong> Format Commands</a></li><li class="chapter-item expanded "><a href="latex_package.html"><strong aria-hidden="true">4.2.</strong> LaTeX Package</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">4.2.1.</strong> Usage</a></li><li class="chapter-item expanded "><a href="example.html"><strong aria-hidden="true">4.2.2.</strong> Example</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="stellar_cli.html"><strong aria-hidden="true">5.</strong> Stellar CLI</a></li><li class="chapter-item expanded affix "><li class="part-title">LaTeX-driven Implementation</li><li class="chapter-item expanded "><a href="notes_installation.html"><strong aria-hidden="true">6.</strong> Installation</a></li><li class="chapter-item expanded "><a href="notes_structure.html"><strong aria-hidden="true">7.</strong> Structure</a></li><li class="chapter-item expanded "><a href="notes_compiler.html"><strong aria-hidden="true">8.</strong> Compiler</a></li><li class="chapter-item expanded "><a href="snippet_build_scripts.html"><strong aria-hidden="true">9.</strong> Snippet Build Scripts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="example_script.html"><strong aria-hidden="true">9.1.</strong> Example Script</a></li></ol></li><li class="chapter-item expanded "><a href="common_snippets.html"><strong aria-hidden="true">10.</strong> Common snippets</a></li><li class="chapter-item expanded affix "><li class="part-title">Miscellaneous</li><li class="chapter-item expanded "><a href="misc_fish.html"><strong aria-hidden="true">11.</strong> Fish configuration</a></li><li class="chapter-item expanded "><a href="misc_todo.html"><strong aria-hidden="true">12.</strong> TODO</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -174,20 +174,252 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>This document is the official documentation for Stellar, a courseware environment.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="stellar"><a class="header" href="#stellar">Stellar</a></h1>
+                        <h1 id="welcome"><a class="header" href="#welcome">Welcome</a></h1>
+<p>This document is the official documentation for stellar, a courseware software.
+Stellar is a very modular framework and can be used in various ways.
+The first part of this book will explain the fundamentals of this framework,
+and then we will take a look at an actual implemented a of LaTeX-driven environment
+for stellar, which is available in the <a href="https://github.com/paolobettelini/notes">paolobettelini/notes</a> repository.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<p>The <code>stellar-cli</code> contains everything needed to manage the <code>stellar</code> ecosystem.
+It contains the tools to manage the contents of the courses
+as well as the server.</p>
+<p>You can either download the executable from the <a href="https://github.com/paolobettelini/stellar/releases">releases</a> or compile it yourself. Regardless, you still need to install the python scripts
+as described below.</p>
+<h1 id="compile-the-cli"><a class="header" href="#compile-the-cli">Compile the CLI</a></h1>
+<p>The webserver uses <a href="https://github.com/leptos-rs/leptos/">leptos</a>.</p>
+<pre><code class="language-bash">git clone https://github.com/paolobettelini/stellar
+cd stellar
+cargo leptos build --release
+mv target/release/stellar-cli /usr/local/bin
+</code></pre>
+<h1 id="development"><a class="header" href="#development">Development</a></h1>
+<pre><code class="language-bash">cargo leptos watch -- web ...
+</code></pre>
+<p>Do not use <code>--port</code> or <code>--address</code> in development,
+set those values in the <code>Cargo.toml</code> instead.</p>
+<h1 id="necessary-scripts"><a class="header" href="#necessary-scripts">Necessary scripts</a></h1>
+<p>The following steps are absolutely crucial if you plan on generating
+pages and snippets from PDFs. The plan for the future is to
+write the following scripts directly in rust and avoid extra steps like these.</p>
+<pre><code class="language-bash">chmod +x scripts/*
+mv scripts/* /usr/local/bin
+
+# Install pdfminer and pymupdf
+# Arch:
+pacman -S python-pdfminer python-pymupdf
+</code></pre>
+<p><strong>Issues with cropping PDFs</strong>:
+Unfortunately, there are some cropping problems with the <code>mupdf</code> package.
+The problems arise from version <code>1.24</code> onwards.</p>
+<pre><code class="language-bash">wget https://archive.archlinux.org/packages/p/python-pymupdf/python-pymupdf-1.23.21-1-x86_64.pkg.tar.zst
+sudo pacman -U python-pymupdf-1.23.21-1-x86_64.pkg.tar.zst
+
+wget https://archive.archlinux.org/packages/p/python-mupdf/python-mupdf-1.23.9-4-x86_64.pkg.tar.zst
+sudo pacman -U python-mupdf-1.23.9-4-x86_64.pkg.tar.zst
+
+wget https://archive.archlinux.org/packages/l/libmupdf/libmupdf-1.23.9-4-x86_64.pkg.tar.zst
+sudo pacman -U libmupdf-1.23.9-4-x86_64.pkg.tar.zst
+
+paru -S python311 # use this version
+</code></pre>
+<p>Lock the packages version in <code>/etc/pacman.conf</code></p>
+<pre><code>IgnorePkg = libmupdf python-mupdf python-pymupdf
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="data-structure"><a class="header" href="#data-structure">Data Structure</a></h1>
+<p>The fundamental types of stellar are four: <code>snippets</code>, <code>pages</code>, <code>courses</code> and <code>universes</code>.
+These are the building blocks of all the information within a stellar instance.</p>
+<blockquote>
+<p><strong>NOTE:</strong> each of these objects have a unique ID,
+which is written in <code>lower-kebab-case</code> format.</p>
+</blockquote>
+<p>All the data is stored in a folder named <code>data</code>.</p>
 <pre><code class="language-latex">data/
 ├── snippets/
 ├── pages/
 ├── courses/
 └── universes/
 </code></pre>
+<h1 id="mongodb-database"><a class="header" href="#mongodb-database">MongoDB database</a></h1>
+<p>A MongoDB database is also required in order to index the data and store some information
+about the contents of the website.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="snippets"><a class="header" href="#snippets">Snippets</a></h1>
+<blockquote>
+<p><strong><u style="color: #FFAAAA">Definition</u> <b>snippet</b>:</strong> a snippet is
+the most primitive type of information. It might be an image, a PDF
+or simply some HTML data. Every snippet has its own folder named as its ID, which may contain
+multiple files. The <strong>primary file</strong> of the snippet is also named as the ID, but with the
+correct extension (E.g. <code>snippet-id/snippet-id.pdf</code>).
+Files other than the primary file are called <strong>secondary files</strong>. Secondary files
+are auxiliary and can be imported by the primary file (or, sometimes, from somewhere else).</p>
+</blockquote>
+<p>The route <code>/snippet/snippet-id</code> will render the snippet primary file of the snippet with ID
+<code>snippet-id</code>, alongside some
+additional data.</p>
+<p>The route <code>/snippet/snippet-id/file1.csv</code> will query for a secondary file within the snippet
+with ID <code>snippet-id</code>.</p>
+<h1 id="parameters"><a class="header" href="#parameters">Parameters</a></h1>
+<p>A primary file of the HTML form may optionally require parameters.
+A parameters can be expressed by the syntax <code>#{paramName|default}</code>.
+This entire string will be replaced by the given parameter, or by the default value
+if no value was provided.</p>
+<p>As an example, the following snippet will render an image.
+The width, height, source and alt of the images are all parameters.</p>
+<pre><code class="language-html">&lt;div style="text-align: center;"&gt;
+    &lt;img
+        width="#{width|auto}"
+        height="#{height|auto}"
+        src="#{src|Missing SRC}"
+        alt="#{alt|Could not display image}"
+    &gt;
+&lt;/div&gt;
+</code></pre>
+<p>Stellar will inject the parameters <strong>only</strong> in the primary HTML file of a snippet.
+If you need to setup some JavaScript variables from the parameters, you will need to do it in the
+primary file.</p>
+<h1 id="file-metajson"><a class="header" href="#file-metajson">File <code>meta.json</code></a></h1>
+<p>A special secondary file is the <code>meta.json</code> which contains additional metadata (more information will follow in the book).</p>
+<h2 id="json-structure"><a class="header" href="#json-structure">JSON Structure</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>generalizations</code></td><td>Array of snippet IDs</td><td>Mathematical generalizations.</td></tr>
+<tr><td><code>requires</code></td><td>Array of snippet IDs</td><td>Necessary libraries.</td></tr>
+<tr><td><code>default-params</code></td><td>Params string</td><td>Default parameters for snippet.</td></tr>
+</tbody></table>
+</div>
+<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<pre><code class="language-json">{
+    "default-params": "width=70%|src=https://youtu.be/dQw4w9WgXcQ&amp;",
+    "requires": ["some-lib-snippet"]
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="pages"><a class="header" href="#pages">Pages</a></h1>
+<blockquote>
+<p><strong><u style="color: #FFAAAA">Definition</u> <b>page</b>:</strong> a page is an HTML page
+which can contain arbitrary HTML. A page may include other snippets that exist
+in the enviroment. For now, every page is a single HTML file named <code>&lt;ID&gt;.html</code> in
+their own folder, but in the future it will have the same primary file/secondary file
+mechanism as snippets.</p>
+</blockquote>
+<h1 id="snippets-tag"><a class="header" href="#snippets-tag">Snippets tag</a></h1>
+<p>There is a special tag which can be used to include snippets in the page</p>
+<pre><code class="language-html">&lt;stellar-snippet&gt;ID&lt;/stellar-snippet&gt;
+</code></pre>
+<p>Parameters can be passed as follows:</p>
+<pre><code class="language-html">&lt;stellar-snippet params="param1=v1|param2=v2"&gt;ID&lt;/stellar-snippet&gt;
+</code></pre>
+<p>Here is an example of a page content:</p>
+<pre><code class="language-html">&lt;h1&gt;Welcome to this page&lt;h1&gt;
+
+Here is some normal text which will be displayed
+
+&lt;stellar-snippet params="src=https://..."&gt;yt-embed&lt;/stellar-snippet&gt;
+
+And here is a snippet
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="courses"><a class="header" href="#courses">Courses</a></h1>
+<blockquote>
+<p><strong><u style="color: #FFAAAA">Definition</u> <b>course</b>:</strong> a course is a
+collection of ordered pages. Every course is a single JSON file named <code>ID.json</code> containing
+the list of pages and headings.</p>
+</blockquote>
+<p>Every course has a title and a list of pages.
+Every page is an array of 2 or 3 elements.
+The first element is a number (either <code>1</code>, <code>2</code>, or <code>3</code>)
+which indicates the level of the heading. The second value is
+the title of the heading of the page (string).
+The third argument is optional and contains the ID of the page (string).
+If no third argument is specified, the title is not clickable.</p>
+<pre><code class="language-json">{
+    "title": "Stellar documentation",
+    "pages": [
+        [
+            1,
+            "Welcome",
+            "welcome-page-id"
+        ],
+        [
+            1,
+            "Stellar",
+        ],
+        [
+            1,
+            "Introduction",
+            "stellar-introduction-page-id"
+        ],
+        [
+            2,
+            "Snippets",
+            "stellar-snippets-page-id"
+        ]
+    ]
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="universes"><a class="header" href="#universes">Universes</a></h1>
+<blockquote>
+<p><strong><u style="color: #FFAAAA">Definition</u> <b>universe</b>:</strong> a universes are a collection of courses
+connected by functional dependencies in a graph. Every universe is a single JSON file named <code>ID.json</code>.</p>
+</blockquote>
+<p>Every universe contains a list of all the courses to display along with their coordinates
+in the <code>(x,y)</code> plane. It also contains a list of pairwise dependencies between courses IDs.</p>
+<pre><code class="language-json">{
+  "title": "Rendering",
+  "courses": [
+    {
+      "name": "Linear Algebra",
+      "id": "linearalgebra",
+      "x": 280,
+      "y": 150
+    },
+    {
+      "name": "Calculus",
+      "id": "calculus",
+      "x": 280,
+      "y": 280
+    },
+    {
+      "name": "Physical Rendering",
+      "id": "physicalrendering",
+      "x": 520,
+      "y": 220
+    },
+    {
+      "name": "Computer Rendering",
+      "id": "computerrendering",
+      "x": 520,
+      "y": 360
+    },
+    {
+      "name": "Vulkan",
+      "id": "vulkan",
+      "x": 800,
+      "y": 280
+    }
+  ],
+  "dependencies": [
+    {
+      "from": "linearalgebra",
+      "to": "physicalrendering"
+    },
+    {
+      "from": "calculus",
+      "to": "physicalrendering"
+    },
+    {
+      "from": "computerrendering",
+      "to": "vulkan"
+    },
+    {
+      "from": "physicalrendering",
+      "to": "vulkan"
+    }
+  ]
+}
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="pdf-stellar-format"><a class="header" href="#pdf-stellar-format">PDF Stellar Format</a></h1>
 <p>Stellar is able to interpret special PDFs with certain text commands written on the page. This is referred to as <code>PDF Stellar Format</code>.
-The file represents a Stellar page containing snippets or just a collection of snippets. Stellar will crop the PDF into multiple pieces to generate every snippet individually, and is also able to generate the corresponding page containing them.</p>
+The file contains a full stellar page and snippets or just a collection of snippets. Stellar will crop the PDF into multiple pieces to generate every snippet individually, and is also able to generate the corresponding page containing them.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="format-commands"><a class="header" href="#format-commands">Format Commands</a></h1>
+<p>There following commands are to be written as text in the PDF.</p>
 <div class="table-wrapper"><table><thead><tr><th>Command</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>!id &lt;ID&gt;</code></td><td>Set the ID of this page.</td></tr>
 <tr><td><code>!snippet &lt;ID&gt;</code></td><td>Start a PDF snippet here.</td></tr>
@@ -201,9 +433,10 @@ The file represents a Stellar page containing snippets or just a collection of s
 </tbody></table>
 </div>
 <p>Furthermore, it is possible to reference another snippet by adding an annotation with a link of the form <code>/snippet/snippet-id</code> or <code>/snippet/snippet-id|Label</code>.</p>
-<p>Stellar will crop the PDF between <code>!snippet</code> and <code>!endsnippet</code>.</p>
+<p>Stellar will crop the PDF between <code>!snippet</code> and <code>!endsnippet</code> commands (margins can be adjusted in the CLI parameters).</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="latex-package"><a class="header" href="#latex-package">LaTeX Package</a></h1>
-<p>The file <code>stellar.sty</code> provides the LaTeX package <code>stellar</code>, which implements PDF Stellar Format.</p>
+<p>The file <code>stellar.sty</code> provides the LaTeX package <code>stellar</code>, which implements PDF Stellar Format.
+The file is available <a href="https://github.com/paolobettelini/stellar/blob/main/utils/latex-packages/stellar.sty">here</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
 <p>To use the package, use the following document class:</p>
 <pre><code class="language-latex">\documentclass[preview]{standalone}
@@ -241,7 +474,7 @@ The file represents a Stellar page containing snippets or just a collection of s
     % snippet content
 \end{snippetproof}
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="example"><a class="header" href="#example">Example</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="example-1"><a class="header" href="#example-1">Example</a></h1>
 <pre><code class="language-latex">\documentclass[preview]{standalone}
 
 \usepackage{stellar}
@@ -269,35 +502,188 @@ The file represents a Stellar page containing snippets or just a collection of s
 
 \includesnpt{snippet2-definition}
 
-\begin{snippet}{text-snippet}[\{"meta": "json"\}]
+\begin{snippet}{text-snippet}[\{"meta": "json"\}] % will add a meta.json file
     Some text as a snippet!
 \end{snippet}
 
 \end{document}
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="metadata"><a class="header" href="#metadata">Metadata</a></h1>
-<p>A snippet may contain a <code>metadata.json</code> file with some metadata properties.</p>
-<h2 id="json-structure"><a class="header" href="#json-structure">JSON Structure</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>generalizations</code></td><td>Array of snippet IDs</td><td>Mathematical generalizations.</td></tr>
-<tr><td><code>requires</code></td><td>Array of snippet IDs</td><td>Necessary libraries.</td></tr>
-<tr><td><code>default-params</code></td><td>Params string</td><td>Default parameters for snippet.</td></tr>
-</tbody></table>
-</div>
-<h2 id="example-1"><a class="header" href="#example-1">Example</a></h2>
-<pre><code class="language-json">{
-    "default-params": "width=70%|src=https://youtu.be/dQw4w9WgXcQ&amp;",
-    "requires": ["some-lib-snippet"]
-}```</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="latex-driven-implementation"><a class="header" href="#latex-driven-implementation">LaTeX-driven Implementation</a></h1>
-<p>The following part of the document describes a particular implementation of a Stellar environment, which is primarily based on LaTeX using the PDF Stellar Format.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stellar-cli"><a class="header" href="#stellar-cli">Stellar CLI</a></h1>
+<p>The stellar cli has various subcommands.</p>
+<pre><code>Stellar CLI
+
+Usage: stellar &lt;COMMAND&gt;
+
+Commands:
+  generate  Help message for generator
+  import    Help message for import
+  web       Help message for web
+  check     Help message for check
+  help      Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print versio
+</code></pre>
+<h1 id="stellar-web"><a class="header" href="#stellar-web">stellar web</a></h1>
+<p>The <code>web</code> subcommand is used to start the web server.</p>
+<pre><code>Help message for web
+
+Usage: stellar web [OPTIONS] --data &lt;DATA&gt; --connection-url &lt;CONNECTION_URL&gt;
+
+Options:
+  -a, --address &lt;ADDRESS&gt;                Listening address [default: 0.0.0.0]
+  -p, --port &lt;PORT&gt;                      Listening port [default: 8080]
+  -d, --data &lt;DATA&gt;                      Data folder
+  -c, --connection-url &lt;CONNECTION_URL&gt;  MongoDB Connection URL
+  -h, --help                             Print help
+</code></pre>
+<h1 id="stellar-import"><a class="header" href="#stellar-import">stellar import</a></h1>
+<p>The <code>import</code> subcommand is used to process data and import it to the MongoDB database.</p>
+<pre><code>Help message for import
+
+Usage: stellar import [OPTIONS] --connection-url &lt;CONNECTION_URL&gt;
+
+Options:
+  -c, --connection-url &lt;CONNECTION_URL&gt;
+          MongoDB connection URL
+  -i, --import &lt;IMPORT&gt;...
+          Import data/snippets/pages/courses folder or single snippet/page/course
+  -h, --help
+          Print help
+</code></pre>
+<p>Here is a bunch of examples:</p>
+<pre><code>stellar import -c "..." --import ./data
+stellar import -c "..." --import ./data/snippets
+stellar import -c "..." --import ./data/pages
+stellar import -c "..." --import ./data/courses
+stellar import -c "..." --import ./data/snippets/snippet1
+stellar import -c "..." --import ./data/pages/page1.html
+stellar import -c "..." --import ./data/courses/course1.json
+stellar import -c "..." --import course1.json course2.json
+</code></pre>
+<h1 id="stellar-generate"><a class="header" href="#stellar-generate">stellar generate</a></h1>
+<p>The <code>generate</code> subcommand is used to parse a PDF in the PDF Stellar Format
+and generate a page and snippets.</p>
+<pre><code>Help message for generator
+
+Usage: stellar generate [OPTIONS] --input &lt;INPUT&gt; --data-output &lt;DATA_OUTPUT&gt;
+
+Options:
+  -i, --input &lt;INPUT&gt;                    Generate data from a PDF file
+  -o, --data-output &lt;DATA_OUTPUT&gt;        Output for generated data
+      --import                           Import the generated snippets
+  -c, --connection-url &lt;CONNECTION_URL&gt;  MongoDB connection URL
+      --top-offset &lt;TOP_OFFSET&gt;          Snippet cut top offset [default: -20]
+      --bottom-offset &lt;BOTTOM_OFFSET&gt;    Snippet cut bottom offset [default: 2.5]
+      --left-margin &lt;LEFT_MARGIN&gt;        Snippet cut left margin
+      --right-margin &lt;RIGHT_MARGIN&gt;      Snippet cut right margin
+  -h, --help
+</code></pre>
+<p>To compile from the PDF generated by the previous LaTeX example:</p>
+<pre><code>stellar-cli generate snippets \
+    --input stellar.pdf \
+    --data-output ./data \
+    --bottom-offset 9.5 \
+    --top-offset=-20
+</code></pre>
+<h1 id="stellar-check"><a class="header" href="#stellar-check">stellar check</a></h1>
+<p>The <code>check</code> subcommand is used to check the integrity of the existing data.</p>
+<p>There are various integrity checks:</p>
+<ul>
+<li>Existence of refereces in the snippets, pages, courses and universes</li>
+<li>Autoreferentiality in snippets</li>
+<li>Reference linearity</li>
+</ul>
+<pre><code>Help message for check
+
+Usage: stellar check [OPTIONS] --connection-url &lt;CONNECTION_URL&gt;
+
+Options:
+  -c, --connection-url &lt;CONNECTION_URL&gt;
+          MongoDB connection URL
+  -e, --existences
+          Check only existance of references E.g. existance for courses checks whether the pages exist
+  -a, --autoreferentiality
+          Check only snippets self-reference
+  -l, --linearity
+          Check only snippets linearity
+  -h, --help
+          Print help
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation-1"><a class="header" href="#installation-1">Installation</a></h1>
+<p>Install <a href="https://github.com/paolobettelini/stellar">stellar</a>
+and clone the repository</p>
+<pre><code class="language-bash">git clone https://github.com/paolobettelini/notes
+</code></pre>
+<p>Set the necessary enviromental variables:</p>
+<pre><code class="language-bash">NOTESPATH # pointing to the notes/ directory
+MONGO_CONNECTION_URL # connection URL to mongodb
+</code></pre>
+<p>Install the required libraries (some snippets require <code>npm</code> and <code>wasm-pack</code> to compile)</p>
+<pre><code class="language-bash">pacman -S tectonic npm wasm-pack git
+</code></pre>
+<p>Compile the compiler or download it from the <a href="https://github.com/paolobettelini/notes/releases/tag/v0.1.0">releases</a></p>
+<pre><code class="language-bash">cd notes/compiler
+cargo build --release
+mv target/release/compile /usr/local/bin/notes
+</code></pre>
+<h1 id="compiling-everything-and-starting-the-server"><a class="header" href="#compiling-everything-and-starting-the-server">Compiling everything and starting the server</a></h1>
+<pre><code class="language-bash">cd source
+notes # compiles everything
+cd ..
+</code></pre>
+<p>It is advisable to set the <code>CARGO_TARGET_DIR</code> variable so that
+the rust projects share the same target folder.</p>
+<p>Then, start the web server</p>
+<pre><code class="language-bash">stellar web --data data/ --connection-url $MONGO_CONNECTION_URL
+</code></pre>
+<p>Go to <a href="http://localhost:8080/search">localhost:8080/search</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
-<pre><code class="language-latex">source/
+<pre><code class="language-latex">data/
+source/
 ├── latex/
 ├── courses/
 ├── pages/
 ├── snippets/
 └── universes/
+</code></pre>
+<p>The <code>latex/</code> folder contains all the <code>.tex</code> files for the PDF Stellar Format files.
+Even though pages and snippets can already be generated from PDFs,
+the <code>pages/</code> and <code>snippets/</code> are a place to put manually crafted snippets and pages.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="compiler-usage"><a class="header" href="#compiler-usage">Compiler usage</a></h1>
+<p>The <code>notes</code> executable is a command used to compile data according to the structure
+of this repository.</p>
+<pre><code>Stellar notes compiler CLI
+
+Usage: notes [OPTIONS] [INPUT]
+
+Arguments:
+  [INPUT]  Compile query
+
+Options:
+  -r, --regex        Use a regex
+  -i, --ignore-case  Ignore case
+      --snippets     Check only snippets folder
+  -p, --pull         Compile current git status files last pull
+      --latex        Check only latex folder
+      --pages        Check only pages folder
+      --courses      Check only courses folder
+      --universes    Check only universes folder
+  -h, --help         Print help
+  -V, --version      Print version
+</code></pre>
+<p>The compiler will automatically handle everything. It will import
+the data to the database. You can call <code>notes</code> from any directory.</p>
+<pre><code class="language-bash">notes # compiles everything
+notes Something # compiles everything that contains "Something"
+notes -r "S|T|N|G" # compiles everything that matches the regex
+notes --latex # compiles all the latex files
+notes --snippets # compiles all the universes
+notes --pages # compiles all the universes
+notes --courses # compiles all the universes
+notes --universes # compiles all the universes
+notes --universes -r "..." # compiles all the universes that match the regex
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="snippet-build-scripts"><a class="header" href="#snippet-build-scripts">Snippet Build Scripts</a></h1>
 <p>By default, snippets in the <code>snippets/</code> folder are just copied to the <code>data/</code> folder by the compiler. However, it is possible to add a custom build script <code>build.py</code> to the snippet directory to implement custom behavior. The build script will receive a single parameter representing the target folder where the files need to be written to.</p>
@@ -356,6 +742,54 @@ def main():
     if __name__ == "__main__":
         main()
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="common-snippets"><a class="header" href="#common-snippets">Common snippets</a></h1>
+<ul>
+<li><code>yt-embed</code>: Embeds a YouTube video. Params: <b>src, width, height</b></li>
+<li><code>centered-img</code>: Displays an image. You can put the images in <code>snippets/static</code>.
+Params: <b>src, width, height</b></li>
+<li><code>iframe</code>: Embeds an iframe. Params: <b>src, width, height</b></li>
+<li><code>file-url</code>: Embeds a file download. Params: <b>href, display</b></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="fish-configuration"><a class="header" href="#fish-configuration">Fish configuration</a></h1>
+<p>If you're writing notes using stellar you might find this setup useful (<code>~/.config/fish/config.fish</code>):</p>
+<pre><code class="language-bash">set --export MONGO_CONNECTION_URL "mongodb://127.0.0.1" # modify accordingly
+set --export NOTES_PATH "/home/user/notes" # modify accordingly
+
+function startstellar
+  sudo -v
+  sudo stellar web --data "$NOTES_PATH/data" --connection-url $MONGO_CONNECTION_URL --port 80
+end
+
+function stopstellar
+  sudo -v
+  set pid (sudo lsof -t -i :80)
+  if test -z "$pid"
+    echo "Server was not open"
+  else
+    sudo kill -9 $pid
+    echo "Server was killed"
+  end
+end
+
+function updatenotes
+  sudo -v
+  set latest_url (curl -s https://api.github.com/repos/paolobettelini/notes/releases/latest | grep browser_download_url | cut -d '"' -f 4)
+  set temp_file /tmp/notes_latest
+  curl -L -o $temp_file $latest_url
+  chmod +x $temp_file
+  sudo mv $temp_file /usr/local/bin/notes
+end
+
+function updatestellar
+  sudo -v
+  set latest_url (curl -s https://api.github.com/repos/paolobettelini/stellar/releases/latest | grep browser_download_url | cut -d '"' -f 4)
+  set temp_file /tmp/stellar_latest
+  curl -L -o $temp_file $latest_url
+  chmod +x $temp_file
+  sudo mv $temp_file /usr/local/bin/stellar
+end
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="todo"><a class="header" href="#todo">TODO</a></h1>
 
                     </main>
 

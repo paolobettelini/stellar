@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Data Structure - Stellar documentation</title>
+        <title>Pages - Stellar documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="stellar.html"><strong aria-hidden="true">2.</strong> Stellar</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="data_structure.html" class="active"><strong aria-hidden="true">2.1.</strong> Data Structure</a></li><li class="chapter-item expanded "><a href="pdf_stellar_format.html"><strong aria-hidden="true">2.2.</strong> PDF Stellar Format</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="format_commands.html"><strong aria-hidden="true">2.2.1.</strong> Format Commands</a></li><li class="chapter-item expanded "><a href="latex_package.html"><strong aria-hidden="true">2.2.2.</strong> LaTeX Package</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">2.2.2.1.</strong> Usage</a></li><li class="chapter-item expanded "><a href="example.html"><strong aria-hidden="true">2.2.2.2.</strong> Example</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="metadata.html"><strong aria-hidden="true">2.3.</strong> Metadata</a></li></ol></li><li class="chapter-item expanded "><a href="latex_implementation.html"><strong aria-hidden="true">3.</strong> LaTeX-driven Implementation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="structure.html"><strong aria-hidden="true">3.1.</strong> Structure</a></li><li class="chapter-item expanded "><a href="snippet_build_scripts.html"><strong aria-hidden="true">3.2.</strong> Snippet Build Scripts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="example_script.html"><strong aria-hidden="true">3.2.1.</strong> Example Script</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="welcome.html"><strong aria-hidden="true">1.</strong> Welcome</a></li><li class="chapter-item expanded affix "><li class="part-title">Stellar</li><li class="chapter-item expanded "><a href="stellar_installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="stellar_introduction.html"><strong aria-hidden="true">3.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="stellar_snippets.html"><strong aria-hidden="true">3.1.</strong> Snippets</a></li><li class="chapter-item expanded "><a href="stellar_pages.html" class="active"><strong aria-hidden="true">3.2.</strong> Pages</a></li><li class="chapter-item expanded "><a href="stellar_courses.html"><strong aria-hidden="true">3.3.</strong> Courses</a></li><li class="chapter-item expanded "><a href="stellar_universes.html"><strong aria-hidden="true">3.4.</strong> Universes</a></li></ol></li><li class="chapter-item expanded "><a href="pdf_stellar_format.html"><strong aria-hidden="true">4.</strong> PDF Stellar Format</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="format_commands.html"><strong aria-hidden="true">4.1.</strong> Format Commands</a></li><li class="chapter-item expanded "><a href="latex_package.html"><strong aria-hidden="true">4.2.</strong> LaTeX Package</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">4.2.1.</strong> Usage</a></li><li class="chapter-item expanded "><a href="example.html"><strong aria-hidden="true">4.2.2.</strong> Example</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="stellar_cli.html"><strong aria-hidden="true">5.</strong> Stellar CLI</a></li><li class="chapter-item expanded affix "><li class="part-title">LaTeX-driven Implementation</li><li class="chapter-item expanded "><a href="notes_installation.html"><strong aria-hidden="true">6.</strong> Installation</a></li><li class="chapter-item expanded "><a href="notes_structure.html"><strong aria-hidden="true">7.</strong> Structure</a></li><li class="chapter-item expanded "><a href="notes_compiler.html"><strong aria-hidden="true">8.</strong> Compiler</a></li><li class="chapter-item expanded "><a href="snippet_build_scripts.html"><strong aria-hidden="true">9.</strong> Snippet Build Scripts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="example_script.html"><strong aria-hidden="true">9.1.</strong> Example Script</a></li></ol></li><li class="chapter-item expanded "><a href="common_snippets.html"><strong aria-hidden="true">10.</strong> Common snippets</a></li><li class="chapter-item expanded affix "><li class="part-title">Miscellaneous</li><li class="chapter-item expanded "><a href="misc_fish.html"><strong aria-hidden="true">11.</strong> Fish configuration</a></li><li class="chapter-item expanded "><a href="misc_todo.html"><strong aria-hidden="true">12.</strong> TODO</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -173,23 +173,40 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="data-structure"><a class="header" href="#data-structure">Data Structure</a></h1>
-<pre><code class="language-latex">data/
-├── snippets/
-├── pages/
-├── courses/
-└── universes/
+                        <h1 id="pages"><a class="header" href="#pages">Pages</a></h1>
+<blockquote>
+<p><strong><u style="color: #FFAAAA">Definition</u> <b>page</b>:</strong> a page is an HTML page
+which can contain arbitrary HTML. A page may include other snippets that exist
+in the enviroment. For now, every page is a single HTML file named <code>&lt;ID&gt;.html</code> in
+their own folder, but in the future it will have the same primary file/secondary file
+mechanism as snippets.</p>
+</blockquote>
+<h1 id="snippets-tag"><a class="header" href="#snippets-tag">Snippets tag</a></h1>
+<p>There is a special tag which can be used to include snippets in the page</p>
+<pre><code class="language-html">&lt;stellar-snippet&gt;ID&lt;/stellar-snippet&gt;
+</code></pre>
+<p>Parameters can be passed as follows:</p>
+<pre><code class="language-html">&lt;stellar-snippet params="param1=v1|param2=v2"&gt;ID&lt;/stellar-snippet&gt;
+</code></pre>
+<p>Here is an example of a page content:</p>
+<pre><code class="language-html">&lt;h1&gt;Welcome to this page&lt;h1&gt;
+
+Here is some normal text which will be displayed
+
+&lt;stellar-snippet params="src=https://..."&gt;yt-embed&lt;/stellar-snippet&gt;
+
+And here is a snippet
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="stellar.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="stellar_snippets.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="pdf_stellar_format.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="stellar_courses.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -199,11 +216,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="stellar.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="stellar_snippets.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="pdf_stellar_format.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="stellar_courses.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
