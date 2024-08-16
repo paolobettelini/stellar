@@ -14,6 +14,7 @@
     - [LaTeX Package](./latex_package.md)
       - [Usage](./usage.md)
       - [Example](./example.md)
+      - [Visual Studio Code](./vscode.md)
   - [Stellar CLI](./stellar_cli.md)
 
 # LaTeX-driven Implementation
