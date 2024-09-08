@@ -27,7 +27,7 @@ set those values in the `Cargo.toml` instead.
 # MongoDB
 
 ```bash
-pacman -S mongodb
+paru -S mongodb-bin
 systemctl enable mongodb
 systemctl start mongodb
 ```
