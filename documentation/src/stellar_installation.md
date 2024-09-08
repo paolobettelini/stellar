@@ -24,6 +24,14 @@ cargo leptos watch -- web ...
 Do not use `--port` or `--address` in development,
 set those values in the `Cargo.toml` instead.
 
+# MongoDB
+
+```bash
+pacman -S mongodb
+systemctl enable mongodb
+systemctl start mongodb
+```
+
 # Necessary scripts
 
 The following steps are absolutely crucial if you plan on generating
