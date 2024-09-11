@@ -112,9 +112,6 @@ async fn static_pkg(path: web::Path<String>) -> impl Responder {
 }
 
 #[get("favicon.ico")]
-async fn favicon() -> actix_web::Result<actix_files::NamedFile> {
-    let site_root = env!("LEPTOS_SITE_ROOT");
-    Ok(actix_files::NamedFile::open(format!(
-        "{site_root}/favicon.ico"
-    ))?)
+async fn favicon() -> impl Responder {
+    handle_static_file("favicon.ico")
 }
