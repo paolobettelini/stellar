@@ -224,6 +224,8 @@ paru -S python311 # use this version
 <p>Lock the packages version in <code>/etc/pacman.conf</code></p>
 <pre><code>IgnorePkg = libmupdf python-mupdf python-pymupdf
 </code></pre>
+<p>In order to use the correct <code>python</code> version, you can replace the shebang in <code>pdfcrop.py</code>
+with <code>#!/bin/python3.11</code>. The other script does not need it.</p>
 
                     </main>
 
