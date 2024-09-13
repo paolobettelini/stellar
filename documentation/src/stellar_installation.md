@@ -66,3 +66,5 @@ Lock the packages version in `/etc/pacman.conf`
 ```
 IgnorePkg = libmupdf python-mupdf python-pymupdf
 ```
+In order to use the correct `python` version, you can replace the shebang in `pdfcrop.py`
+with `#!/bin/python3.11`. The other script does not need it.

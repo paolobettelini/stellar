@@ -18,7 +18,7 @@ Compile the compiler or download it from the [releases](https://github.com/paolo
 ```bash
 cd notes/compiler
 cargo build --release
-mv target/release/compile /usr/local/bin/notes
+mv target/release/compiler /usr/local/bin/notes
 ```
 
 # Compiling everything and starting the server
