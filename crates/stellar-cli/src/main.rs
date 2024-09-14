@@ -79,13 +79,35 @@ pub async fn parse_import_args(args: &ImportArgs) -> anyhow::Result<()> {
 }
 
 pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
-    web::start_server(
-        args.address,
-        args.port,
-        &args.connection_url,
-        args.data.clone(),
-    )
-    .await?;
+    let mut config = if let Some(path) = &args.config {
+        web::config::parse_toml_config(&path).unwrap_or_else(|e| {
+            log::error!("Could not parse config: {:?}", e);
+            std::process::exit(1);
+        })
+    } else {
+        // Default config
+        Box::new(web::config::StellarConfig::default())
+    };
+
+    // Override config values if params are specified
+    if let Some(address) = &args.address {
+        config.server.address = address.clone();
+    }
+
+    if let Some(port) = args.port {
+        config.server.port = port;
+    }
+
+    if let Some(connection_url) = &args.connection_url {
+        config.server.connection_url = connection_url.clone();
+    }
+
+    if let Some(data) = &args.data {
+        config.server.data_folder = data.clone();
+    }
+
+    // Start the server
+    web::start_server(*config).await?;
 
     Ok(())
 }

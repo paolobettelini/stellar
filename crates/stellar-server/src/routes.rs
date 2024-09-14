@@ -14,7 +14,7 @@ async fn snippet_service(
 ) -> impl Responder {
     let snippet = snippet.to_string();
     // TODO pre-create path
-    let dir = &Path::new(&data.data_folder).join("snippets").join(&snippet);
+    let dir = &Path::new(&data.config.server.data_folder).join("snippets").join(&snippet);
 
     let (file, content_type) = {
         if let Some(v) = get_snippet_file_and_content_type(dir, &snippet) {
@@ -61,7 +61,7 @@ async fn snippet_complementary_service(
     let snippet = &params.0;
     let file_name = &params.1;
     // TODO pre-create path
-    let file = &Path::new(&data.data_folder)
+    let file = &Path::new(&data.config.server.data_folder)
         .join("snippets")
         .join(snippet)
         .join(file_name.replace("..", "")); // replace .. just to be sure

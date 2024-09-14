@@ -32,6 +32,7 @@ icondata_ai = "0.0.10"
 icondata = "0.3.1"
 serde = "1.0.203"
 web-sys = { version = "0.3.69", features = ["CanvasRenderingContext2d"] }
+toml = "0.8.19"
 
 [features]
 hydrate = [

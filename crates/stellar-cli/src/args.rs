@@ -73,20 +73,24 @@ pub struct GenerateArgs {
 #[derive(Debug, Args)]
 pub struct WebArgs {
     /// Listening address
-    #[arg(short, long, default_value_t = default_address())]
-    pub address: IpAddr,
+    #[arg(short, long)]
+    pub address: Option<IpAddr>,
 
     /// Listening port
-    #[arg(short, long, default_value_t = 8080)]
-    pub port: u16,
+    #[arg(short, long)]
+    pub port: Option<u16>,
 
     /// Data folder
     #[arg(short, long)]
-    pub data: PathBuf,
+    pub data: Option<PathBuf>,
 
     /// MongoDB Connection URL
-    #[arg(short, short, long)]
-    pub connection_url: String,
+    #[arg(short, long)]
+    pub connection_url: Option<String>,
+
+    /// Config file
+    #[arg(long)]
+    pub config: Option<PathBuf>,
 }
 
 #[derive(Debug, Args)]
@@ -107,8 +111,4 @@ pub struct CheckArgs {
     /// Check only snippets linearity
     #[arg(short, long)]
     pub linearity: bool,
-}
-
-fn default_address() -> IpAddr {
-    IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0))
 }

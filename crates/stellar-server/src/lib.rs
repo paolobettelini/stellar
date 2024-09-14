@@ -1,3 +1,5 @@
+pub mod config;
+
 // Hydrate feature-gated function(s)
 mod hydrate;
 #[cfg(feature = "hydrate")]
@@ -13,6 +15,5 @@ pub(crate) mod app;
 pub(crate) mod assets;
 #[cfg(feature = "ssr")]
 pub(crate) mod routes;
-
 #[cfg(feature = "ssr")]
 mod data;

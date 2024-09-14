@@ -2,6 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use thaw::*;
+use std::rc::Rc;
+use crate::config::StellarConfig;
 
 mod api;
 mod components;
@@ -20,10 +22,19 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/stellar.css"/>
         <script src="/assets/js/init.js" />
 
+        // Meta
+        <Meta property="og:site_name" content="Stellar" />
+        <Meta property="og:title" content="Stellar" />
+        <Meta property="og:description" content="Courseware website" />
+
+        <Meta property="og:type" content="website" />
+        <Meta property="og:image:type" content="image/png" />
+        <Meta property="og:image:width" content="600" />
+        <Meta property="og:image:height" content="600" />
+
         // Computer Modern (LaTeX)
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css" />
 
-        // sets the document title
         <Title text="Stellar"/>
 
         <Router>
