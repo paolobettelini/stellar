@@ -726,7 +726,7 @@ notes --universes -r "..." # compiles all the universes that match the regex
 notes course1 File1 File2 # compile multiple inputs
 notes -r reg1 reg2 # compiles files matching reg1 or reg2
 notes "Something" --containing "\command" # compiles every file name that contains "Something" whose content contains "\command"
-notes -r "Something.+" --containing "\\command" # like the one above but with regex matching
+notes -r "Something.+" --containing "\command" # like the one above but with regex matching
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="snippet-build-scripts"><a class="header" href="#snippet-build-scripts">Snippet Build Scripts</a></h1>
 <p>By default, snippets in the <code>snippets/</code> folder are just copied to the <code>data/</code> folder by the compiler. However, it is possible to add a custom build script <code>build.py</code> to the snippet directory to implement custom behavior. The build script will receive a single parameter representing the target folder where the files need to be written to.</p>
