@@ -40,5 +40,5 @@ notes --universes -r "..." # compiles all the universes that match the regex
 notes course1 File1 File2 # compile multiple inputs
 notes -r reg1 reg2 # compiles files matching reg1 or reg2
 notes "Something" --containing "\command" # compiles every file name that contains "Something" whose content contains "\command"
-notes -r "Something.+" --containing "\\command" # like the one above but with regex matching
+notes -r "Something.+" --containing "\command" # like the one above but with regex matching
 ```
