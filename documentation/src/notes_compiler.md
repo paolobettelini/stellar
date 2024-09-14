@@ -29,12 +29,16 @@ the data to the database. You can call `notes` from any directory.
 
 ```bash
 notes # compiles everything
-notes Something # compiles everything that contains "Something"
-notes -r "S|T|N|G" # compiles everything that matches the regex
+notes Something # compiles every file name that contains "Something"
+notes -r "S|T|N|G" # compiles every file name that matches the regex
 notes --latex # compiles all the latex files
 notes --snippets # compiles all the universes
 notes --pages # compiles all the universes
 notes --courses # compiles all the universes
 notes --universes # compiles all the universes
 notes --universes -r "..." # compiles all the universes that match the regex
+notes course1 File1 File2 # compile multiple inputs
+notes -r reg1 reg2 # compiles files matching reg1 or reg2
+notes "Something" --containing "\command" # compiles every file name that contains "Something" whose content contains "\command"
+notes -r "Something.+" --containing "\\command" # like the one above but with regex matching
 ```
