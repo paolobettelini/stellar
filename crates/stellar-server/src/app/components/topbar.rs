@@ -61,6 +61,13 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
                     <Button on_click=move |_| set_theme("theme-light")>"Light"</Button>
                     <Button on_click=move |_| set_theme("theme-dark")>"Dark"</Button>
                 </ul>
+                <i id="topbar-github">
+                    <a
+                        style="color: inherit"
+                        href="https://github.com/paolobettelini/notes" >
+                        <Icon icon=icondata::BsGithub/>
+                    </a>
+                </i>
             </div>
 
             <div id="top-bar-title">{title}</div>
