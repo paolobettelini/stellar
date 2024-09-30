@@ -86,12 +86,12 @@ pub async fn generate_snippets(
         handles.push(handle);
     }
 
-    let mut imported_snippets = 0;
+    let mut imported_snippets = vec![];
     for cmd in commands {
-        let res = process_cmd(input, &mut processor, &cmd, &snippets_dir, &client, &dim, tx.clone()).await;
+        let snippet = process_cmd(input, &mut processor, &cmd, &snippets_dir, &dim, tx.clone()).await;
 
-        if res {
-            imported_snippets += 1;
+        if let Some(snippet) = snippet {
+            imported_snippets.push(snippet);
         }
     }
 
@@ -102,9 +102,23 @@ pub async fn generate_snippets(
         handle.join().expect("Failed to join worker thread");
     }
 
+    // Import all the snippets since now the PDFs are available
+    // and their contents can be parsed.
+    let mut imported_snippets_count = 0;
+    if let Some(ref client) = client {
+        for snippet in imported_snippets {
+            let path = snippets_dir.join(&snippet);
+            let res = import::import_snippet_with_client(client, &path).await;
+            
+            if res.is_ok() {
+                imported_snippets_count += 1;
+            }
+        }
+    }
+
     let page_imported = finalize(&mut processor, &pages_dir, &courses_dir, &client).await;
 
-    Ok((page_imported, imported_snippets))
+    Ok((page_imported, imported_snippets_count))
 }
 
 async fn process_cmd(
@@ -112,10 +126,9 @@ async fn process_cmd(
     processor: &mut DocProcessor,
     cmd: &DocumentCmd,
     snippets_dir: &Path,
-    client: &Option<&ClientHandler>,
     dim: &CropDimension,
     tx: Sender<CropPdfData>,
-) -> bool { // true if a snippet has been imported
+) -> Option<String> { // true if a snippet has been imported
     match &cmd.cmd {
         SetGlobalID(id) => {
             processor.global_id = id.to_string();
@@ -152,15 +165,8 @@ async fn process_cmd(
             // Send Data so that the cropping is executed in parallel.
             tx.send(data).expect("Failed to send data");
 
-            let mut snippet_imported = false;
-            if let Some(ref client) = client {
-                let res = import::import_snippet_with_client(client, &output).await;
-                
-                if res.is_ok() {
-                    // Snippet has been imported
-                    snippet_imported = true;
-                }
-            }
+            // Note: the snippet is not imported here as the PDF might not be cropped yet.
+            // yet will all be imported at the end.
 
             // Add generated snippet to HTML page
             if let Some(id) = &processor.current_id {
@@ -180,7 +186,7 @@ async fn process_cmd(
             processor.current_page = None;
             processor.current_id = None;
 
-            return snippet_imported;
+            return Some(snippet_id);
         }
         AddSection(title) => {
             // Add title to HTML page
@@ -216,7 +222,7 @@ async fn process_cmd(
         }
     }
 
-    false
+    None
 }
 
 async fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path, client: &Option<&ClientHandler>) -> bool {
