@@ -5,3 +5,4 @@
     Params: <b>src, width, height</b>
 * `iframe`: Embeds an iframe. Params: <b>src, width, height</b>
 * `file-url`: Embeds a file download. Params: <b>href, display</b>
+* `mathjax`: Loads the [MathJax library](https://www.mathjax.org/). Use `\usepackage{mathjax}` instead to achieve the same.

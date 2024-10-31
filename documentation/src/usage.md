@@ -45,3 +45,22 @@ Other types of snippets:
     % snippet content
 \end{snippetproof}
 ```
+
+## The plain command
+
+The `plain` command is used as follows:
+```latex
+\plain{This is some <b>HTML</b> text.}
+```
+The plain command embeds its content into the HTML code of the page.
+Note that the passed argument is printed verbatim, LaTeX commands will not work.
+If you want to write a percentage, use `\HTMLPercentage`.
+
+You can enable MathJax and write LaTeX in the plain command by importing the
+`mathjax` package.
+
+```latex
+\usepackage{mathjax}
+...
+\plain{Some math: \(e^x\).}
+```
