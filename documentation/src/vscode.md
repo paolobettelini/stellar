@@ -20,8 +20,6 @@ The file provides some autocompletions such as `sdocument` which will provide a 
 \id{id}
 \genpage
 
-
-
 \end{document}
 ```
 

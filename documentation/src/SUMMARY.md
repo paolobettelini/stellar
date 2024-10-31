@@ -24,6 +24,7 @@
   - [Snippet Build Scripts](./snippet_build_scripts.md)
     - [Example Script](./example_script.md)
   - [Common snippets](./common_snippets.md)
+  - [MathJax support](./mathjax.md)
 
 # Miscellaneous
   - [Fish configuration](./misc_fish.md)

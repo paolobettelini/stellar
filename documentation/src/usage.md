@@ -55,12 +55,3 @@ The `plain` command is used as follows:
 The plain command embeds its content into the HTML code of the page.
 Note that the passed argument is printed verbatim, LaTeX commands will not work.
 If you want to write a percentage, use `\HTMLPercentage`.
-
-You can enable MathJax and write LaTeX in the plain command by importing the
-`mathjax` package.
-
-```latex
-\usepackage{mathjax}
-...
-\plain{Some math: \(e^x\).}
-```
