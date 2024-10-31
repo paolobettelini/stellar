@@ -210,6 +210,19 @@
     % snippet content
 \end{snippetproof}
 </code></pre>
+<h2 id="the-plain-command"><a class="header" href="#the-plain-command">The plain command</a></h2>
+<p>The <code>plain</code> command is used as follows:</p>
+<pre><code class="language-latex">\plain{This is some &lt;b&gt;HTML&lt;/b&gt; text.}
+</code></pre>
+<p>The plain command embeds its content into the HTML code of the page.
+Note that the passed argument is printed verbatim, LaTeX commands will not work.
+If you want to write a percentage, use <code>\HTMLPercentage</code>.</p>
+<p>You can enable MathJax and write LaTeX in the plain command by importing the
+<code>mathjax</code> package.</p>
+<pre><code class="language-latex">\usepackage{mathjax}
+...
+\plain{Some math: \(e^x\).}
+</code></pre>
 
                     </main>
 
