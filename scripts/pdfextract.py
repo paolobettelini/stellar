@@ -35,7 +35,10 @@ def extract_text_from_pdf(pdf_file):
                 # Get coordinates and text
                 x, y, text = lobj.bbox[0], lobj.bbox[3], lobj.get_text().strip()
 
-                if text.startswith("!"):
+                # The '!' characters should be at coordinate 0 (actually, very very close)
+                # I encountered a situation where there were '!' symbols at absurd cordinates,
+                # so we add the < 0.001 condition just to be sure.
+                if text.startswith("!") and x < 0.001:
                     # Clean characters.
                     # TODO: ' needs to be replace, but the other characters should be supported
 
