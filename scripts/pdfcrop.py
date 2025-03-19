@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import fitz
+import pymupdf
 import argparse
 
 # PyMuPDF Doc
@@ -8,7 +8,7 @@ import argparse
 
 def crop_and_redact_pdf(input_pdf, output_pdf, y1, y2, right_margin, left_margin, page_number):
     # Open the input PDF using PyMuPDF
-    pdf_document = fitz.open(input_pdf)
+    pdf_document = pymupdf.open(input_pdf)
 
     page = pdf_document[page_number]
 

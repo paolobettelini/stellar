@@ -47,6 +47,7 @@ mv scripts/* /usr/local/bin
 pacman -S python-pdfminer python-pymupdf
 ```
 
+<!-- Should be solved
 **Issues with cropping PDFs**:
 Unfortunately, there are some cropping problems with the `mupdf` package.
 The problems arise from version `1.24` onwards.
@@ -68,3 +69,4 @@ IgnorePkg = libmupdf python-mupdf python-pymupdf
 ```
 In order to use the correct `python` version, you can replace the shebang in `pdfcrop.py`
 with `#!/bin/python3.11`. The other script does not need it.
+-->
