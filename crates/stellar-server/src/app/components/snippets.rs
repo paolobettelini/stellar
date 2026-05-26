@@ -12,8 +12,16 @@ pub fn SnippetsRenderer(content: String) -> impl IntoView {
 pub fn SnippetLibraries() -> impl IntoView {
     view! {
         <script type="module">
-            import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs';
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs';
+            {r#"
+            if (!window.stellarPdfJsPromise) {
+                window.stellarPdfJsPromise = import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs')
+                    .then((pdfjsLib) => {
+                        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs';
+                        window.pdfjsLib = pdfjsLib;
+                        return pdfjsLib;
+                    });
+            }
+            "#}
         </script>
         <script src="/assets/js/filter.js" />
         <script src="/assets/js/load-pdf.js" />

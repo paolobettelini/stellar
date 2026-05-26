@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use std::time::Duration;
 use wasm_bindgen::prelude::*;
 
 #[component]
@@ -40,14 +41,40 @@ extern "C" {
     fn setLocalStorageTheme(theme: &str);
 }
 
+#[wasm_bindgen(inline_js = r#"
+export function copyHrefToClipboard(href) {
+    const url = new URL(href, window.location.origin).toString();
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url);
+        return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = url;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+}
+"#)]
+extern "C" {
+    fn copyHrefToClipboard(href: &str);
+}
+
 #[component]
 pub fn Topbar(
     title: Signal<String>,
     #[prop(optional)] set_navbar_hidden: Option<WriteSignal<bool>>,
     #[prop(default = true)] show_search: bool,
     #[prop(optional)] edit_href: Option<Signal<String>>,
+    #[prop(optional)] share_href: Option<Signal<String>>,
 ) -> impl IntoView {
     let (themes_hidden, set_themes_hidden) = signal(true);
+    let (share_popup_visible, set_share_popup_visible) = signal(false);
 
     let set_theme = |theme| {
         setLocalStorageTheme(theme);
@@ -88,6 +115,27 @@ pub fn Topbar(
                         </i>
                     }
                 })}
+                {share_href.map(|share_href| {
+                    view! {
+                        <i id="topbar-share">
+                            <a
+                                style="color: inherit"
+                                href=move || share_href.get()
+                                on:click=move |event| {
+                                    event.prevent_default();
+                                    copyHrefToClipboard(&share_href.get());
+                                    set_share_popup_visible.set(true);
+                                    let _ = leptos::leptos_dom::helpers::set_timeout(
+                                        move || set_share_popup_visible.set(false),
+                                        Duration::from_millis(1800),
+                                    );
+                                }
+                            >
+                                <Icon icon=icondata::FaShareSolid/>
+                            </a>
+                        </i>
+                    }
+                })}
                 <i
                     id="topbar-theme"
                     on:click=move |_| {
@@ -119,6 +167,12 @@ pub fn Topbar(
             </div>
 
             <div id="top-bar-title">{title}</div>
+            <div
+                id="topbar-share-popup"
+                class:visible=move || share_popup_visible()
+            >
+                "Course link copied to clipboard"
+            </div>
         </div>
     }
 }

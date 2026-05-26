@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos_router::hooks::use_params_map;
+use leptos_router::{hooks::use_navigate, NavigateOptions};
 use wasm_bindgen::prelude::*;
 
 use crate::app::get_course_json;
@@ -29,27 +29,46 @@ extern "C" {
 #[component]
 pub fn Navbar(
     page_sig: RwSignal<String>,
+    course: Signal<String>,
+    route_page: Signal<Option<String>>,
     set_title: WriteSignal<String>,
     hidden: ReadSignal<bool>,
 ) -> impl IntoView {
-    let params = use_params_map();
-    let course = move || params.with(|params| params.get("course").unwrap_or_default());
-    let page = move || params.with(|params| params.get("page"));
+    let navigate = use_navigate();
+    let navigate_first_page = navigate.clone();
+    let once = Resource::new(move || course.get(), get_course_json);
 
-    let once = Resource::new(course, get_course_json);
-
-    // TODO: show hamburger only if an optional signal is passed
-
-    // Render parameter specified page
-    if let Some(v) = page() {
-        page_sig.set(v);
-    }
-
-    // Render first page of the course logic
-    let (first_page, set_first_page) = signal(None::<String>);
     Effect::new(move |_| {
-        if let Some(id) = first_page() {
-            page_sig.set(id.clone());
+        if let Some(page) = route_page.get().filter(|page| !page.trim().is_empty()) {
+            page_sig.set(page);
+        }
+    });
+
+    Effect::new(move |_| {
+        let Some(Ok(json)) = once.get() else {
+            return;
+        };
+        let Ok(course_data) = serde_json::from_str::<Course>(&json) else {
+            return;
+        };
+
+        set_title.set(course_data.title.clone());
+
+        if route_page
+            .get()
+            .filter(|page| !page.trim().is_empty())
+            .is_none()
+        {
+            if let Some(first_page) = first_content_page(&course_data) {
+                page_sig.set(first_page.clone());
+                navigate_first_page(
+                    &format!("/course/{}/{}", course.get(), first_page),
+                    NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
         }
     });
 
@@ -77,11 +96,10 @@ pub fn Navbar(
                         None => view! {}.into_any(),
                         Some(res) => {
                             let json = res.unwrap();
-                            let course: Course = serde_json::from_str(&json).unwrap();
+                            let course_data: Course = serde_json::from_str(&json).unwrap();
+                            let course_id = course.get();
 
-                            set_title.set(course.title);
-
-                            course.pages.into_iter()
+                            course_data.pages.into_iter()
                                 .map(|page| {
                                     let (lvl, title, id) = match page {
                                         Page::Empty((lvl, title)) => (lvl, title, None),
@@ -89,20 +107,18 @@ pub fn Navbar(
                                     };
                                     let id_is_none = id.is_none();
                                     let lvl_class = format!("nav-title-level-{lvl}");
-                                    let id_str = if let Some(ref id) = id {
+                                    let id_str = if let Some(id) = id.as_ref() {
                                         format!("nav-title-{id}")
                                     } else {
                                         "".to_string()
                                     };
+                                    let href = id
+                                        .as_ref()
+                                        .map(|id| format!("/course/{course_id}/{id}"))
+                                        .unwrap_or_else(|| String::from("#"));
                                     let id_clone = id.clone();
-                                    let id_clone2 = id.clone();
-
-                                    // Render first page
-                                    if first_page.get_untracked().is_none() {
-                                        if let Some(id) = id_clone2.clone() {
-                                            set_first_page.set(Some(id.to_string()));
-                                        }
-                                    }
+                                    let href_clone = href.clone();
+                                    let navigate = navigate.clone();
 
                                     view! {
                                         <a
@@ -114,10 +130,15 @@ pub fn Navbar(
                                                 }
                                                 return false;
                                             })
-                                            on:click=move |_| {
+                                            on:click=move |event| {
+                                                event.prevent_default();
+
                                                 if let Some(id) = &id {
-                                                    // Update page
                                                     page_sig.set(id.to_string());
+                                                    navigate(
+                                                        &href_clone,
+                                                        NavigateOptions::default(),
+                                                    );
                                                 }
 
                                                 // If the screen is small close full navbar
@@ -125,7 +146,7 @@ pub fn Navbar(
                                                     set_full_navbar.set(false)
                                                 }
                                             }
-                                            href=""
+                                            href=href
                                             id=id_str>
                                             {title}
                                         </a>
@@ -139,4 +160,11 @@ pub fn Navbar(
             </div>
         </div>
     }
+}
+
+fn first_content_page(course: &Course) -> Option<String> {
+    course.pages.iter().find_map(|page| match page {
+        Page::Empty(_) => None,
+        Page::Ref((_, _, id)) => Some(id.clone()),
+    })
 }

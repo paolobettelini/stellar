@@ -1,3 +1,9 @@
+(() => {
+if (window.stellarLoadPdfReady) {
+    return;
+}
+window.stellarLoadPdfReady = true;
+
 // Loaded via <script> tag, create shortcut to access PDF.js exports.
 //var pdfjsLib = window['pdfjs-dist/build/pdf'];
 
@@ -8,6 +14,12 @@ const scale = 2.75;
 
 // Asynchronous download of PDF
 function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
+    const pdfjsLib = window.pdfjsLib;
+
+    if (!pdfjsLib) {
+        throw new Error("PDF.js is not loaded yet");
+    }
+
     let loadingTask = pdfjsLib.getDocument({ data: buffer });
 
     loadingTask.promise.then(function(pdf) {
@@ -67,6 +79,12 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
 
 
 function setupAnnotations(page, viewport, container) {
+    const pdfjsLib = window.pdfjsLib;
+
+    if (!pdfjsLib) {
+        throw new Error("PDF.js is not loaded yet");
+    }
+
     let promise = page.getAnnotations().then(function (annotationsData) {
         viewport = viewport.clone({});
 
@@ -129,3 +147,7 @@ function setupAnnotations(page, viewport, container) {
 
     return promise;
 }
+
+window.loadPDF = loadPDF;
+window.setupAnnotations = setupAnnotations;
+})();

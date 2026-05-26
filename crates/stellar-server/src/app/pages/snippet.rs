@@ -18,8 +18,6 @@ pub fn SnippetPage() -> impl IntoView {
     let once1 = Resource::new(snippet, get_snippet_meta_json);
     let once2 = Resource::new(snippet, get_snippet_references);
 
-    // TODO: prova a togliere il setTimeout
-
     view! {
         <SnippetLibraries />
 

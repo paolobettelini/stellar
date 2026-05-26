@@ -1,4 +1,29 @@
-var snippet_index_counter = 0;
+(() => {
+if (window.stellarSnippetReady) {
+    return;
+}
+window.stellarSnippetReady = true;
+window.stellarSnippetIndexCounter = window.stellarSnippetIndexCounter || 0;
+
+const PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs";
+const PDFJS_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs";
+
+function ensurePdfJs() {
+    if (window.pdfjsLib) {
+        return Promise.resolve(window.pdfjsLib);
+    }
+
+    if (!window.stellarPdfJsPromise) {
+        window.stellarPdfJsPromise = import(PDFJS_URL)
+            .then((pdfjsLib) => {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+                window.pdfjsLib = pdfjsLib;
+                return pdfjsLib;
+            });
+    }
+
+    return window.stellarPdfJsPromise;
+}
 
 class SnippetElement extends HTMLElement {
     static observedAttributes = [];
@@ -19,7 +44,7 @@ class SnippetElement extends HTMLElement {
 
         let snippetName = this.innerHTML;
         this.innerHTML = "";
-        let index = ++snippet_index_counter;
+        let index = ++window.stellarSnippetIndexCounter;
 
         postData(`/snippet/${snippetName}`)
             .then(response => {
@@ -39,24 +64,35 @@ class SnippetElement extends HTMLElement {
                     let contentType = response.headers.get('content-type');
             
                     if (contentType == 'application/pdf') {
-                        // Load PDF
-                        let canvas = document.createElement('canvas');
-            
-                        let textLayer = document.createElement('div');
-                        textLayer.classList.add('textLayer');
+                        ensurePdfJs()
+                            .then(() => {
+                                // Load PDF
+                                let canvas = document.createElement('canvas');
+                    
+                                let textLayer = document.createElement('div');
+                                textLayer.classList.add('textLayer');
 
-                        let canvasId = `pdf${index}`;
-                        let textLayerId = `tl${index}`;
-                        canvas.id = canvasId;
-                        textLayer.id = textLayerId;
+                                let canvasId = `pdf${index}`;
+                                let textLayerId = `tl${index}`;
+                                canvas.id = canvasId;
+                                textLayer.id = textLayerId;
 
-                        this.appendChild(canvas);
-                        this.appendChild(textLayer);
-                        loadPDF(buffer, canvasId, textLayerId,
-                            () => {
-                                // Apply filter
-                                let theme = localStorage.getItem('theme');
-                                applyFilter(canvas, theme);
+                                this.appendChild(canvas);
+                                this.appendChild(textLayer);
+                                loadPDF(buffer, canvasId, textLayerId,
+                                    () => {
+                                        // Apply filter
+                                        let theme = localStorage.getItem('theme');
+                                        applyFilter(canvas, theme);
+                                    });
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                let p = document.createElement('p');
+                                p.innerHTML = `Error while loading PDF.js for snippet {<b>${snippetName}</b>}.`;
+                                p.style.padding = '20px';
+                                p.style.backgroundColor = 'red';
+                                this.appendChild(p);
                             });
                     } else if (contentType == 'text/html') {
                         const decoder = new TextDecoder();
@@ -114,4 +150,7 @@ function injectParameters(paramMap, content) {
     });
 }
 
-customElements.define("stellar-snippet", SnippetElement);
+if (!customElements.get("stellar-snippet")) {
+    customElements.define("stellar-snippet", SnippetElement);
+}
+})();

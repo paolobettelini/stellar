@@ -6,6 +6,12 @@
 // TODO: Observer for --col? O forse è meglio ri-renderizzare la pagina
 // perché alcuni snippet sono strani e hanno cose custom
 
+(() => {
+if (window.stellarFilterReady) {
+	return;
+}
+window.stellarFilterReady = true;
+
 let themeFilterRenderer = null;
 
 function createThemeFilterRenderer() {
@@ -351,3 +357,6 @@ function applyFilter(canvas, theme) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.drawImage(glCanvas, 0, 0);
 }
+
+window.applyFilter = applyFilter;
+})();

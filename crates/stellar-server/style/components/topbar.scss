@@ -1,4 +1,5 @@
 #top-bar {
+	position: relative;
 	padding: 16px 0px 6px 0px;
 	display: flex;
 	justify-content: space-between;
@@ -63,4 +64,29 @@
 	z-index: 1000;
 	background: var(--col2);
 	top: 50px;
+}
+
+#topbar-share-popup {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 10px);
+	z-index: 1001;
+	padding: 8px 12px;
+	border: 1px solid color-mix(in srgb, var(--col1) 28%, transparent);
+	border-radius: 5px;
+	color: var(--col2);
+	background: var(--col4);
+	font-family: Inter, sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-4px);
+	transition: opacity 0.16s ease, transform 0.16s ease;
+	white-space: nowrap;
+}
+
+#topbar-share-popup.visible {
+	opacity: 1;
+	transform: translateY(0);
 }
