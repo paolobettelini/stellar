@@ -160,7 +160,8 @@ pub fn Topbar(
                 <i id="topbar-github">
                     <a
                         style="color: inherit"
-                        href="https://github.com/paolobettelini/notes" >
+                        href="https://github.com/paolobettelini/notes"
+                        target="_blank" >
                         <Icon icon=icondata::BsGithub/>
                     </a>
                 </i>
