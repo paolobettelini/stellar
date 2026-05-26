@@ -1,3 +1,26 @@
+.universe-page {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--col2);
+}
+
+.universe-page-topbar {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 10;
+    width: min(960px, calc(100% - 40px));
+    transform: translateX(-50%);
+}
+
+.universe-page-topbar #top-bar {
+    padding-top: 16px;
+    background: color-mix(in srgb, var(--col2) 92%, transparent);
+}
+
 .universe-stage {
     position: relative;
     width: 100%;
@@ -95,6 +118,17 @@
     overflow: hidden;
     color: var(--col1);
     background: var(--col2);
+}
+
+.universe-editor-canvas-panel {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+}
+
+.universe-editor-topbar {
+    width: min(960px, calc(100% - 40px));
 }
 
 .universe-editor-sidebar {

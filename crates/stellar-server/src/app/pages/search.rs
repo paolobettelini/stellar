@@ -13,6 +13,7 @@ enum QueryType {
 pub fn SearchPage() -> impl IntoView {
     const DEFAULT_QUERY: &str = ".*";
 
+    let title = Signal::derive(|| String::from("Search"));
     let (query, set_query) = signal(DEFAULT_QUERY.to_owned());
     let (query_type, set_query_type) = signal(QueryType::Universe);
     let req = Resource::new(
@@ -29,9 +30,11 @@ pub fn SearchPage() -> impl IntoView {
 
     view! {
         <div id="search-container">
-            <section id="search-panel">
-                <h1>Search</h1>
+            <div class="search-topbar">
+                <Topbar title show_search=false />
+            </div>
 
+            <section id="search-panel">
                 <div class="radio-group" role="radiogroup" aria-label="Search type">
                     <label>
                     <input

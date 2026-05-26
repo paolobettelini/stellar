@@ -41,7 +41,12 @@ extern "C" {
 }
 
 #[component]
-pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -> impl IntoView {
+pub fn Topbar(
+    title: Signal<String>,
+    #[prop(optional)] set_navbar_hidden: Option<WriteSignal<bool>>,
+    #[prop(default = true)] show_search: bool,
+    #[prop(optional)] edit_href: Option<Signal<String>>,
+) -> impl IntoView {
     let (themes_hidden, set_themes_hidden) = signal(true);
 
     let set_theme = |theme| {
@@ -54,16 +59,35 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
     view! {
         <div id="top-bar">
             <div id="top-bar-icons">
-                <i id="topbar-hamburger" on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
-                    <a href=""><Icon icon=icondata::FaBarsSolid/></a>
-                </i>
-                <i id="topbar-search">
-                    <a
-                        style="color: inherit"
-                        href="/search" >
-                        <Icon icon=icondata::ImSearch/>
-                    </a>
-                </i>
+                {set_navbar_hidden.map(|set_navbar_hidden| {
+                    view! {
+                        <i id="topbar-hamburger" on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
+                            <a href=""><Icon icon=icondata::FaBarsSolid/></a>
+                        </i>
+                    }
+                })}
+                {show_search.then(|| {
+                    view! {
+                        <i id="topbar-search">
+                            <a
+                                style="color: inherit"
+                                href="/search" >
+                                <Icon icon=icondata::ImSearch/>
+                            </a>
+                        </i>
+                    }
+                })}
+                {edit_href.map(|edit_href| {
+                    view! {
+                        <i id="topbar-edit">
+                            <a
+                                style="color: inherit"
+                                href=move || edit_href.get() >
+                                <Icon icon=icondata::FaPenToSquareSolid/>
+                            </a>
+                        </i>
+                    }
+                })}
                 <i
                     id="topbar-theme"
                     on:click=move |_| {

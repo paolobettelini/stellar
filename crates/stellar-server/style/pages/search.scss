@@ -4,10 +4,20 @@
     align-items: center;
     height: 100vh;
     min-height: 0;
-    padding: 42px 20px 36px;
+    padding: 0 20px 36px;
     overflow: hidden;
     color: var(--col1);
     background: var(--col2);
+}
+
+.search-topbar {
+    width: min(960px, 100%);
+    flex: 0 0 auto;
+    margin-bottom: 28px;
+}
+
+.search-topbar #top-bar {
+    padding-top: 16px;
 }
 
 #search-panel {
@@ -168,7 +178,7 @@
 
 @media (max-width: 640px) {
     #search-container {
-        padding: 28px 14px 24px;
+        padding: 0 14px 24px;
     }
 
     #search-panel h1 {

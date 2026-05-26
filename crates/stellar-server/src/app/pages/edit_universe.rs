@@ -1,4 +1,4 @@
-use crate::app::{get_universe_json, Course, Dependency, Universe, UniverseCanvas};
+use crate::app::{get_universe_json, Course, Dependency, Topbar, Universe, UniverseCanvas};
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
@@ -59,6 +59,16 @@ pub fn EditUniversePage() -> impl IntoView {
 fn UniverseEditor(universe_id: String, initial: Universe) -> impl IntoView {
     let universe = RwSignal::new(Some(initial));
     let selected_course = RwSignal::new(None::<usize>);
+    let topbar_title = {
+        let universe_id = universe_id.clone();
+        Signal::derive(move || {
+            if universe_id.is_empty() {
+                String::from("Edit universe")
+            } else {
+                format!("Edit universe / {universe_id}")
+            }
+        })
+    };
 
     let (new_course_name, set_new_course_name) = signal(String::new());
     let (new_course_id, set_new_course_id) = signal(String::new());
@@ -137,11 +147,17 @@ fn UniverseEditor(universe_id: String, initial: Universe) -> impl IntoView {
 
     view! {
         <div class="universe-editor-page">
-            <UniverseCanvas
-                universe=universe
-                selected_course=selected_course
-                editable=true
-            />
+            <div class="universe-editor-canvas-panel">
+                <div class="universe-page-topbar universe-editor-topbar">
+                    <Topbar title=topbar_title />
+                </div>
+
+                <UniverseCanvas
+                    universe=universe
+                    selected_course=selected_course
+                    editable=true
+                />
+            </div>
 
             <aside class="universe-editor-sidebar">
                 <header class="universe-editor-header">
@@ -211,7 +227,7 @@ fn UniverseEditor(universe_id: String, initial: Universe) -> impl IntoView {
                             <input
                                 type="color"
                                 value=move || color_value(new_course_color())
-                                on:input=move |event| set_new_course_color.set(event_target_value(&event))
+                                on:change=move |event| set_new_course_color.set(event_target_value(&event))
                             />
                             <input
                                 type="text"
@@ -386,7 +402,7 @@ fn CourseEditorRow(
                     <input
                         type="color"
                         value=color_value(course.color.clone().unwrap_or_default())
-                        on:input=move |event| {
+                        on:change=move |event| {
                             update_course(universe, index, |course| {
                                 course.color = non_empty_string(event_target_value(&event));
                             });

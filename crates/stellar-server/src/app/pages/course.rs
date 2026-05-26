@@ -15,7 +15,7 @@ pub fn CoursePage() -> impl IntoView {
 
             <div class="course-body">
                 <div class="course-topbar">
-                    <Topbar title set_navbar_hidden />
+                    <Topbar title=title.into() set_navbar_hidden />
                 </div>
                 <div class="course-content">
                     <PageRenderer page />
