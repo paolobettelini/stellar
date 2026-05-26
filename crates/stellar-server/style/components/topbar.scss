@@ -87,10 +87,15 @@
 }
 
 #theme-list button:hover,
-#theme-list button:focus-visible {
+#theme-list button:focus-visible,
+#theme-list button.active {
 	color: var(--col2);
 	background: var(--col4);
 	outline: none;
+}
+
+#theme-list button.active {
+	cursor: default;
 }
 
 #topbar-share-popup {

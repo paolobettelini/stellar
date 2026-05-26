@@ -16,19 +16,30 @@ pub fn SnippetPage() -> impl IntoView {
     let default_params = RwSignal::new(None::<String>);
     let params_draft = RwSignal::new(String::new());
     let applied_params = RwSignal::new(None::<String>);
+    let snippet_rerender_key = RwSignal::new(0_u64);
     let content = Signal::derive(move || {
         let snippet = html_text_escape(&snippet.get());
+        let rerender_key = snippet_rerender_key.get();
 
         if let Some(params) = applied_params.get() {
             format!(
-                r#"<stellar-snippet params="{}">{}</stellar-snippet>"#,
+                r#"<stellar-snippet params="{}">{}</stellar-snippet><!-- stellar-rerender:{} -->"#,
                 html_attr_escape(&params),
-                snippet
+                snippet,
+                rerender_key
             )
         } else {
-            format!("<stellar-snippet>{snippet}</stellar-snippet>")
+            format!("<stellar-snippet>{snippet}</stellar-snippet><!-- stellar-rerender:{rerender_key} -->")
         }
     });
+
+    let theme_change_handle = leptos::leptos_dom::helpers::window_event_listener_untyped(
+        "stellar-theme-change",
+        move |_| {
+            snippet_rerender_key.update(|key| *key += 1);
+        },
+    );
+    on_cleanup(move || theme_change_handle.remove());
 
     Effect::new(move |_| {
         let Some(Ok(json)) = meta.get() else {
@@ -117,6 +128,7 @@ pub fn SnippetPage() -> impl IntoView {
                                     type="button"
                                     on:click=move |_| {
                                         applied_params.set(Some(params_draft.get()));
+                                        snippet_rerender_key.update(|key| *key += 1);
                                     }
                                 >
                                     "Reload"

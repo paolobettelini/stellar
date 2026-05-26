@@ -18,6 +18,15 @@ pub fn CoursePage() -> impl IntoView {
     let page = page_sig.read_only();
     let (title, set_title) = signal("".to_string());
     let (navbar_hidden, set_navbar_hidden) = signal(false);
+    let theme_rerender_key = RwSignal::new(0_u64);
+
+    let theme_change_handle = leptos::leptos_dom::helpers::window_event_listener_untyped(
+        "stellar-theme-change",
+        move |_| {
+            theme_rerender_key.update(|key| *key += 1);
+        },
+    );
+    on_cleanup(move || theme_change_handle.remove());
 
     view! {
         <div class="course-container" class:retracted=move || navbar_hidden()>
@@ -46,7 +55,10 @@ pub fn CoursePage() -> impl IntoView {
                             }.into_any()
                         } else {
                             view! {
-                                <PageRenderer page />
+                                <PageRenderer
+                                    page
+                                    rerender_key=theme_rerender_key.into()
+                                />
                             }.into_any()
                         }
                     }}

@@ -42,6 +42,37 @@ extern "C" {
 }
 
 #[wasm_bindgen(inline_js = r#"
+export function getCurrentTheme() {
+    return localStorage.getItem('theme') || document.body.className || 'theme-light';
+}
+"#)]
+extern "C" {
+    fn getCurrentTheme() -> String;
+}
+
+#[wasm_bindgen(inline_js = r#"
+export function dispatchThemeChange(theme) {
+    window.dispatchEvent(new CustomEvent('stellar-theme-change', { detail: theme }));
+}
+"#)]
+extern "C" {
+    fn dispatchThemeChange(theme: &str);
+}
+
+#[wasm_bindgen(inline_js = r#"
+export function syncThemeButtons(theme) {
+    document
+        .querySelectorAll('#theme-list button[data-theme]')
+        .forEach((button) => {
+            button.classList.toggle('active', button.dataset.theme === theme);
+        });
+}
+"#)]
+extern "C" {
+    fn syncThemeButtons(theme: &str);
+}
+
+#[wasm_bindgen(inline_js = r#"
 export function copyHrefToClipboard(href) {
     const url = new URL(href, window.location.origin).toString();
 
@@ -65,6 +96,36 @@ extern "C" {
     fn copyHrefToClipboard(href: &str);
 }
 
+#[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
+fn current_theme_initial_value() -> String {
+    getCurrentTheme()
+}
+
+#[cfg(not(all(feature = "hydrate", target_arch = "wasm32")))]
+fn current_theme_initial_value() -> String {
+    String::new()
+}
+
+#[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
+fn sync_theme_buttons(theme: &str) {
+    syncThemeButtons(theme);
+}
+
+#[cfg(not(all(feature = "hydrate", target_arch = "wasm32")))]
+fn sync_theme_buttons(_theme: &str) {
+}
+
+fn theme_button_class(current_theme: String, theme: &str) -> &'static str {
+    if current_theme
+        .split_whitespace()
+        .any(|current| current == theme)
+    {
+        "active"
+    } else {
+        ""
+    }
+}
+
 #[component]
 pub fn Topbar(
     title: Signal<String>,
@@ -75,10 +136,21 @@ pub fn Topbar(
 ) -> impl IntoView {
     let (themes_hidden, set_themes_hidden) = signal(true);
     let (share_popup_visible, set_share_popup_visible) = signal(false);
+    let (current_theme, set_current_theme) = signal(current_theme_initial_value());
 
-    let set_theme = |theme| {
+    #[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
+    Effect::new(move |_| {
+        let theme = getCurrentTheme();
+        set_current_theme.set(theme.clone());
+        sync_theme_buttons(&theme);
+    });
+
+    let set_theme = move |theme| {
         setLocalStorageTheme(theme);
         setBodyClass(theme);
+        set_current_theme.set(theme.to_string());
+        sync_theme_buttons(theme);
+        dispatchThemeChange(theme);
     };
 
     // https://carloskiki.github.io/icondata/
@@ -131,7 +203,7 @@ pub fn Topbar(
                                     );
                                 }
                             >
-                                <Icon icon=icondata::FaShareSolid/>
+                                <Icon icon=icondata::FaCopySolid/>
                             </a>
                         </i>
                     }
@@ -139,6 +211,12 @@ pub fn Topbar(
                 <i
                     id="topbar-theme"
                     on:click=move |_| {
+                        #[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
+                        {
+                            let theme = getCurrentTheme();
+                            set_current_theme.set(theme.clone());
+                            sync_theme_buttons(&theme);
+                        }
                         set_themes_hidden.update(|v| *v = !*v)
                     }
                 >
@@ -148,14 +226,48 @@ pub fn Topbar(
                     id="theme-list"
                     style:display=move || if themes_hidden() { "none" } else { "block" }
                 >
-                    // TODO: re-render page)
-                    <button type="button" on:click=move |_| set_theme("theme-light")>"Light"</button>
-                    <button type="button" on:click=move |_| set_theme("theme-dark")>"Dark"</button>
-                    <button type="button" on:click=move |_| set_theme("theme-violet")>"Violet"</button>
-                    <button type="button" on:click=move |_| set_theme("theme-mint")>"Mint"</button>
-                    <button type="button" on:click=move |_| set_theme("theme-sepia")>"Sepia"</button>
-                    <button type="button" on:click=move |_| set_theme("theme-earth")>"Earth"</button>
-                    <button type="button" on:click=move |_| set_theme("theme-brutalist")>"Brutalist"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-light"
+                        class=move || theme_button_class(current_theme(), "theme-light")
+                        on:click=move |_| set_theme("theme-light")
+                    >"Light"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-dark"
+                        class=move || theme_button_class(current_theme(), "theme-dark")
+                        on:click=move |_| set_theme("theme-dark")
+                    >"Dark"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-violet"
+                        class=move || theme_button_class(current_theme(), "theme-violet")
+                        on:click=move |_| set_theme("theme-violet")
+                    >"Violet"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-mint"
+                        class=move || theme_button_class(current_theme(), "theme-mint")
+                        on:click=move |_| set_theme("theme-mint")
+                    >"Mint"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-sepia"
+                        class=move || theme_button_class(current_theme(), "theme-sepia")
+                        on:click=move |_| set_theme("theme-sepia")
+                    >"Sepia"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-earth"
+                        class=move || theme_button_class(current_theme(), "theme-earth")
+                        on:click=move |_| set_theme("theme-earth")
+                    >"Earth"</button>
+                    <button
+                        type="button"
+                        data-theme="theme-brutalist"
+                        class=move || theme_button_class(current_theme(), "theme-brutalist")
+                        on:click=move |_| set_theme("theme-brutalist")
+                    >"Brutalist"</button>
                 </ul>
                 <i id="topbar-github">
                     <a

@@ -3,10 +3,20 @@ use crate::app::{SnippetLibraries, SnippetsRenderer};
 use leptos::prelude::*;
 
 #[component]
-pub fn PageRenderer(page: ReadSignal<String>) -> impl IntoView {
+pub fn PageRenderer(
+    page: ReadSignal<String>,
+    #[prop(optional)] rerender_key: Option<Signal<u64>>,
+) -> impl IntoView {
     let once = Resource::new(
-        move || page.get(),
-        |page| async move { get_page_html(page).await },
+        move || {
+            (
+                page.get(),
+                rerender_key
+                    .map(|rerender_key| rerender_key.get())
+                    .unwrap_or(0),
+            )
+        },
+        |(page, _)| async move { get_page_html(page).await },
     );
 
     view! {
@@ -23,6 +33,11 @@ pub fn PageRenderer(page: ReadSignal<String>) -> impl IntoView {
                 Some(res) => {
                     if let Ok(content) = res {
                         if !content.is_empty() {
+                            let content = format!(
+                                "{content}\n<!-- stellar-rerender:{} -->",
+                                rerender_key.map(|rerender_key| rerender_key.get()).unwrap_or(0)
+                            );
+
                             view! {
                                 <SnippetsRenderer content />
                             }.into_any()
