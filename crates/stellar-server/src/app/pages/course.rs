@@ -1,13 +1,13 @@
-use leptos::*;
+use leptos::prelude::*;
 
 use crate::app::{Navbar, PageRenderer, Topbar};
 
 #[component]
 pub fn CoursePage() -> impl IntoView {
-    let page_sig = create_rw_signal("".to_string());
+    let page_sig = RwSignal::new("".to_string());
     let page = page_sig.read_only();
-    let (title, set_title) = create_signal("".to_string());
-    let (navbar_hidden, set_navbar_hidden) = create_signal(false);
+    let (title, set_title) = signal("".to_string());
+    let (navbar_hidden, set_navbar_hidden) = signal(false);
 
     view! {
         <div class="course-container" class:retracted=move || navbar_hidden()>

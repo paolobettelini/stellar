@@ -15,31 +15,35 @@ futures = "0.3.30"
 rust-embed = { version = "8.4.0", features = ["include-exclude", "interpolate-folder-path"] }
 mime_guess = "2.0.4"
 
-leptos = { version = "0.6.12", features = ["nightly"] }
-leptos_meta = { version = "0.6.12", features = ["nightly"] }
-leptos_router = { version = "0.6.12", features = ["nightly"] }
-leptos_actix = { version = "0.6.12", optional = true }
+leptos = { version = "0.9.0-alpha", features = ["nightly"] }
+leptos_meta = "0.9.0-alpha"
+leptos_router = { version = "0.9.0-alpha", features = ["nightly"] }
+leptos_actix = { version = "0.9.0-alpha", optional = true }
 actix-web = { version = "4.8.0", optional = true, features = ["macros"] }
 actix-files = { version = "0.6.6", optional = true}
 cfg-if = "1"
 console_error_panic_hook = "0.1"
 http = "1.1.0"
 log = "0.4.22"
-wasm-bindgen = "=0.2.92"
-thaw = { git = "https://github.com/thaw-ui/thaw" }
+wasm-bindgen = "0.2.122"
 icondata_fa = "0.0.10"
 icondata_ai = "0.0.10"
 icondata = "0.3.1"
 serde = "1.0.203"
-web-sys = { version = "0.3.69", features = ["CanvasRenderingContext2d"] }
+web-sys = { version = "0.3.69", features = [
+  "CanvasRenderingContext2d",
+  "Document",
+  "DomRect",
+  "Element",
+  "HtmlCanvasElement",
+  "MouseEvent",
+  "Window",
+] }
 toml = "0.8.19"
 
 [features]
 hydrate = [
   "leptos/hydrate",
-  "leptos_meta/hydrate",
-  "leptos_router/hydrate",
-  "thaw/hydrate"
 ]
 ssr = [
   "dep:stellar-database",
@@ -49,5 +53,4 @@ ssr = [
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
-  "thaw/ssr",
 ]

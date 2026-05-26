@@ -1,5 +1,5 @@
 use crate::app::*;
-use leptos::*;
+use leptos::prelude::*;
 
 #[derive(Clone, PartialEq)]
 enum QueryType {
@@ -13,9 +13,9 @@ enum QueryType {
 pub fn SearchPage() -> impl IntoView {
     const DEFAULT_QUERY: &str = ".*";
 
-    let (query, set_query) = create_signal(DEFAULT_QUERY.to_owned());
-    let (query_type, set_query_type) = create_signal(QueryType::Universe);
-    let req = create_resource(
+    let (query, set_query) = signal(DEFAULT_QUERY.to_owned());
+    let (query_type, set_query_type) = signal(QueryType::Universe);
+    let req = Resource::new(
         move || (query.get(), query_type.get()),
         |(query, query_type)| async move {
             match query_type {
@@ -24,7 +24,7 @@ pub fn SearchPage() -> impl IntoView {
                 QueryType::Course => query_course(query).await,
                 QueryType::Universe => query_universe(query).await,
             }
-        }
+        },
     );
 
     view! {
@@ -86,7 +86,7 @@ pub fn SearchPage() -> impl IntoView {
                     fallback=move || view! { <p>Loading...</p> }
                 >
                     {move || match req.get() {
-                        None => view! {}.into_view(),
+                        None => view! {}.into_any(),
                         Some(res) => {
                             let content = res.unwrap();
                             let results = serde_json::from_str::<Vec<QueryEntry>>(&content).unwrap();
@@ -96,7 +96,7 @@ pub fn SearchPage() -> impl IntoView {
                                 QueryType::Course => "course",
                                 QueryType::Universe => "universe",
                             };
-                            
+
                             results.into_iter()
                                 .map(|entry| {
                                     let link = format!("/{}/{}", query_type, entry.id);
@@ -105,7 +105,7 @@ pub fn SearchPage() -> impl IntoView {
                                             rel="external"
                                             href=link
                                         >{entry.id}</a>
-                                    }}).collect_view()
+                                    }}).collect_view().into_any()
                         }
                     }}
                 </Suspense>

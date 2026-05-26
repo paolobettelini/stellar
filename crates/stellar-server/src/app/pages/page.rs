@@ -1,14 +1,14 @@
-use leptos::*;
-use leptos_router::use_params_map;
-use crate::app::{Navbar, PageRenderer, Topbar};
+use crate::app::PageRenderer;
+use leptos::prelude::*;
+use leptos_router::hooks::use_params_map;
 
 #[component]
 pub fn PagePage() -> impl IntoView {
-    let page_sig = create_rw_signal("".to_string());
+    let page_sig = RwSignal::new("".to_string());
     let page = page_sig.read_only();
-    
+
     let params = use_params_map();
-    let page_v = params.with(|params| params.get("page").cloned().unwrap_or_default());
+    let page_v = params.with(|params| params.get("page").unwrap_or_default());
 
     page_sig.set(page_v.clone());
 

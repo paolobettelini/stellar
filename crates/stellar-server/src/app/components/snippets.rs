@@ -1,5 +1,4 @@
-use leptos::*;
-use thaw::*;
+use leptos::prelude::*;
 
 #[component]
 pub fn SnippetsRenderer(content: String) -> impl IntoView {

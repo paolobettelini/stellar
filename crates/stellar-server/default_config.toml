@@ -4,6 +4,10 @@ port = 8080
 connection-url = "mongodb://localhost"
 data-folder = "/path/to/data"
 
+[[icons]] # This section does not work yet
+name = "Hammer"
+url = "https://github.com/paolobettelini/notes"
+
 # Open Graph Protocol https://ogp.me/
 [ogp] # This section does not work yet
 title = "Stellar"

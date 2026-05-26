@@ -2,12 +2,13 @@
 
 use actix_web::HttpResponse;
 use mime_guess::from_path;
+#[cfg(not(debug_assertions))]
 use rust_embed::RustEmbed;
 use std::path::Path;
 
 #[cfg(not(debug_assertions))]
 #[derive(RustEmbed)]
-#[folder = "$CARGO_MANIFEST_DIR/../../$LEPTOS_SITE_ROOT/"]
+#[folder = "$CARGO_MANIFEST_DIR/../../dist/"]
 pub(crate) struct Asset;
 
 #[cfg(not(debug_assertions))]
@@ -24,7 +25,7 @@ pub(crate) fn handle_static_file(path: &str) -> HttpResponse {
 
 #[cfg(debug_assertions)]
 pub(crate) fn handle_static_file(path: &str) -> HttpResponse {
-    let site_root = env!("LEPTOS_SITE_ROOT");
+    let site_root = option_env!("LEPTOS_SITE_ROOT").unwrap_or("dist");
     let path = Path::new(site_root).join(path);
     match std::fs::read(&path) {
         Ok(content) => HttpResponse::Ok()

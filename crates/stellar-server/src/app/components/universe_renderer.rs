@@ -1,22 +1,26 @@
 use crate::app::{get_universe_json, Universe};
-use leptos::{html::*, *};
-use thaw::*;
-use wasm_bindgen::{prelude::*, JsCast};
-use web_sys::{window, CanvasRenderingContext2d, Document, HtmlCanvasElement, MouseEvent, CssStyleDeclaration};
+use leptos::html::{Canvas, Div};
+use leptos::prelude::*;
+#[cfg(feature = "hydrate")]
+use wasm_bindgen::JsCast;
+use web_sys::MouseEvent;
+#[cfg(feature = "hydrate")]
+use web_sys::{window, CanvasRenderingContext2d};
 
 #[component]
 pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
-    let once = create_resource(universe, |universe| async move {
-        get_universe_json(universe).await
-    });
+    let once = Resource::new(
+        move || universe.get(),
+        |universe| async move { get_universe_json(universe).await },
+    );
 
-    let canvas = create_node_ref::<Canvas>();
-    let canvas_container = create_node_ref::<Div>();
+    let canvas = NodeRef::<Canvas>::new();
+    let canvas_container = NodeRef::<Div>::new();
 
     // Dragging state
-    let (is_dragging, set_is_dragging) = create_signal(false);
-    let (drag_start, set_drag_start) = create_signal((0.0, 0.0));
-    let (offset, set_offset) = create_signal((0.0, 0.0));
+    let (is_dragging, set_is_dragging) = signal(false);
+    let (drag_start, set_drag_start) = signal((0.0, 0.0));
+    let (offset, set_offset) = signal((0.0, 0.0));
 
     let on_mouse_down = move |event: MouseEvent| {
         set_is_dragging.set(true);
@@ -27,23 +31,15 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
         set_is_dragging.set(false);
     };
 
-    let on_mouse_move = {
-        let is_dragging = is_dragging.clone();
-        let drag_start = drag_start.clone();
-        let offset = offset.clone();
-        let canvas_container = canvas_container.clone();
-        move |event: MouseEvent| {
-            if is_dragging() {
-                let (start_x, start_y) = drag_start();
-                let delta_x = event.client_x() as f64 - start_x;
-                let delta_y = event.client_y() as f64 - start_y;
+    let on_mouse_move = move |event: MouseEvent| {
+        if is_dragging() {
+            let (start_x, start_y) = drag_start();
+            let delta_x = event.client_x() as f64 - start_x;
+            let delta_y = event.client_y() as f64 - start_y;
 
-                set_offset.update(|offset| {
-                    *offset = (offset.0 + delta_x, offset.1 + delta_y)
-                });
+            set_offset.update(|offset| *offset = (offset.0 + delta_x, offset.1 + delta_y));
 
-                set_drag_start.set((event.client_x() as f64, event.client_y() as f64));
-            }
+            set_drag_start.set((event.client_x() as f64, event.client_y() as f64));
         }
     };
 
@@ -65,7 +61,7 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                 fallback=move || view! { <p>Loading...</p> }
             >
                 {move || match once.get() {
-                    None => view! {}.into_view(),
+                    None => view! {}.into_any(),
                     Some(res) => {
                         let content = res.unwrap();
                         let universe = serde_json::from_str::<Universe>(&content).unwrap();
@@ -83,7 +79,7 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                             canvas.set_width(canvas_container.client_width() as u32);
                             canvas.set_height(canvas_container.client_height() as u32);
 
-                            ctx.set_stroke_style(&JsValue::from_str("red"));
+                            ctx.set_stroke_style_str("red");
                             ctx.set_line_width(3.0);
 
                             let window = window().unwrap();
@@ -144,7 +140,9 @@ pub fn UniverseRenderer(universe: ReadSignal<String>) -> impl IntoView {
                                         style:border=move || format!("2px solid {}", color3)
                                     >{course.name}</a>
                                 }
-                            }).collect_view()
+                            })
+                            .collect_view()
+                            .into_any()
                     }
                 }}
             </Suspense>

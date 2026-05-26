@@ -1,6 +1,5 @@
-use leptos::*;
-use leptos_router::*;
-use thaw::*;
+use leptos::prelude::*;
+use leptos_router::hooks::use_params_map;
 use wasm_bindgen::prelude::*;
 
 use crate::app::get_course_json;
@@ -28,12 +27,16 @@ extern "C" {
 }
 
 #[component]
-pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden: ReadSignal<bool>) -> impl IntoView {
+pub fn Navbar(
+    page_sig: RwSignal<String>,
+    set_title: WriteSignal<String>,
+    hidden: ReadSignal<bool>,
+) -> impl IntoView {
     let params = use_params_map();
-    let course = move || params.with(|params| params.get("course").cloned().unwrap_or_default());
-    let page = move || params.with(|params| params.get("page").cloned());
+    let course = move || params.with(|params| params.get("course").unwrap_or_default());
+    let page = move || params.with(|params| params.get("page"));
 
-    let once = create_resource(course, get_course_json);
+    let once = Resource::new(course, get_course_json);
 
     // TODO: show hamburger only if an optional signal is passed
 
@@ -43,18 +46,19 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
     }
 
     // Render first page of the course logic
-    let (first_page, set_first_page) = create_signal(None::<String>);
-    create_effect(move |_| {
+    let (first_page, set_first_page) = signal(None::<String>);
+    Effect::new(move |_| {
         if let Some(id) = first_page() {
             page_sig.set(id.clone());
         }
     });
 
-    let (full_navbar, set_full_navbar) = create_signal(true);
+    let (full_navbar, set_full_navbar) = signal(true);
     // If the navbar is set to be shown, set it to full mode (for small screens)
-    create_effect(move |_| {
+    Effect::new(move |_| {
         let _ = hidden();
-        if getPageWidth() < 768 { // ??? I have to click the hamburger two times?
+        if getPageWidth() < 768 {
+            // ??? I have to click the hamburger two times?
             set_full_navbar.set(true);
         }
     });
@@ -65,12 +69,12 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
             <div id="navbar-content">
                 <Suspense
                     fallback=move || view! {
-                        <Skeleton repeat=10 text=true/>
+                        <p>"Loading..."</p>
                         <br></br>
                     }
                 >
                     {move || match once.get() {
-                        None => view! {}.into_view(),
+                        None => view! {}.into_any(),
                         Some(res) => {
                             let json = res.unwrap();
                             let course: Course = serde_json::from_str(&json).unwrap();
@@ -102,8 +106,7 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
 
                                     view! {
                                         <a
-                                            class="nav-title"
-                                            class={lvl_class}
+                                            class=format!("nav-title {lvl_class}")
                                             class=("empty-nav-title", id_is_none)
                                             class=("active", move || {
                                                 if let Some(id) = id_clone.clone() {
@@ -129,6 +132,7 @@ pub fn Navbar(page_sig: RwSignal<String>, set_title: WriteSignal<String>, hidden
                                     }
                                 })
                                 .collect_view()
+                                .into_any()
                         }
                     }}
                 </Suspense>

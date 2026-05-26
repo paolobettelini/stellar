@@ -1,9 +1,9 @@
-use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
-use thaw::*;
-use std::rc::Rc;
-use crate::config::StellarConfig;
+use leptos::prelude::*;
+use leptos_meta::{provide_meta_context, Meta, Stylesheet, Title};
+use leptos_router::{
+    components::{Route, Router, Routes},
+    path,
+};
 
 mod api;
 mod components;
@@ -39,15 +39,14 @@ pub fn App() -> impl IntoView {
 
         <Router>
             <main>
-                <Routes>
-                    <Route path="/" view=HomePage/>
-                    <Route path="/snippet/:snippet" view=SnippetPage/>
-                    <Route path="/page/:page" view=PagePage/>
-                    <Route path="/course/:course" view=CoursePage/>
-                    <Route path="/course/:course/:page" view=CoursePage/>
-                    <Route path="/universe/:universe" view=UniversePage/>
-                    <Route path="/search" view=SearchPage/>
-                    <Route path="/*any" view=NotFound/>
+                <Routes fallback=|| view! { <NotFound/> }>
+                    <Route path=path!("") view=HomePage/>
+                    <Route path=path!("snippet/:snippet") view=SnippetPage/>
+                    <Route path=path!("page/:page") view=PagePage/>
+                    <Route path=path!("course/:course") view=CoursePage/>
+                    <Route path=path!("course/:course/:page") view=CoursePage/>
+                    <Route path=path!("universe/:universe") view=UniversePage/>
+                    <Route path=path!("search") view=SearchPage/>
                 </Routes>
             </main>
         </Router>

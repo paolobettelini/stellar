@@ -2,16 +2,34 @@
 
 use crate::app::App;
 use crate::assets::handle_static_file;
-use crate::routes::*;
 use crate::config::StellarConfig;
+use crate::routes::*;
 use actix_web::{get, web, HttpServer, Responder};
-use std::net::IpAddr;
+use leptos::config::{get_config_from_str, Env, LeptosOptions};
+use leptos::prelude::*;
+use leptos_meta::MetaTags;
 use std::path::PathBuf;
 use stellar_database::*;
 
+pub fn shell(options: LeptosOptions) -> impl IntoView {
+    view! {
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <AutoReload options=options.clone()/>
+                <HydrationScripts options/>
+                <MetaTags/>
+            </head>
+            <body>
+                <App/>
+            </body>
+        </html>
+    }
+}
+
 pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
-    use actix_files::Files;
-    use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
 
     // Check if data folder exists
@@ -21,25 +39,23 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     let _ = client.create_indexes().await;
 
     use crate::data::ServerData;
-    let data = ServerData {
-        client,
-        config,
-    };
+    let data = ServerData { client, config };
 
     // Generate leptos options
     let cargo_toml = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../Cargo.toml"));
-    let mut leptos_options = match leptos_config::get_config_from_str(cargo_toml) {
+    let mut leptos_options = match get_config_from_str(cargo_toml) {
         Ok(file) => file,
         Err(err) => {
             log::error!("{:#?}", err);
             panic!("Error in leptos config file")
         }
     };
-    leptos_options.site_addr = std::net::SocketAddr::new(data.config.server.address, data.config.server.port);
+    leptos_options.site_addr =
+        std::net::SocketAddr::new(data.config.server.address, data.config.server.port);
     leptos_options.env = if cfg!(debug_assertions) {
-        leptos_config::Env::DEV
+        Env::DEV
     } else {
-        leptos_config::Env::PROD
+        Env::PROD
     };
 
     // Generate the list of routes in your Leptos App
@@ -49,7 +65,7 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     HttpServer::new(move || {
         let data = data.clone();
         let data2 = data.clone();
-        let site_root = &leptos_options.site_root;
+        let options = leptos_options.clone();
 
         actix_web::App::new()
             .service(snippet_service)
@@ -62,10 +78,9 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
             //.service(Files::new("/assets", site_root))
             .service(static_pkg)
             .leptos_routes_with_context(
-                leptos_options.to_owned(),
                 routes.to_owned(),
                 move || provide_context(data.clone()),
-                App,
+                move || shell(options.clone()),
             )
             // Data
             .app_data(web::Data::new(data2))
@@ -84,7 +99,7 @@ async fn static_assets(path: web::Path<String>) -> impl Responder {
 
 #[get("/pkg/{_:.*}")]
 async fn static_pkg(path: web::Path<String>) -> impl Responder {
-    let site_pkg = env!("LEPTOS_SITE_PKG_DIR");
+    let site_pkg = option_env!("LEPTOS_SITE_PKG_DIR").unwrap_or("pkg");
 
     let path = path.as_str();
     let full_path = format!("{}/{}", site_pkg, path);

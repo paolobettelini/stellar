@@ -1,7 +1,26 @@
-use leptos::*;
-use thaw::*;
+use leptos::prelude::*;
 use wasm_bindgen::prelude::*;
-use web_sys::window;
+
+#[component]
+fn Icon(icon: icondata::Icon) -> impl IntoView {
+    let view_box = icon.view_box.unwrap_or("0 0 24 24");
+    let width = icon.width.unwrap_or("1em");
+    let height = icon.height.unwrap_or("1em");
+    let fill = icon.fill.unwrap_or("currentColor");
+
+    view! {
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            viewBox=view_box
+            width=width
+            height=height
+            fill=fill
+            style="display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em;"
+            inner_html=icon.data
+        />
+    }
+}
 
 #[wasm_bindgen(inline_js = r#"
 export function setBodyClass(className) {
@@ -23,7 +42,7 @@ extern "C" {
 
 #[component]
 pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -> impl IntoView {
-    let (themes_hidden, set_themes_hidden) = create_signal(true);
+    let (themes_hidden, set_themes_hidden) = signal(true);
 
     let set_theme = |theme| {
         setLocalStorageTheme(theme);
@@ -58,8 +77,8 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
                     style:display=move || if themes_hidden() { "none" } else { "block" }
                 >
                     // TODO: set LocalStorage and re-render page
-                    <Button on_click=move |_| set_theme("theme-light")>"Light"</Button>
-                    <Button on_click=move |_| set_theme("theme-dark")>"Dark"</Button>
+                    <button type="button" on:click=move |_| set_theme("theme-light")>"Light"</button>
+                    <button type="button" on:click=move |_| set_theme("theme-dark")>"Dark"</button>
                 </ul>
                 <i id="topbar-github">
                     <a

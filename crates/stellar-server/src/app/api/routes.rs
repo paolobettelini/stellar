@@ -1,4 +1,5 @@
-use leptos::*;
+use leptos::prelude::*;
+#[cfg(feature = "ssr")]
 use std::path::Path;
 
 // POST /course/{course}
@@ -104,7 +105,9 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     let data = expect_context::<ServerData>();
 
     // TODO pre-create path
-    let file = &Path::new(&data.config.server.data_folder).join("pages").join(&file_name);
+    let file = &Path::new(&data.config.server.data_folder)
+        .join("pages")
+        .join(&file_name);
     let content = {
         if let Ok(v) = std::fs::read_to_string(file) {
             v
