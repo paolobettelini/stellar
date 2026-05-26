@@ -1,7 +1,6 @@
-use crate::app::get_snippet_meta_json;
-use crate::app::get_snippet_references;
-use crate::app::SnippetLibraries;
-use crate::app::SnippetsRenderer;
+use crate::app::{
+    get_snippet_meta_json, get_snippet_references, SnippetLibraries, SnippetsRenderer, Topbar,
+};
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 use serde_json::Value;
@@ -9,100 +8,209 @@ use serde_json::Value;
 #[component]
 pub fn SnippetPage() -> impl IntoView {
     let params = use_params_map();
-    let snippet = move || params.with(|params| params.get("snippet").unwrap_or_default());
-    let content = format!(
-        "<stellar-snippet>{}</stellar-snippet>",
-        &snippet().to_string()
-    );
+    let snippet =
+        Signal::derive(move || params.with(|params| params.get("snippet").unwrap_or_default()));
+    let title = Signal::derive(|| String::from("Snippet"));
+    let meta = Resource::new(move || snippet.get(), get_snippet_meta_json);
+    let references = Resource::new(move || snippet.get(), get_snippet_references);
+    let default_params = RwSignal::new(None::<String>);
+    let params_draft = RwSignal::new(String::new());
+    let applied_params = RwSignal::new(None::<String>);
+    let content = Signal::derive(move || {
+        let snippet = html_text_escape(&snippet.get());
 
-    let once1 = Resource::new(snippet, get_snippet_meta_json);
-    let once2 = Resource::new(snippet, get_snippet_references);
+        if let Some(params) = applied_params.get() {
+            format!(
+                r#"<stellar-snippet params="{}">{}</stellar-snippet>"#,
+                html_attr_escape(&params),
+                snippet
+            )
+        } else {
+            format!("<stellar-snippet>{snippet}</stellar-snippet>")
+        }
+    });
+
+    Effect::new(move |_| {
+        let Some(Ok(json)) = meta.get() else {
+            return;
+        };
+
+        let params = default_params_from_json(&json);
+        params_draft.set(params.clone().unwrap_or_default());
+        applied_params.set(params.clone());
+        default_params.set(params);
+    });
 
     view! {
         <SnippetLibraries />
 
-        <h1>Snippet ID: {snippet}</h1>
+        <div id="snippet-container">
+            <div class="snippet-topbar">
+                <Topbar title />
+            </div>
 
-        <Suspense
-            fallback=move || view! {
-                <p>"Loading..."</p>
-            }
-        >
-            {move || match once1.get() {
-                None => view! {}.into_any(),
-                Some(res) => {
-                    if res.is_err() {
-                        return view! { <p>No meta data </p> }.into_any()
-                    }
+            <main id="snippet-page">
+                <section id="snippet-header">
+                    <p class="snippet-id">{move || snippet.get()}</p>
+                </section>
 
-                    let json = res.unwrap();
+                <section class="snippet-info-stack">
+                    <div class="snippet-panel">
+                        <header class="snippet-panel-header">
+                            <h2>"Metadata"</h2>
+                        </header>
 
-                    if json.len() == 0 {
-                        return view! { <p>No meta data </p> }.into_any()
-                    }
+                        <Suspense fallback=move || view! { <p class="snippet-status">"Loading..."</p> }>
+                            {move || match meta.get() {
+                                None => view! {}.into_any(),
+                                Some(Err(_)) => view! { <p class="snippet-status">"Could not load metadata"</p> }.into_any(),
+                                Some(Ok(json)) => metadata_table(json),
+                            }}
+                        </Suspense>
+                    </div>
 
-                    let json_data: Value = if let Ok(v) = serde_json::from_str(&json){
-                        v
-                    } else {
-                        return view! { <p>Invalid JSON data in meta.json</p> }.into_any()
-                    };
+                    <div class="snippet-panel">
+                        <header class="snippet-panel-header">
+                            <h2>"References"</h2>
+                        </header>
 
-                    if let Some(generalizations) = json_data.get("generalizations") {
-                        if let Value::Array(array) = generalizations {
-                            return view! {
-                                <h2>Generalizations:</h2>
-                                <ul>
-                                    {array.clone().into_iter()
-                                        .map(|n| {
-                                            if let Value::String(id) = n {
-                                                let href = format!("/snippet/{}", &id);
+                        <Suspense fallback=move || view! { <p class="snippet-status">"Loading..."</p> }>
+                            {move || match references.get() {
+                                None => view! {}.into_any(),
+                                Some(Ok(Some(references))) if !references.is_empty() => view! {
+                                    <div class="snippet-reference-list">
+                                        {references.into_iter()
+                                            .map(|id| {
+                                                let href = format!("/snippet/{id}");
                                                 view! {
-                                                    <li><h2><a href=href>{id}</a></h2></li>
-                                                }.into_any()
-                                            } else {
-                                                view! { }.into_any()
-                                            }
-                                        })
-                                        .collect::<Vec<_>>()}
-                                </ul>
-                            }.into_any()
-                        }
-                    }
+                                                    <a class="snippet-reference" href=href>
+                                                        <span>{id}</span>
+                                                    </a>
+                                                }
+                                            })
+                                            .collect_view()}
+                                    </div>
+                                }.into_any(),
+                                Some(Ok(_)) => view! { <p class="snippet-status">"No references"</p> }.into_any(),
+                                Some(Err(_)) => view! { <p class="snippet-status">"Could not load references"</p> }.into_any(),
+                            }}
+                        </Suspense>
+                    </div>
+                </section>
 
-                    view!{ }.into_any()
-                }
-            }}
-        </Suspense>
-
-        <Suspense
-            fallback=move || view! {
-                <p>"Loading..."</p>
-            }
-        >
-            {move || match once2.get() {
-                None => view! {}.into_any(),
-                Some(res) => {
-                    if let Ok(Some(references)) = res {
+                <section id="snippet-rendered-free">
+                    {move || default_params.get().map(|default_params| {
                         view! {
-                            <h2>References:</h2>
-                            <ul>
-                                {references.clone().into_iter()
-                                    .map(|id| {
-                                        let href = format!("/snippet/{}", &id);
-                                        view! {
-                                            <li><h2><a href=href>{id}</a></h2></li>
-                                        }.into_any()
-                                    })
-                                    .collect::<Vec<_>>()}
-                            </ul>
-                        }.into_any()
-                    } else {
-                        view!{ <p>No references</p> }.into_any()
-                    }
-                }
-            }}
-        </Suspense>
+                            <div class="snippet-params-row">
+                                <label class="snippet-param-field">
+                                    <span>"Default parameters"</span>
+                                    <input
+                                        type="text"
+                                        value=move || params_draft.get()
+                                        placeholder=default_params
+                                        on:input=move |event| {
+                                            params_draft.set(event_target_value(&event));
+                                        }
+                                    />
+                                </label>
+                                <button
+                                    type="button"
+                                    on:click=move |_| {
+                                        applied_params.set(Some(params_draft.get()));
+                                    }
+                                >
+                                    "Reload"
+                                </button>
+                            </div>
+                        }
+                    })}
+                    {move || view! { <SnippetsRenderer content=content.get() /> }}
+                </section>
+            </main>
+        </div>
+    }
+}
 
-        <SnippetsRenderer content />
+fn default_params_from_json(json: &str) -> Option<String> {
+    let value = serde_json::from_str::<Value>(json).ok()?;
+    let default_params = value.get("default-params")?;
+
+    match default_params {
+        Value::String(value) => Some(value.clone()),
+        Value::Null => None,
+        value => Some(json_value_label(value)),
+    }
+}
+
+fn metadata_table(json: String) -> AnyView {
+    if json.trim().is_empty() {
+        return view! { <p class="snippet-status">"No metadata"</p> }.into_any();
+    }
+
+    let Ok(value) = serde_json::from_str::<Value>(&json) else {
+        return view! { <p class="snippet-status">"Invalid metadata JSON"</p> }.into_any();
+    };
+
+    let Value::Object(entries) = value else {
+        return view! {
+            <table class="snippet-meta-table">
+                <tbody>
+                    <tr>
+                        <th>"value"</th>
+                        <td>{json_value_label(&value)}</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        .into_any();
+    };
+
+    if entries.is_empty() {
+        return view! { <p class="snippet-status">"No metadata"</p> }.into_any();
+    }
+
+    view! {
+        <table class="snippet-meta-table">
+            <tbody>
+                {entries.into_iter()
+                    .map(|(key, value)| {
+                        view! {
+                            <tr>
+                                <th>{key}</th>
+                                <td>{json_value_label(&value)}</td>
+                            </tr>
+                        }
+                    })
+                    .collect_view()}
+            </tbody>
+        </table>
+    }
+    .into_any()
+}
+
+fn html_attr_escape(value: &str) -> String {
+    value
+        .replace('&', "&amp;")
+        .replace('"', "&quot;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+}
+
+fn html_text_escape(value: &str) -> String {
+    value
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+}
+
+fn json_value_label(value: &Value) -> String {
+    match value {
+        Value::Null => String::from("null"),
+        Value::Bool(value) => value.to_string(),
+        Value::Number(value) => value.to_string(),
+        Value::String(value) => value.clone(),
+        Value::Array(_) | Value::Object(_) => {
+            serde_json::to_string_pretty(value).unwrap_or_else(|_| value.to_string())
+        }
     }
 }
