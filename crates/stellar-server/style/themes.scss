@@ -1,0 +1,48 @@
+.theme-light {
+    --col1: black; /* Text */
+    --col2: white; /* Background */
+    --col3: rgb(245, 245, 245); /* Nav Background */
+    --col4: blue; /* Colored Text */
+}
+
+.theme-dark {
+    --col1: #c8c9db; /* Text */
+    --col2: #161923; /* Background */
+    --col3: #2c2d41; /* Nav Background */
+    --col4: #286f96; /* Colored Text */
+}
+
+.theme-violet {
+    --col1: #2a2235; /* Text */
+    --col2: #f4effa; /* Background */
+    --col3: #e5dced; /* Nav Background */
+    --col4: #6200ea; /* Colored Text */
+}
+
+.theme-mint {
+    --col1: #1a2e20; /* Text */
+    --col2: #e8f5e9; /* Background */
+    --col3: #c8e6c9; /* Nav Background */
+    --col4: #d84315; /* Colored Text */
+}
+
+.theme-sepia {
+    --col1: #433422; /* Text */
+    --col2: #fdf6e3; /* Background */
+    --col3: #eee8d5; /* Nav Background */
+    --col4: #d35400; /* Colored Text */
+}
+
+.theme-earth {
+    --col1: #d4c4b7; /* Text */
+    --col2: #2b2620; /* Background */
+    --col3: #3b352d; /* Nav Background */
+    --col4: #a3b18a; /* Colored Text */
+}
+
+.theme-brutalist {
+    --col1: #111111; /* Text */
+    --col2: #e5e5e5; /* Background */
+    --col3: #cccccc; /* Nav Background */
+    --col4: #ff0000; /* Colored Text */
+}

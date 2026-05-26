@@ -6,21 +6,8 @@
 @import 'pages/course.scss';
 @import 'pages/search.scss';
 
+@import 'themes.scss';
 @import 'pdf_viewer.scss';
-
-.theme-light {
-    --col1: black; /* Text */
-    --col2: white; /* Background */
-    --col3: rgb(245, 245, 245); /* Nav Background */
-    --col4: blue; /* Colored Text */
-}
-
-.theme-dark {
-    --col1: #c8c9db; /* Text */
-    --col2: #161923; /* Background */
-    --col3: #2c2d41; /* Nav Background */
-    --col4: #286f96; /* Colored Text */
-}
 
 body {
     transition: color 0.5s, background-color 0.5s;

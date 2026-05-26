@@ -76,9 +76,14 @@ pub fn Topbar(title: ReadSignal<String>, set_navbar_hidden: WriteSignal<bool>) -
                     id="theme-list"
                     style:display=move || if themes_hidden() { "none" } else { "block" }
                 >
-                    // TODO: set LocalStorage and re-render page
+                    // TODO: re-render page)
                     <button type="button" on:click=move |_| set_theme("theme-light")>"Light"</button>
                     <button type="button" on:click=move |_| set_theme("theme-dark")>"Dark"</button>
+                    <button type="button" on:click=move |_| set_theme("theme-violet")>"Violet"</button>
+                    <button type="button" on:click=move |_| set_theme("theme-mint")>"Mint"</button>
+                    <button type="button" on:click=move |_| set_theme("theme-sepia")>"Sepia"</button>
+                    <button type="button" on:click=move |_| set_theme("theme-earth")>"Earth"</button>
+                    <button type="button" on:click=move |_| set_theme("theme-brutalist")>"Brutalist"</button>
                 </ul>
                 <i id="topbar-github">
                     <a

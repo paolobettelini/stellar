@@ -1,235 +1,353 @@
-// maps white to "color" and the other colors respectively
+// maps the light-themed canvas to the current theme
 
 // TODO
 // The theme variable is not used.
-// It should directly use the --col2 variable (and others?)$
 
-// TODO: Observer for --col2? O forse è meglio ri-renderizzare la pagina
+// TODO: Observer for --col? O forse è meglio ri-renderizzare la pagina
 // perché alcuni snippet sono strani e hanno cose custom
 
-let darkModeRenderer = null;
+let themeFilterRenderer = null;
 
-function createDarkModeRenderer() {
-    const glCanvas = document.createElement("canvas");
-    const gl = glCanvas.getContext("webgl", {
-        premultipliedAlpha: false,
-        preserveDrawingBuffer: true,
-    });
+function createThemeFilterRenderer() {
+	const glCanvas = document.createElement("canvas");
 
-    if (!gl) {
-        throw new Error("WebGL not available");
-    }
+	const gl = glCanvas.getContext("webgl", {
+		premultipliedAlpha: false,
+		preserveDrawingBuffer: true,
+	});
 
-    const vertexShaderSource = `
-        attribute vec2 a_position;
-        attribute vec2 a_texCoord;
+	if (!gl) {
+		throw new Error("WebGL not available");
+	}
 
-        varying vec2 v_texCoord;
+	const vertexShaderSource = `
+		attribute vec2 a_position;
+		attribute vec2 a_texCoord;
 
-        void main() {
-            gl_Position = vec4(a_position, 0.0, 1.0);
-            v_texCoord = a_texCoord;
-        }
+		varying vec2 v_texCoord;
+
+		void main() {
+			gl_Position = vec4(a_position, 0.0, 1.0);
+			v_texCoord = a_texCoord;
+		}
+	`;
+
+	// Logic that transforms the colors
+	const fragmentShaderSource = `
+	precision mediump float;
+
+	uniform sampler2D u_image;
+
+	uniform vec3 u_col1; // Text
+	uniform vec3 u_col2; // Background
+	uniform vec3 u_col3; // Nav background
+	uniform vec3 u_col4; // Accent / colored text
+
+	varying vec2 v_texCoord;
+
+	float luminance(vec3 color) {
+		return dot(color, vec3(0.2126, 0.7152, 0.0722));
+	}
+
+	void main() {
+		vec4 pixel = texture2D(u_image, v_texCoord);
+		vec3 src = pixel.rgb;
+
+		float lum = luminance(src);
+
+		float maxChannel = max(max(src.r, src.g), src.b);
+		float minChannel = min(min(src.r, src.g), src.b);
+		float chroma = maxChannel - minChannel;
+
+		// Base mapping:
+		// original black -> theme text color
+		// original white -> theme background color
+		vec3 grayMapped = mix(u_col1, u_col2, lum);
+
+		// Preserve part of the original hue/saturation.
+		// This avoids pushing colored pixels too much toward gray.
+		vec3 colorOffset = src - vec3(lum);
+
+		float saturationPreservation = smoothstep(0.04, 0.22, chroma);
+		vec3 colorMapped = grayMapped + colorOffset * 1.15;
+		colorMapped = clamp(colorMapped, 0.0, 1.0);
+
+		vec3 result = mix(
+			grayMapped,
+			colorMapped,
+			saturationPreservation
+		);
+
+		// Original light nav background:
+		// rgb(245, 245, 245) -> --col3
+		vec3 lightNav = vec3(245.0 / 255.0);
+
+		float navMask = 1.0 - smoothstep(
+			0.015,
+			0.045,
+			distance(src, lightNav)
+		);
+
+		// Exact or near white must become exactly --col2
+		float whiteMask = 1.0 - smoothstep(
+			0.001,
+			0.02,
+			distance(src, vec3(1.0))
+		);
+
+		// Original accent is blue-ish.
+		// This catches pure blue and similar colored text.
+		float blueDominance = src.b - max(src.r, src.g);
+
+		float accentMask =
+			smoothstep(0.08, 0.25, chroma) *
+			smoothstep(0.05, 0.25, blueDominance);
+
+		// Darker blues become --col4.
+		// Very light blues blend toward --col2 to remain readable.
+		vec3 accentMapped = mix(
+			u_col4,
+			u_col2,
+			smoothstep(0.25, 1.0, lum)
+		);
+
+		result = mix(result, accentMapped, accentMask);
+		result = mix(result, u_col3, navMask);
+		result = mix(result, u_col2, whiteMask);
+
+		gl_FragColor = vec4(result, pixel.a);
+	}
 `;
 
-const fragmentShaderSource = `
-    precision mediump float;
+	function compileShader(type, source) {
+		const shader = gl.createShader(type);
 
-    uniform sampler2D u_image;
-    uniform vec3 u_diff;
-    uniform vec3 u_v;
+		gl.shaderSource(shader, source);
+		gl.compileShader(shader);
 
-    varying vec2 v_texCoord;
+		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+			const error = gl.getShaderInfoLog(shader);
+			gl.deleteShader(shader);
+			throw new Error(error);
+		}
 
-    void main() {
-        vec4 pixel = texture2D(u_image, v_texCoord);
-        vec3 rgb = pixel.rgb * 255.0;
+		return shader;
+	}
 
-        float r = rgb.r;
-        float g = rgb.g;
-        float b = rgb.b;
+	const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
+	const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-        bool isGray = abs(r - g) < 0.5 && abs(g - b) < 0.5;
-        bool isNotWhite = abs(b - 255.0) >= 0.5;
+	const program = gl.createProgram();
 
-        vec3 result;
+	gl.attachShader(program, vertexShader);
+	gl.attachShader(program, fragmentShader);
+	gl.linkProgram(program);
 
-        if (isGray && isNotWhite) {
-            result = 255.0 - rgb;
-        } else {
-            result = mix(
-            255.0 - u_v * rgb,
-            rgb - u_diff,
-            step(u_diff, rgb)
-            );
-        }
+	if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+		throw new Error(gl.getProgramInfoLog(program));
+	}
 
-        gl_FragColor = vec4(result / 255.0, pixel.a);
-    }
-`;
+	gl.useProgram(program);
 
-function compileShader(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
+	const positionLocation = gl.getAttribLocation(program, "a_position");
+	const texCoordLocation = gl.getAttribLocation(program, "a_texCoord");
 
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const error = gl.getShaderInfoLog(shader);
-        gl.deleteShader(shader);
-        throw new Error(error);
-    }
+	const imageLocation = gl.getUniformLocation(program, "u_image");
 
-    return shader;
+	const col1Location = gl.getUniformLocation(program, "u_col1");
+	const col2Location = gl.getUniformLocation(program, "u_col2");
+	const col3Location = gl.getUniformLocation(program, "u_col3");
+	const col4Location = gl.getUniformLocation(program, "u_col4");
+
+	const buffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+	gl.bufferData(
+		gl.ARRAY_BUFFER,
+		new Float32Array([
+			// x,  y,   u, v
+			-1, -1,   0, 0,
+			 1, -1,   1, 0,
+			-1,  1,   0, 1,
+			 1,  1,   1, 1,
+		]),
+		gl.STATIC_DRAW
+	);
+
+	const stride = 4 * Float32Array.BYTES_PER_ELEMENT;
+
+	gl.enableVertexAttribArray(positionLocation);
+	gl.vertexAttribPointer(
+		positionLocation,
+		2,
+		gl.FLOAT,
+		false,
+		stride,
+		0
+	);
+
+	gl.enableVertexAttribArray(texCoordLocation);
+	gl.vertexAttribPointer(
+		texCoordLocation,
+		2,
+		gl.FLOAT,
+		false,
+		stride,
+		2 * Float32Array.BYTES_PER_ELEMENT
+	);
+
+	const texture = gl.createTexture();
+
+	gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+	// Avoid interpolation between pixels.
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+	gl.uniform1i(imageLocation, 0);
+
+	return {
+		gl,
+		glCanvas,
+		texture,
+		col1Location,
+		col2Location,
+		col3Location,
+		col4Location,
+	};
 }
 
-const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+const colorParserCanvas = document.createElement("canvas");
+const colorParserCtx = colorParserCanvas.getContext("2d");
 
-const program = gl.createProgram();
-gl.attachShader(program, vertexShader);
-gl.attachShader(program, fragmentShader);
-gl.linkProgram(program);
+function cssColorToRgb(color) {
+	if (!color || !color.trim()) {
+		throw new Error("Invalid CSS color");
+	}
 
-if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error(gl.getProgramInfoLog(program));
+	colorParserCtx.fillStyle = "#000000";
+	colorParserCtx.fillStyle = color.trim();
+
+	const normalized = colorParserCtx.fillStyle;
+
+	if (normalized.startsWith("#")) {
+		let hex = normalized.slice(1);
+
+		if (hex.length === 3) {
+			hex = hex
+				.split("")
+				.map((character) => character + character)
+				.join("");
+		}
+
+		return {
+			r: parseInt(hex.slice(0, 2), 16),
+			g: parseInt(hex.slice(2, 4), 16),
+			b: parseInt(hex.slice(4, 6), 16),
+		};
+	}
+
+	const match = normalized.match(
+		/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/
+	);
+
+	if (!match) {
+		throw new Error(`Invalid CSS color: ${color}`);
+	}
+
+	return {
+		r: Number(match[1]),
+		g: Number(match[2]),
+		b: Number(match[3]),
+	};
 }
 
-gl.useProgram(program);
+function getThemeColor(canvas, cssVarName, fallback) {
+	const canvasValue = getComputedStyle(canvas)
+		.getPropertyValue(cssVarName)
+		.trim();
 
-const positionLocation = gl.getAttribLocation(program, "a_position");
-const texCoordLocation = gl.getAttribLocation(program, "a_texCoord");
+	const bodyValue = getComputedStyle(document.body)
+		.getPropertyValue(cssVarName)
+		.trim();
 
-const imageLocation = gl.getUniformLocation(program, "u_image");
-const diffLocation = gl.getUniformLocation(program, "u_diff");
-const vLocation = gl.getUniformLocation(program, "u_v");
+	const rootValue = getComputedStyle(document.documentElement)
+		.getPropertyValue(cssVarName)
+		.trim();
 
-const buffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-        // x,  y,   u, v
-        -1, -1,   0, 0,
-        1, -1,   1, 0,
-        -1,  1,   0, 1,
-        1,  1,   1, 1,
-    ]),
-    gl.STATIC_DRAW
-);
-
-const stride = 4 * Float32Array.BYTES_PER_ELEMENT;
-
-gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(
-    positionLocation,
-    2,
-    gl.FLOAT,
-    false,
-    stride,
-    0
-);
-
-gl.enableVertexAttribArray(texCoordLocation);
-gl.vertexAttribPointer(
-    texCoordLocation,
-    2,
-    gl.FLOAT,
-    false,
-    stride,
-    2 * Float32Array.BYTES_PER_ELEMENT
-);
-
-const texture = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, texture);
-
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-// Importante: evita interpolazioni tra pixel.
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-gl.uniform1i(imageLocation, 0);
-
-return {
-    gl,
-    glCanvas,
-    texture,
-    diffLocation,
-    vLocation,
-    };
+	return cssColorToRgb(canvasValue || bodyValue || rootValue || fallback);
 }
 
-function hexToRgb(hex) {
-    return {
-        r: parseInt(hex.slice(1, 3), 16),
-        g: parseInt(hex.slice(3, 5), 16),
-        b: parseInt(hex.slice(5, 7), 16),
-    };
+function setVec3Color(gl, location, color) {
+	gl.uniform3f(
+		location,
+		color.r / 255,
+		color.g / 255,
+		color.b / 255
+	);
 }
 
 function applyFilter(canvas, theme) {
-    if (theme == null || theme === "theme-light") {
-        return;
-    }
+	if (theme == null || theme === "theme-light") {
+		return;
+	}
 
-    // TODO we are using "theme" just to check it isn't white.
+	const ctx = canvas.getContext("2d");
 
-    const hexColor = getComputedStyle(document.body).getPropertyValue("--col2").trim();
-    const ctx = canvas.getContext("2d");
+	if (!ctx) {
+		throw new Error("Canvas must have a 2D context");
+	}
 
-    if (!ctx) {
-        throw new Error("Canvas must have a 2D context");
-    }
+	if (!themeFilterRenderer) {
+		themeFilterRenderer = createThemeFilterRenderer();
+	}
 
-    if (!darkModeRenderer) {
-        darkModeRenderer = createDarkModeRenderer();
-    }
+	const {
+		gl,
+		glCanvas,
+		texture,
+		col1Location,
+		col2Location,
+		col3Location,
+		col4Location,
+	} = themeFilterRenderer;
 
-    const {
-        gl,
-        glCanvas,
-        texture,
-        diffLocation,
-        vLocation,
-    } = darkModeRenderer;
+	const col1 = getThemeColor(canvas, "--col1", "#c8c9db");
+	const col2 = getThemeColor(canvas, "--col2", "#161923");
+	const col3 = getThemeColor(canvas, "--col3", "#2c2d41");
+	const col4 = getThemeColor(canvas, "--col4", "#286f96");
 
-    const { r, g, b } = hexToRgb(hexColor);
+	glCanvas.width = canvas.width;
+	glCanvas.height = canvas.height;
 
-    const diffR = 255 - r;
-    const diffG = 255 - g;
-    const diffB = 255 - b;
+	gl.viewport(0, 0, canvas.width, canvas.height);
 
-    const v1 = 255 / diffR;
-    const v2 = 255 / diffG;
-    const v3 = 255 / diffB;
+	gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    glCanvas.width = canvas.width;
-    glCanvas.height = canvas.height;
+	// Maintain correct orientation.
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
-    gl.viewport(0, 0, canvas.width, canvas.height);
+	gl.texImage2D(
+		gl.TEXTURE_2D,
+		0,
+		gl.RGBA,
+		gl.RGBA,
+		gl.UNSIGNED_BYTE,
+		canvas
+	);
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+	setVec3Color(gl, col1Location, col1);
+	setVec3Color(gl, col2Location, col2);
+	setVec3Color(gl, col3Location, col3);
+	setVec3Color(gl, col4Location, col4);
 
-    // Maintain correct orientation
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        canvas
-    );
-
-    gl.uniform3f(diffLocation, diffR, diffG, diffB);
-    gl.uniform3f(vLocation, v1, v2, v3);
-
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(glCanvas, 0, 0);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(glCanvas, 0, 0);
 }
