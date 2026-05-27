@@ -1,5 +1,4 @@
 use crate::app::*;
-use leptos::prelude::*;
 
 #[derive(Clone, Copy, PartialEq)]
 enum QueryType {
@@ -11,19 +10,20 @@ enum QueryType {
 
 #[component]
 pub fn SearchPage() -> impl IntoView {
-    const DEFAULT_QUERY: &str = ".*";
+    const DEFAULT_QUERY: &str = "";
 
     let title = Signal::derive(|| String::from("Search"));
     let (query, set_query) = signal(DEFAULT_QUERY.to_owned());
     let (query_type, set_query_type) = signal(QueryType::Universe);
+    let (regex_enabled, set_regex_enabled) = signal(false);
     let req = Resource::new(
-        move || (query.get(), query_type.get()),
-        |(query, query_type)| async move {
+        move || (query.get(), query_type.get(), regex_enabled.get()),
+        |(query, query_type, regex_enabled)| async move {
             match query_type {
-                QueryType::Snippet => query_snippet(query).await,
-                QueryType::Page => query_page(query).await,
-                QueryType::Course => query_course(query).await,
-                QueryType::Universe => query_universe(query).await,
+                QueryType::Snippet => query_snippet(query, regex_enabled).await,
+                QueryType::Page => query_page(query, regex_enabled).await,
+                QueryType::Course => query_course(query, regex_enabled).await,
+                QueryType::Universe => query_universe(query, regex_enabled).await,
             }
         },
     );
@@ -82,13 +82,31 @@ pub fn SearchPage() -> impl IntoView {
                     </label>
                 </div>
 
-                <input
-                    type="text"
-                    autocomplete="off"
-                    on:input=move |e| set_query.set(event_target_value(&e))
-                    value=|| DEFAULT_QUERY.to_owned()
-                    id="searchbox"
-                />
+                <div class="search-input-row">
+                    <input
+                        type="text"
+                        autocomplete="off"
+                        on:input=move |e| set_query.set(event_target_value(&e))
+                        value=move || query()
+                        placeholder=move || {
+                            if regex_enabled() {
+                                "Regex pattern"
+                            } else {
+                                "Search by substring"
+                            }
+                        }
+                        id="searchbox"
+                    />
+                    <label class="search-regex-toggle">
+                        <input
+                            type="checkbox"
+                            autocomplete="off"
+                            checked=move || regex_enabled()
+                            on:change=move |event| set_regex_enabled.set(event_target_checked(&event))
+                        />
+                        <span>"Regex"</span>
+                    </label>
+                </div>
             </section>
 
             <div id="results">

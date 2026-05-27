@@ -108,10 +108,10 @@ function setupAnnotations(page, viewport, container) {
             //element.style.border = "1px solid green";
 
             // floating snippet on hover
-            console.log(data.unsafeUrl);
+            const unsafeUrl = typeof data.unsafeUrl === 'string' ? data.unsafeUrl : "";
             if (data.url == undefined) {
-                if (data.unsafeUrl.startsWith("/snippet/")) {
-                    let str = data.unsafeUrl.split('.pdf')[0];
+                if (unsafeUrl.startsWith("/snippet/")) {
+                    let str = unsafeUrl.split('.pdf')[0];
                     let url = str.split('|')[0];
                     let title = str.split('|')[1];
                     let id = url.split('/').pop();
@@ -125,8 +125,8 @@ function setupAnnotations(page, viewport, container) {
                     } else {
                         element.title = `${title}\nID: ${id}\nClick to see source`;
                     }
-                } else if (data.unsafeUrl.startsWith("|")) {
-                    let str = data.unsafeUrl.split('.pdf')[0];
+                } else if (unsafeUrl.startsWith("|")) {
+                    let str = unsafeUrl.split('.pdf')[0];
                     let label = str.substr(1);
                     element.title = label;
                     element.href = "";

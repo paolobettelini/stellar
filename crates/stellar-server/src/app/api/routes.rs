@@ -4,10 +4,20 @@ use leptos::prelude::*;
 #[cfg(feature = "ssr")]
 use std::path::Path;
 
+#[cfg(feature = "ssr")]
+const MAX_ID_LEN: usize = 128;
+#[cfg(feature = "ssr")]
+const MAX_SEARCH_QUERY_LEN: usize = 128;
+#[cfg(feature = "ssr")]
+const MAX_REGEX_QUERY_LEN: usize = 80;
+#[cfg(feature = "ssr")]
+const SEARCH_RESULTS_LIMIT: i64 = 80;
+
 // POST /course/{course}
 #[server]
 pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
+    let course = validate_id(course, "course")?;
     let data = expect_context::<ServerData>();
 
     let file_name = format!("{course}.json");
@@ -32,6 +42,7 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
 #[server]
 pub async fn get_snippet_exists(snippet: String) -> Result<bool, ServerFnError> {
     use crate::data::ServerData;
+    let snippet = validate_id(snippet, "snippet")?;
     let data = expect_context::<ServerData>();
 
     data.client
@@ -43,9 +54,14 @@ pub async fn get_snippet_exists(snippet: String) -> Result<bool, ServerFnError> 
 #[server]
 pub async fn get_snippet_references(snippet: String) -> Result<Option<Vec<String>>, ServerFnError> {
     use crate::data::ServerData;
+    let snippet = validate_id(snippet, "snippet")?;
     let data = expect_context::<ServerData>();
 
-    let mut res = data.client.query_snippet(&snippet).await.unwrap();
+    let res = data
+        .client
+        .query_snippet(&snippet)
+        .await
+        .map_err(ServerFnError::new)?;
 
     if let Some(snippet) = res {
         return Ok(snippet.references);
@@ -60,6 +76,7 @@ pub async fn get_snippet_reference_tree(snippet: String) -> Result<String, Serve
     use futures::TryStreamExt;
     use std::collections::HashMap;
 
+    let snippet = validate_id(snippet, "snippet")?;
     let data = expect_context::<ServerData>();
     let mut cursor = data
         .client
@@ -112,6 +129,7 @@ fn build_snippet_reference_tree(
 #[server]
 pub async fn get_snippet_meta_json(snippet: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
+    let snippet = validate_id(snippet, "snippet")?;
     let data = expect_context::<ServerData>();
 
     let file_name = format!("{snippet}.json");
@@ -138,6 +156,7 @@ pub async fn get_snippet_meta_json(snippet: String) -> Result<String, ServerFnEr
 #[server]
 pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
+    let universe = validate_id(universe, "universe")?;
     let data = expect_context::<ServerData>();
 
     let file_name = format!("{universe}.json");
@@ -168,6 +187,7 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
     if page.is_empty() {
         return Ok(String::from(""));
     }
+    let page = validate_id(page, "page")?;
 
     let file_name = format!("{page}.html");
     log::info!("Reading file: {file_name:?}");
@@ -192,76 +212,136 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
 
 // POST /query/snippet/{keyword}
 #[server]
-pub async fn query_snippet(keyword: String) -> Result<String, ServerFnError> {
+pub async fn query_snippet(keyword: String, regex: bool) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     use futures::TryStreamExt;
 
+    let keyword = validate_search_query(keyword, regex)?;
     let data = expect_context::<ServerData>();
 
-    let mut cursor = data.client.query_snippets(&keyword).await.unwrap();
+    let mut cursor = data
+        .client
+        .search_snippets(&keyword, regex, SEARCH_RESULTS_LIMIT)
+        .await
+        .map_err(ServerFnError::new)?;
 
     let mut vec = Vec::new();
-    while let Some(document) = cursor.try_next().await.unwrap() {
+    while let Some(document) = cursor.try_next().await.map_err(ServerFnError::new)? {
         vec.push(document);
     }
-    let json = serde_json::to_string(&vec).unwrap();
+    let json = serde_json::to_string(&vec).map_err(ServerFnError::new)?;
 
     Ok(json)
 }
 
 // POST /query/page/{keyword}
 #[server]
-pub async fn query_page(keyword: String) -> Result<String, ServerFnError> {
+pub async fn query_page(keyword: String, regex: bool) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     use futures::TryStreamExt;
 
+    let keyword = validate_search_query(keyword, regex)?;
     let data = expect_context::<ServerData>();
 
-    let mut cursor = data.client.query_pages(&keyword).await.unwrap();
+    let mut cursor = data
+        .client
+        .search_pages(&keyword, regex, SEARCH_RESULTS_LIMIT)
+        .await
+        .map_err(ServerFnError::new)?;
 
     let mut vec = Vec::new();
-    while let Some(document) = cursor.try_next().await.unwrap() {
+    while let Some(document) = cursor.try_next().await.map_err(ServerFnError::new)? {
         vec.push(document);
     }
-    let json = serde_json::to_string(&vec).unwrap();
+    let json = serde_json::to_string(&vec).map_err(ServerFnError::new)?;
 
     Ok(json)
 }
 
 // POST /query/course/{keyword}
 #[server]
-pub async fn query_course(keyword: String) -> Result<String, ServerFnError> {
+pub async fn query_course(keyword: String, regex: bool) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     use futures::TryStreamExt;
 
+    let keyword = validate_search_query(keyword, regex)?;
     let data = expect_context::<ServerData>();
 
-    let mut cursor = data.client.query_courses(&keyword).await.unwrap();
+    let mut cursor = data
+        .client
+        .search_courses(&keyword, regex, SEARCH_RESULTS_LIMIT)
+        .await
+        .map_err(ServerFnError::new)?;
 
     let mut vec = Vec::new();
-    while let Some(document) = cursor.try_next().await.unwrap() {
+    while let Some(document) = cursor.try_next().await.map_err(ServerFnError::new)? {
         vec.push(document);
     }
-    let json = serde_json::to_string(&vec).unwrap();
+    let json = serde_json::to_string(&vec).map_err(ServerFnError::new)?;
 
     Ok(json)
 }
 
 // POST /query/universe/{keyword}
 #[server]
-pub async fn query_universe(keyword: String) -> Result<String, ServerFnError> {
+pub async fn query_universe(keyword: String, regex: bool) -> Result<String, ServerFnError> {
     use crate::data::ServerData;
     use futures::TryStreamExt;
 
+    let keyword = validate_search_query(keyword, regex)?;
     let data = expect_context::<ServerData>();
 
-    let mut cursor = data.client.query_universes(&keyword).await.unwrap();
+    let mut cursor = data
+        .client
+        .search_universes(&keyword, regex, SEARCH_RESULTS_LIMIT)
+        .await
+        .map_err(ServerFnError::new)?;
 
     let mut vec = Vec::new();
-    while let Some(document) = cursor.try_next().await.unwrap() {
+    while let Some(document) = cursor.try_next().await.map_err(ServerFnError::new)? {
         vec.push(document);
     }
-    let json = serde_json::to_string(&vec).unwrap();
+    let json = serde_json::to_string(&vec).map_err(ServerFnError::new)?;
 
     Ok(json)
+}
+
+#[cfg(feature = "ssr")]
+fn validate_id(value: String, kind: &str) -> Result<String, ServerFnError> {
+    let value = value.trim().to_string();
+
+    if is_safe_id(&value) {
+        Ok(value)
+    } else {
+        Err(ServerFnError::new(format!("Invalid {kind} id")))
+    }
+}
+
+#[cfg(feature = "ssr")]
+fn is_safe_id(id: &str) -> bool {
+    !id.is_empty()
+        && id != "."
+        && id != ".."
+        && id.len() <= MAX_ID_LEN
+        && id.bytes().all(|byte| {
+            byte.is_ascii_alphanumeric() || byte == b'-' || byte == b'_' || byte == b'.'
+        })
+}
+
+#[cfg(feature = "ssr")]
+fn validate_search_query(keyword: String, regex: bool) -> Result<String, ServerFnError> {
+    let keyword = keyword.trim().to_string();
+    let max_len = if regex {
+        MAX_REGEX_QUERY_LEN
+    } else {
+        MAX_SEARCH_QUERY_LEN
+    };
+
+    if keyword.len() > max_len {
+        return Err(ServerFnError::new(format!(
+            "Search query is too long. Maximum length is {max_len} characters."
+        )));
+    }
+
+    Ok(keyword)
 }

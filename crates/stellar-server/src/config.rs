@@ -25,7 +25,7 @@ pub struct StellarOPGConf {
     pub title: Option<String>,
     pub description: Option<String>,
     #[serde(default = "default_false")]
-    #[serde(rename(deserialize = "data-folder"))]
+    #[serde(rename(deserialize = "requires-https"))]
     pub requires_https: bool,
     pub url: Option<String>,
 }

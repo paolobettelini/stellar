@@ -1,8 +1,8 @@
 use anyhow::Result;
-use mongodb::bson::doc;
+use mongodb::bson::{Document, doc};
 use mongodb::{
     Client, Cursor, IndexModel,
-    options::{ClientOptions, IndexOptions, InsertOneOptions, ReplaceOptions},
+    options::{ClientOptions, FindOptions, IndexOptions, ReplaceOptions},
 };
 
 pub mod model;
@@ -129,6 +129,22 @@ impl ClientHandler {
         Ok(collection.find(filter, None).await?)
     }
 
+    pub async fn search_snippets(
+        &self,
+        keyword: &str,
+        regex: bool,
+        limit: i64,
+    ) -> anyhow::Result<Cursor<Snippet>> {
+        let collection = self
+            .client
+            .database(DATABASE)
+            .collection::<Snippet>(SNIPPETS_COLLECTION);
+
+        Ok(collection
+            .find(id_search_filter(keyword, regex), search_options(limit))
+            .await?)
+    }
+
     pub async fn query_snippet(&self, id: &str) -> anyhow::Result<Option<Snippet>> {
         let collection = self
             .client
@@ -147,6 +163,22 @@ impl ClientHandler {
         let filter = doc! { "id": {"$regex": keyword} };
 
         Ok(collection.find(filter, None).await?)
+    }
+
+    pub async fn search_pages(
+        &self,
+        keyword: &str,
+        regex: bool,
+        limit: i64,
+    ) -> anyhow::Result<Cursor<Page>> {
+        let collection = self
+            .client
+            .database(DATABASE)
+            .collection::<Page>(PAGES_COLLECTION);
+
+        Ok(collection
+            .find(id_search_filter(keyword, regex), search_options(limit))
+            .await?)
     }
 
     pub async fn query_page(&self, id: &str) -> anyhow::Result<Option<Page>> {
@@ -169,6 +201,22 @@ impl ClientHandler {
         Ok(collection.find(filter, None).await?)
     }
 
+    pub async fn search_courses(
+        &self,
+        keyword: &str,
+        regex: bool,
+        limit: i64,
+    ) -> anyhow::Result<Cursor<Course>> {
+        let collection = self
+            .client
+            .database(DATABASE)
+            .collection::<Course>(COURSES_COLLECTION);
+
+        Ok(collection
+            .find(id_search_filter(keyword, regex), search_options(limit))
+            .await?)
+    }
+
     pub async fn query_course(&self, id: &str) -> anyhow::Result<Option<Course>> {
         let collection = self
             .client
@@ -187,6 +235,22 @@ impl ClientHandler {
         let filter = doc! { "id": {"$regex": keyword} };
 
         Ok(collection.find(filter, None).await?)
+    }
+
+    pub async fn search_universes(
+        &self,
+        keyword: &str,
+        regex: bool,
+        limit: i64,
+    ) -> anyhow::Result<Cursor<Universe>> {
+        let collection = self
+            .client
+            .database(DATABASE)
+            .collection::<Universe>(UNIVERSES_COLLECTION);
+
+        Ok(collection
+            .find(id_search_filter(keyword, regex), search_options(limit))
+            .await?)
     }
 
     pub async fn query_universe(&self, id: &str) -> anyhow::Result<Option<Universe>> {
@@ -330,4 +394,39 @@ impl ClientHandler {
             Ok(Vec::new()) // Return an empty vector if the universe is not found
         }
     }
+}
+
+fn id_search_filter(keyword: &str, regex: bool) -> Document {
+    let pattern = if regex {
+        keyword.to_string()
+    } else {
+        escape_regex(keyword)
+    };
+
+    doc! { "id": { "$regex": pattern } }
+}
+
+fn search_options(limit: i64) -> Option<FindOptions> {
+    Some(
+        FindOptions::builder()
+            .limit(limit.clamp(1, 100))
+            .sort(doc! { "id": 1 })
+            .build(),
+    )
+}
+
+fn escape_regex(value: &str) -> String {
+    let mut escaped = String::with_capacity(value.len());
+
+    for ch in value.chars() {
+        match ch {
+            '\\' | '.' | '+' | '*' | '?' | '^' | '$' | '(' | ')' | '[' | ']' | '{' | '}' | '|' => {
+                escaped.push('\\');
+                escaped.push(ch);
+            }
+            _ => escaped.push(ch),
+        }
+    }
+
+    escaped
 }

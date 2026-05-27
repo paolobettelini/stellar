@@ -8,12 +8,12 @@ pub fn PagePage() -> impl IntoView {
     let page = page_sig.read_only();
 
     let params = use_params_map();
-    let page_v = params.with(|params| params.get("page").unwrap_or_default());
-
-    page_sig.set(page_v.clone());
+    Effect::new(move |_| {
+        page_sig.set(params.with(|params| params.get("page").unwrap_or_default()));
+    });
 
     view! {
-        <h1>Page ID: {page_v}</h1>
+        <h1>Page ID: {move || page.get()}</h1>
         <hr></hr>
         <PageRenderer page />
     }

@@ -36,7 +36,7 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     check_data_folder_exists(&config.server.data_folder);
 
     let client = ClientHandler::new(&config.server.connection_url).await?;
-    let _ = client.create_indexes().await;
+    client.create_indexes().await?;
 
     use crate::data::ServerData;
     let data = ServerData { client, config };
