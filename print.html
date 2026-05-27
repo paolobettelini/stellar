@@ -1,49 +1,48 @@
 <!DOCTYPE HTML>
-<html lang="en" class="light sidebar-visible" dir="ltr">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Stellar documentation</title>
-        <meta name="robots" content="noindex">
-
+                <meta name="robots" content="noindex" />
+                
 
         <!-- Custom HTML head -->
+        
 
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#ffffff" />
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
+                <link rel="icon" href="favicon.svg">
+                        <link rel="shortcut icon" href="favicon.png">
+                <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
-
+                <link rel="stylesheet" href="css/print.css" media="print">
+        
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
-
+                <link rel="stylesheet" href="fonts/fonts.css">
+        
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-
-
+        
+            </head>
+    <body>
         <!-- Provide site root to javascript -->
-        <script>
+        <script type="text/javascript">
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
-        <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
-    </head>
-    <body>
-    <div id="body-container">
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script>
+        <script type="text/javascript">
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -59,79 +58,71 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script>
+        <script type="text/javascript">
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            const html = document.documentElement;
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add("js");
+            html.classList.add('js');
         </script>
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
-
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
-            } else {
-                sidebar = 'hidden';
             }
-            sidebar_toggle.checked = sidebar === 'visible';
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <!-- populated by js -->
-            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
-            <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
-            </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
-                <div class="sidebar-resize-indicator"></div>
-            </div>
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="welcome.html"><strong aria-hidden="true">1.</strong> Welcome</a></li><li class="chapter-item expanded affix "><li class="part-title">Stellar</li><li class="chapter-item expanded "><a href="stellar_installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="stellar_introduction.html"><strong aria-hidden="true">3.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="stellar_snippets.html"><strong aria-hidden="true">3.1.</strong> Snippets</a></li><li class="chapter-item expanded "><a href="stellar_pages.html"><strong aria-hidden="true">3.2.</strong> Pages</a></li><li class="chapter-item expanded "><a href="stellar_courses.html"><strong aria-hidden="true">3.3.</strong> Courses</a></li><li class="chapter-item expanded "><a href="stellar_universes.html"><strong aria-hidden="true">3.4.</strong> Universes</a></li></ol></li><li class="chapter-item expanded "><a href="pdf_stellar_format.html"><strong aria-hidden="true">4.</strong> PDF Stellar Format</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="format_commands.html"><strong aria-hidden="true">4.1.</strong> Format Commands</a></li><li class="chapter-item expanded "><a href="latex_package.html"><strong aria-hidden="true">4.2.</strong> LaTeX Package</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">4.2.1.</strong> Usage</a></li><li class="chapter-item expanded "><a href="example.html"><strong aria-hidden="true">4.2.2.</strong> Example</a></li><li class="chapter-item expanded "><a href="vscode.html"><strong aria-hidden="true">4.2.3.</strong> Visual Studio Code</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="stellar_cli.html"><strong aria-hidden="true">5.</strong> Stellar CLI</a></li><li class="chapter-item expanded affix "><li class="part-title">LaTeX-driven Implementation</li><li class="chapter-item expanded "><a href="notes_installation.html"><strong aria-hidden="true">6.</strong> Installation</a></li><li class="chapter-item expanded "><a href="notes_structure.html"><strong aria-hidden="true">7.</strong> Structure</a></li><li class="chapter-item expanded "><a href="notes_compiler.html"><strong aria-hidden="true">8.</strong> Compiler</a></li><li class="chapter-item expanded "><a href="snippet_build_scripts.html"><strong aria-hidden="true">9.</strong> Snippet Build Scripts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="example_script.html"><strong aria-hidden="true">9.1.</strong> Example Script</a></li></ol></li><li class="chapter-item expanded "><a href="common_snippets.html"><strong aria-hidden="true">10.</strong> Common snippets</a></li><li class="chapter-item expanded "><a href="mathjax.html"><strong aria-hidden="true">11.</strong> MathJax support</a></li><li class="chapter-item expanded affix "><li class="part-title">Miscellaneous</li><li class="chapter-item expanded "><a href="misc_fish.html"><strong aria-hidden="true">12.</strong> Fish configuration</a></li><li class="chapter-item expanded "><a href="misc_vscode.html"><strong aria-hidden="true">13.</strong> VS Code configuration</a></li><li class="chapter-item expanded "><a href="misc_todo.html"><strong aria-hidden="true">14.</strong> TODO</a></li></ol>            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
+                
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+                <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </label>
+                        </button>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                                <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                    </div>
+                                            </div>
 
                     <h1 class="menu-title">Stellar documentation</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                                                <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-
+                                                                        
                     </div>
                 </div>
 
-                <div id="search-wrapper" class="hidden">
+                                <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
                         <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
@@ -141,9 +132,9 @@
                         </ul>
                     </div>
                 </div>
-
+                
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script>
+                <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -163,10 +154,9 @@ for stellar, which is available in the <a href="https://github.com/paolobettelin
 <p>The <code>stellar-cli</code> contains everything needed to manage the <code>stellar</code> ecosystem.
 It contains the tools to manage the contents of the courses
 as well as the server.</p>
-<p>You can either download the executable from the <a href="https://github.com/paolobettelini/stellar/releases">releases</a> or compile it yourself. Regardless, you still need to install the python scripts
-as described below.</p>
+<p>You can either download the executable from the <a href="https://github.com/paolobettelini/stellar/releases">releases</a> or compile it yourself.</p>
 <h1 id="compile-the-cli"><a class="header" href="#compile-the-cli">Compile the CLI</a></h1>
-<p>The webserver uses <a href="https://github.com/leptos-rs/leptos/">leptos</a>.</p>
+<p>The webserver uses <a href="https://github.com/leptos-rs/leptos/">leptos</a>. </p>
 <pre><code class="language-bash">git clone https://github.com/paolobettelini/stellar
 cd stellar
 cargo leptos build --release
@@ -182,36 +172,6 @@ set those values in the <code>Cargo.toml</code> instead.</p>
 systemctl enable mongodb
 systemctl start mongodb
 </code></pre>
-<h1 id="necessary-scripts"><a class="header" href="#necessary-scripts">Necessary scripts</a></h1>
-<p>The following steps are absolutely crucial if you plan on generating
-pages and snippets from PDFs. The plan for the future is to
-write the following scripts directly in rust and avoid extra steps like these.</p>
-<pre><code class="language-bash">chmod +x scripts/*
-mv scripts/* /usr/local/bin
-
-# Install pdfminer and pymupdf
-# Arch:
-pacman -S python-pdfminer python-pymupdf
-</code></pre>
-<p><strong>Issues with cropping PDFs</strong>:
-Unfortunately, there are some cropping problems with the <code>mupdf</code> package.
-The problems arise from version <code>1.24</code> onwards.</p>
-<pre><code class="language-bash">wget https://archive.archlinux.org/packages/p/python-pymupdf/python-pymupdf-1.23.21-1-x86_64.pkg.tar.zst
-sudo pacman -U python-pymupdf-1.23.21-1-x86_64.pkg.tar.zst
-
-wget https://archive.archlinux.org/packages/p/python-mupdf/python-mupdf-1.23.9-4-x86_64.pkg.tar.zst
-sudo pacman -U python-mupdf-1.23.9-4-x86_64.pkg.tar.zst
-
-wget https://archive.archlinux.org/packages/l/libmupdf/libmupdf-1.23.9-4-x86_64.pkg.tar.zst
-sudo pacman -U libmupdf-1.23.9-4-x86_64.pkg.tar.zst
-
-paru -S python311 # use this version
-</code></pre>
-<p>Lock the packages version in <code>/etc/pacman.conf</code></p>
-<pre><code>IgnorePkg = libmupdf python-mupdf python-pymupdf
-</code></pre>
-<p>In order to use the correct <code>python</code> version, you can replace the shebang in <code>pdfcrop.py</code>
-with <code>#!/bin/python3.11</code>. The other script does not need it.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="data-structure"><a class="header" href="#data-structure">Data Structure</a></h1>
 <p>The fundamental types of stellar are four: <code>snippets</code>, <code>pages</code>, <code>courses</code> and <code>universes</code>.
 These are the building blocks of all the information within a stellar instance.</p>
@@ -251,12 +211,12 @@ This entire string will be replaced by the given parameter, or by the default va
 if no value was provided.</p>
 <p>As an example, the following snippet will render an image.
 The width, height, source and alt of the images are all parameters.</p>
-<pre><code class="language-html">&lt;div style="text-align: center;"&gt;
+<pre><code class="language-html">&lt;div style=&quot;text-align: center;&quot;&gt;
     &lt;img
-        width="#{width|auto}"
-        height="#{height|auto}"
-        src="#{src|Missing SRC}"
-        alt="#{alt|Could not display image}"
+        width=&quot;#{width|auto}&quot;
+        height=&quot;#{height|auto}&quot;
+        src=&quot;#{src|Missing SRC}&quot;
+        alt=&quot;#{alt|Could not display image}&quot;
     &gt;
 &lt;/div&gt;
 </code></pre>
@@ -266,16 +226,16 @@ primary file.</p>
 <h1 id="file-metajson"><a class="header" href="#file-metajson">File <code>meta.json</code></a></h1>
 <p>A special secondary file is the <code>meta.json</code> which contains additional metadata (more information will follow in the book).</p>
 <h2 id="json-structure"><a class="header" href="#json-structure">JSON Structure</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>generalizations</code></td><td>Array of snippet IDs</td><td>Mathematical generalizations.</td></tr>
 <tr><td><code>requires</code></td><td>Array of snippet IDs</td><td>Necessary libraries.</td></tr>
 <tr><td><code>default-params</code></td><td>Params string</td><td>Default parameters for snippet.</td></tr>
+<tr><td><code>params</code></td><td>Params string</td><td>List of params as documentation.</td></tr>
 </tbody></table>
-</div>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{
-    "default-params": "width=70%|src=https://youtu.be/dQw4w9WgXcQ&amp;",
-    "requires": ["some-lib-snippet"]
+    &quot;default-params&quot;: &quot;width=70%|src=https://youtu.be/dQw4w9WgXcQ&amp;&quot;,
+    &quot;requires&quot;: [&quot;some-lib-snippet&quot;]
 }
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="pages"><a class="header" href="#pages">Pages</a></h1>
@@ -291,14 +251,14 @@ mechanism as snippets.</p>
 <pre><code class="language-html">&lt;stellar-snippet&gt;ID&lt;/stellar-snippet&gt;
 </code></pre>
 <p>Parameters can be passed as follows:</p>
-<pre><code class="language-html">&lt;stellar-snippet params="param1=v1|param2=v2"&gt;ID&lt;/stellar-snippet&gt;
+<pre><code class="language-html">&lt;stellar-snippet params=&quot;param1=v1|param2=v2&quot;&gt;ID&lt;/stellar-snippet&gt;
 </code></pre>
 <p>Here is an example of a page content:</p>
 <pre><code class="language-html">&lt;h1&gt;Welcome to this page&lt;h1&gt;
 
 Here is some normal text which will be displayed
 
-&lt;stellar-snippet params="src=https://..."&gt;yt-embed&lt;/stellar-snippet&gt;
+&lt;stellar-snippet params=&quot;src=https://...&quot;&gt;yt-embed&lt;/stellar-snippet&gt;
 
 And here is a snippet
 </code></pre>
@@ -316,26 +276,26 @@ the title of the heading of the page (string).
 The third argument is optional and contains the ID of the page (string).
 If no third argument is specified, the title is not clickable.</p>
 <pre><code class="language-json">{
-    "title": "Stellar documentation",
-    "pages": [
+    &quot;title&quot;: &quot;Stellar documentation&quot;,
+    &quot;pages&quot;: [
         [
             1,
-            "Welcome",
-            "welcome-page-id"
+            &quot;Welcome&quot;,
+            &quot;welcome-page-id&quot;
         ],
         [
             1,
-            "Stellar",
+            &quot;Stellar&quot;,
         ],
         [
             1,
-            "Introduction",
-            "stellar-introduction-page-id"
+            &quot;Introduction&quot;,
+            &quot;stellar-introduction-page-id&quot;
         ],
         [
             2,
-            "Snippets",
-            "stellar-snippets-page-id"
+            &quot;Snippets&quot;,
+            &quot;stellar-snippets-page-id&quot;
         ]
     ]
 }
@@ -348,55 +308,55 @@ connected by functional dependencies in a graph. Every universe is a single JSON
 <p>Every universe contains a list of all the courses to display along with their coordinates
 in the <code>(x,y)</code> plane. It also contains a list of pairwise dependencies between courses IDs.</p>
 <pre><code class="language-json">{
-  "title": "Rendering",
-  "courses": [
+  &quot;title&quot;: &quot;Rendering&quot;,
+  &quot;courses&quot;: [
     {
-      "name": "Linear Algebra",
-      "id": "linearalgebra",
-      "x": 280,
-      "y": 150
+      &quot;name&quot;: &quot;Linear Algebra&quot;,
+      &quot;id&quot;: &quot;linearalgebra&quot;,
+      &quot;x&quot;: 280,
+      &quot;y&quot;: 150
     },
     {
-      "name": "Calculus",
-      "id": "calculus",
-      "x": 280,
-      "y": 280
+      &quot;name&quot;: &quot;Calculus&quot;,
+      &quot;id&quot;: &quot;calculus&quot;,
+      &quot;x&quot;: 280,
+      &quot;y&quot;: 280
     },
     {
-      "name": "Physical Rendering",
-      "id": "physicalrendering",
-      "x": 520,
-      "y": 220
+      &quot;name&quot;: &quot;Physical Rendering&quot;,
+      &quot;id&quot;: &quot;physicalrendering&quot;,
+      &quot;x&quot;: 520,
+      &quot;y&quot;: 220
     },
     {
-      "name": "Computer Rendering",
-      "id": "computerrendering",
-      "x": 520,
-      "y": 360
+      &quot;name&quot;: &quot;Computer Rendering&quot;,
+      &quot;id&quot;: &quot;computerrendering&quot;,
+      &quot;x&quot;: 520,
+      &quot;y&quot;: 360
     },
     {
-      "name": "Vulkan",
-      "id": "vulkan",
-      "x": 800,
-      "y": 280
+      &quot;name&quot;: &quot;Vulkan&quot;,
+      &quot;id&quot;: &quot;vulkan&quot;,
+      &quot;x&quot;: 800,
+      &quot;y&quot;: 280
     }
   ],
-  "dependencies": [
+  &quot;dependencies&quot;: [
     {
-      "from": "linearalgebra",
-      "to": "physicalrendering"
+      &quot;from&quot;: &quot;linearalgebra&quot;,
+      &quot;to&quot;: &quot;physicalrendering&quot;
     },
     {
-      "from": "calculus",
-      "to": "physicalrendering"
+      &quot;from&quot;: &quot;calculus&quot;,
+      &quot;to&quot;: &quot;physicalrendering&quot;
     },
     {
-      "from": "computerrendering",
-      "to": "vulkan"
+      &quot;from&quot;: &quot;computerrendering&quot;,
+      &quot;to&quot;: &quot;vulkan&quot;
     },
     {
-      "from": "physicalrendering",
-      "to": "vulkan"
+      &quot;from&quot;: &quot;physicalrendering&quot;,
+      &quot;to&quot;: &quot;vulkan&quot;
     }
   ]
 }
@@ -406,7 +366,7 @@ in the <code>(x,y)</code> plane. It also contains a list of pairwise dependencie
 The file contains a full stellar page and snippets or just a collection of snippets. Stellar will crop the PDF into multiple pieces to generate every snippet individually, and is also able to generate the corresponding page containing them.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="format-commands"><a class="header" href="#format-commands">Format Commands</a></h1>
 <p>There following commands are to be written as text in the PDF.</p>
-<div class="table-wrapper"><table><thead><tr><th>Command</th><th>Description</th></tr></thead><tbody>
+<table><thead><tr><th>Command</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>!id &lt;ID&gt;</code></td><td>Set the ID of this page.</td></tr>
 <tr><td><code>!snippet &lt;ID&gt;</code></td><td>Start a PDF snippet here.</td></tr>
 <tr><td><code>!endsnippet &lt;JSON meta&gt;</code></td><td>End the current snippet here. The JSON metadata is optional.</td></tr>
@@ -417,7 +377,6 @@ The file contains a full stellar page and snippets or just a collection of snipp
 <tr><td><code>!subsection</code></td><td>Add a level 2 heading <code>&lt;h2&gt;</code>.</td></tr>
 <tr><td><code>!subsubsection</code></td><td>Add a level 3 heading <code>&lt;h3&gt;</code>.</td></tr>
 </tbody></table>
-</div>
 <p>Furthermore, it is possible to reference another snippet by adding an annotation with a link of the form <code>/snippet/snippet-id</code> or <code>/snippet/snippet-id|Label</code>.</p>
 <p>Stellar will crop the PDF between <code>!snippet</code> and <code>!endsnippet</code> commands (margins can be adjusted in the CLI parameters).</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="latex-package"><a class="header" href="#latex-package">LaTeX Package</a></h1>
@@ -495,7 +454,7 @@ If you want to write a percentage, use <code>\HTMLPercentage</code>.</p>
 
 \includesnpt{snippet2-definition}
 
-\begin{snippet}{text-snippet}[\{"meta": "json"\}] % will add a meta.json file
+\begin{snippet}{text-snippet}[\{&quot;meta&quot;: &quot;json&quot;\}] % will add a meta.json file
     Some text as a snippet!
 \end{snippet}
 
@@ -576,14 +535,14 @@ Options:
           Print help
 </code></pre>
 <p>Here is a bunch of examples:</p>
-<pre><code>stellar import -c "..." --import ./data
-stellar import -c "..." --import ./data/snippets
-stellar import -c "..." --import ./data/pages
-stellar import -c "..." --import ./data/courses
-stellar import -c "..." --import ./data/snippets/snippet1
-stellar import -c "..." --import ./data/pages/page1.html
-stellar import -c "..." --import ./data/courses/course1.json
-stellar import -c "..." --import course1.json course2.json
+<pre><code>stellar import -c &quot;...&quot; --import ./data
+stellar import -c &quot;...&quot; --import ./data/snippets
+stellar import -c &quot;...&quot; --import ./data/pages
+stellar import -c &quot;...&quot; --import ./data/courses
+stellar import -c &quot;...&quot; --import ./data/snippets/snippet1
+stellar import -c &quot;...&quot; --import ./data/pages/page1.html
+stellar import -c &quot;...&quot; --import ./data/courses/course1.json
+stellar import -c &quot;...&quot; --import course1.json course2.json
 </code></pre>
 <h1 id="stellar-generate"><a class="header" href="#stellar-generate">stellar generate</a></h1>
 <p>The <code>generate</code> subcommand is used to parse a PDF in the PDF Stellar Format
@@ -612,12 +571,10 @@ Options:
 </code></pre>
 <h1 id="stellar-check"><a class="header" href="#stellar-check">stellar check</a></h1>
 <p>The <code>check</code> subcommand is used to check the integrity of the existing data.</p>
-<p>There are various integrity checks:</p>
-<ul>
-<li>Existence of refereces in the snippets, pages, courses and universes</li>
-<li>Autoreferentiality in snippets</li>
-<li>Reference linearity</li>
-</ul>
+<p>There are various integrity checks:
++ Existence of refereces in the snippets, pages, courses and universes
++ Autoreferentiality in snippets
++ Reference linearity</p>
 <pre><code>Help message for check
 
 Usage: stellar check [OPTIONS] --connection-url &lt;CONNECTION_URL&gt;
@@ -699,19 +656,19 @@ Options:
 <p>The compiler will automatically handle everything. It will import
 the data to the database. You can call <code>notes</code> from any directory.</p>
 <pre><code class="language-bash">notes # compiles everything
-notes Something # compiles every file name that contains "Something"
-notes -r "S|T|N|G" # compiles every file name that matches the regex
+notes Something # compiles every file name that contains &quot;Something&quot;
+notes -r &quot;S|T|N|G&quot; # compiles every file name that matches the regex
 notes --latex # compiles all the latex files
 notes --snippets # compiles all the universes
 notes --pages # compiles all the universes
 notes --courses # compiles all the universes
 notes --universes # compiles all the universes
-notes --universes -r "..." # compiles all the universes that match the regex
+notes --universes -r &quot;...&quot; # compiles all the universes that match the regex
 notes course1 File1 File2 # compile multiple inputs
 notes -r reg1 reg2 # compiles files matching reg1 or reg2
-notes "Something" --containing "\command" # compiles every file name that contains "Something" whose content contains "\command"
-notes -r "Something.+" --containing "\command" # like the one above but with regex matching
-notes File1 File2 --containing "hello"
+notes &quot;Something&quot; --containing &quot;\command&quot; # compiles every file name that contains &quot;Something&quot; whose content contains &quot;\command&quot;
+notes -r &quot;Something.+&quot; --containing &quot;\command&quot; # like the one above but with regex matching
+notes File1 File2 --containing &quot;hello&quot;
 </code></pre>
 <p><b>Note:</b> the <code>--containing</code> option is not affected by <code>--regex</code> and <code>--ignore-case</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="snippet-build-scripts"><a class="header" href="#snippet-build-scripts">Snippet Build Scripts</a></h1>
@@ -729,46 +686,46 @@ def main():
     
     try:
         # Execute wasm-pack build --release
-        subprocess.run(["wasm-pack", "build", "--release"], check=True)
+        subprocess.run([&quot;wasm-pack&quot;, &quot;build&quot;, &quot;--release&quot;], check=True)
         
         # Change directory to website
-        os.chdir("website")
+        os.chdir(&quot;website&quot;)
         
         # Execute npm install
-        subprocess.run(["npm", "install"], check=True)
+        subprocess.run([&quot;npm&quot;, &quot;install&quot;], check=True)
         
         # Execute npm run build
-        subprocess.run(["npm", "run", "build"], check=True)
+        subprocess.run([&quot;npm&quot;, &quot;run&quot;, &quot;build&quot;], check=True)
         
         # Generate snippet folder
-        dist_folder = "dist"
+        dist_folder = &quot;dist&quot;
         target_files = os.listdir(dist_folder)
         
-        # Remove "dist/index.js"
-        index_file_path = os.path.join(dist_folder, "index.js")
+        # Remove &quot;dist/index.js&quot;
+        index_file_path = os.path.join(dist_folder, &quot;index.js&quot;)
         if os.path.exists(index_file_path):
             os.remove(index_file_path)
         
-        # Move all files from "dist" to target_folder
+        # Move all files from &quot;dist&quot; to target_folder
         for file_name in target_files:
             file_path = os.path.join(dist_folder, file_name)
             if os.path.isfile(file_path):
                 shutil.move(file_path, target_folder)
         
-        # Remove the "dist" directory
+        # Remove the &quot;dist&quot; directory
         shutil.rmtree(dist_folder, ignore_errors=True)
         
-        print(f"Successfully moved files to {target_folder}")
+        print(f&quot;Successfully moved files to {target_folder}&quot;)
     
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred while executing: {e.cmd}")
-        print(f"Return code: {e.returncode}")
+        print(f&quot;An error occurred while executing: {e.cmd}&quot;)
+        print(f&quot;Return code: {e.returncode}&quot;)
         sys.exit(1)
     except Exception as e:
-        print(f"An unexpected error occurred: {str(e)}")
+        print(f&quot;An unexpected error occurred: {str(e)}&quot;)
         sys.exit(1)
 
-    if __name__ == "__main__":
+    if __name__ == &quot;__main__&quot;:
         main()
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="common-snippets"><a class="header" href="#common-snippets">Common snippets</a></h1>
@@ -790,28 +747,28 @@ Params: <b>src, width, height</b></li>
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="fish-configuration"><a class="header" href="#fish-configuration">Fish configuration</a></h1>
 <p>If you're writing notes using stellar you might find this setup useful (<code>~/.config/fish/config.fish</code>):</p>
-<pre><code class="language-bash">set --export MONGO_CONNECTION_URL "mongodb://127.0.0.1" # modify accordingly
-set --export NOTES_PATH "/home/user/notes" # modify accordingly
+<pre><code class="language-bash">set --export MONGO_CONNECTION_URL &quot;mongodb://127.0.0.1&quot; # modify accordingly
+set --export NOTES_PATH &quot;/home/user/notes&quot; # modify accordingly
 
 function startstellar
   sudo -v
-  sudo stellar web --data "$NOTES_PATH/data" --connection-url $MONGO_CONNECTION_URL --port 80
+  sudo stellar web --data &quot;$NOTES_PATH/data&quot; --connection-url $MONGO_CONNECTION_URL --port 80
 end
 
 function stopstellar
   sudo -v
   set pid (sudo lsof -t -i :80)
-  if test -z "$pid"
-    echo "Server was not open"
+  if test -z &quot;$pid&quot;
+    echo &quot;Server was not open&quot;
   else
     sudo kill -9 $pid
-    echo "Server was killed"
+    echo &quot;Server was killed&quot;
   end
 end
 
 function updatenotes
   sudo -v
-  set latest_url (curl -s https://api.github.com/repos/paolobettelini/notes/releases/latest | grep browser_download_url | cut -d '"' -f 4)
+  set latest_url (curl -s https://api.github.com/repos/paolobettelini/notes/releases/latest | grep browser_download_url | cut -d '&quot;' -f 4)
   set temp_file /tmp/notes_latest
   curl -L -o $temp_file $latest_url
   chmod +x $temp_file
@@ -820,7 +777,7 @@ end
 
 function updatestellar
   sudo -v
-  set latest_url (curl -s https://api.github.com/repos/paolobettelini/stellar/releases/latest | grep browser_download_url | cut -d '"' -f 4)
+  set latest_url (curl -s https://api.github.com/repos/paolobettelini/stellar/releases/latest | grep browser_download_url | cut -d '&quot;' -f 4)
   set temp_file /tmp/stellar_latest
   curl -L -o $temp_file $latest_url
   chmod +x $temp_file
@@ -830,10 +787,10 @@ end
 <div style="break-before: page; page-break-before: always;"></div><h1 id="vs-code-configuration"><a class="header" href="#vs-code-configuration">VS Code configuration</a></h1>
 <p>You can install the <code>Action Buttons</code> extension and add the following command:</p>
 <pre><code class="language-json">{
-    "name": "$(triangle-right) Run Notes",
-    "color": "green",
-    "singleInstance": true,
-    "command": "notes ${fileBasename}",
+    &quot;name&quot;: &quot;$(triangle-right) Run Notes&quot;,
+    &quot;color&quot;: &quot;green&quot;,
+    &quot;singleInstance&quot;: true,
+    &quot;command&quot;: &quot;notes ${fileBasename}&quot;,
 }
 </code></pre>
 <p>This will provide a button to compile the current file.</p>
@@ -843,43 +800,42 @@ end
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-
-
+                        
+                        
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-
-            </nav>
+                
+                            </nav>
 
         </div>
 
-
-
-
-        <script>
+        
+        
+        
+                <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-
-
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
-
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        
+        
+                <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-
-        <script>
+        
+                        <script type="text/javascript">
         window.addEventListener('load', function() {
             window.setTimeout(window.print, 100);
         });
         </script>
-
-    </div>
+                
     </body>
 </html>
