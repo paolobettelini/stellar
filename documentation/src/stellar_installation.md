@@ -12,7 +12,14 @@ The webserver uses [leptos](https://github.com/leptos-rs/leptos/).
 ```bash
 git clone https://github.com/paolobettelini/stellar
 cd stellar
-cargo leptos build --release
+
+# In release mode the static files are embedded in the executable
+# These commands ensure it works properly
+cargo clean -p stellar-server -p stellar-cli
+cargo leptos build --release --frontend-only
+cargo clean -p stellar-server -p stellar-cli
+cargo build --release --package stellar-cli --bin stellar-cli --no-default-features
+
 mv target/release/stellar-cli /usr/local/bin
 ```
 
