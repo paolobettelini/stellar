@@ -150,7 +150,7 @@ async fn process_cmd(
             let output = output.join(format!("{snippet_id}.pdf"));
 
             // Crop snippet using old "current_coords"
-            let page = cmd.page - 1;
+            let page = cmd.page;
             let y1 = processor.current_coords.unwrap().1 + dim.top_offset;
             let y2 = cmd.coords.1 + dim.bottom_offset;
 

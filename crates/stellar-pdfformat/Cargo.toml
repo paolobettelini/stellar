@@ -8,7 +8,7 @@ anyhow = "1.0.86"
 log = "0.4.22"
 serde_json = "1.0.118"
 serde = { version = "1.0.203", features = [ "derive" ] }
-
+mupdf = "0.7"
 stellar-import = { path = "../stellar-import" }
 stellar-utils = { path = "../stellar-utils" }
 stellar-parser = { path = "../stellar-parser" }
