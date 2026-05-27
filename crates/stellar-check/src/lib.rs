@@ -5,8 +5,8 @@ use futures::TryStreamExt;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 use stellar_database as database;
-use stellar_database::model::*;
 use stellar_database::ClientHandler;
+use stellar_database::model::*;
 
 pub async fn check_autoreferentiality(client: &ClientHandler) -> anyhow::Result<u32> {
     log::debug!("Checking autoreferentiality in snippets");

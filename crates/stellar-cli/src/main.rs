@@ -14,7 +14,9 @@ const LOG_ENV: &str = "RUST_LOG";
 async fn main() -> anyhow::Result<()> {
     // Initialize logging
     if std::env::var(LOG_ENV).is_err() {
-        std::env::set_var(LOG_ENV, "info");
+        unsafe {
+            std::env::set_var(LOG_ENV, "info");
+        }
     }
 
     env_logger::init();
@@ -159,10 +161,7 @@ pub async fn parse_check_args(args: &CheckArgs) -> anyhow::Result<()> {
     }
 
     if all_operations || args.linearity {
-        log::info!(
-            "Found {} non-linear snippets",
-            not_linear_count
-        );
+        log::info!("Found {} non-linear snippets", not_linear_count);
     }
 
     Ok(())

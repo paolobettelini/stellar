@@ -1,6 +1,7 @@
-use crate::app::{get_universe_json, Universe};
+use crate::app::{Universe, get_universe_json};
 use leptos::html::{Canvas, Div};
 use leptos::prelude::*;
+use leptos_router::components::Redirect;
 #[cfg(feature = "hydrate")]
 use wasm_bindgen::JsCast;
 #[cfg(feature = "hydrate")]
@@ -18,7 +19,7 @@ pub fn UniverseRenderer(universe: Signal<String>) -> impl IntoView {
         <Suspense fallback=move || view! { <p class="universe-status">"Loading..."</p> }>
             {move || match once.get() {
                 None => view! {}.into_any(),
-                Some(Err(_)) => view! { <p class="universe-status">"Could not load universe"</p> }.into_any(),
+                Some(Err(_)) => view! { <Redirect path="/404" /> }.into_any(),
                 Some(Ok(content)) => {
                     match serde_json::from_str::<Universe>(&content) {
                         Ok(parsed) => {

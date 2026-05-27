@@ -1,6 +1,7 @@
 use crate::app::get_page_html;
 use crate::app::{SnippetLibraries, SnippetsRenderer};
 use leptos::prelude::*;
+use leptos_router::components::Redirect;
 
 #[component]
 pub fn PageRenderer(
@@ -45,7 +46,7 @@ pub fn PageRenderer(
                             view! {}.into_any()
                         }
                     } else {
-                        view! {}.into_any()
+                        view! { <Redirect path="/404" /> }.into_any()
                     }
                 }
             }}

@@ -18,7 +18,7 @@ pub fn get_path_type(path: &Path) -> PathBufType {
     let path = path.canonicalize().unwrap();
     if path.is_dir() {
         let path_str = path.to_string_lossy();
-        
+
         if path_str.ends_with("/data") {
             PathBufType::DataFolder
         } else if path_str.ends_with("/data/snippets") {
@@ -32,7 +32,7 @@ pub fn get_path_type(path: &Path) -> PathBufType {
         } else if let Some(parent) = path.parent() {
             // Single snippets are folders
             let path_str = parent.to_string_lossy();
-            
+
             if path_str.ends_with("/data/snippets") {
                 PathBufType::SnippetsFile
             } else {

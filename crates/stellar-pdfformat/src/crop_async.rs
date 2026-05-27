@@ -4,11 +4,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::thread::JoinHandle;
 use std::time::Duration;
-use std::sync::mpsc::Receiver;
 
 pub struct CropPdfData {
     pub input: PathBuf,
@@ -41,13 +41,29 @@ pub fn crop_worker(rx: Arc<Mutex<Receiver<CropPdfData>>>) {
 }
 
 pub fn crop_pdf(data: &CropPdfData) {
-    let input = &data.input.to_str().map(|s| s.to_string()).unwrap_or_default();
-    let output = &data.output.to_str().map(|s| s.to_string()).unwrap_or_default();
-    
+    let input = &data
+        .input
+        .to_str()
+        .map(|s| s.to_string())
+        .unwrap_or_default();
+    let output = &data
+        .output
+        .to_str()
+        .map(|s| s.to_string())
+        .unwrap_or_default();
+
     log::info!("Cropping snippet: {}", &data.snippet_id);
 
-    let right_margin = if let Some(v) = data.right_margin { v } else { 0.0 };
-    let left_margin = if let Some(v) = data.left_margin { v } else { 0.0 };
+    let right_margin = if let Some(v) = data.right_margin {
+        v
+    } else {
+        0.0
+    };
+    let left_margin = if let Some(v) = data.left_margin {
+        v
+    } else {
+        0.0
+    };
 
     let res = Command::new("pdfcrop.py")
         .arg(input)

@@ -1,22 +1,22 @@
-use import::ClientHandler;
 use crate::Cmd::*;
+use crate::CropPdfData;
 use crate::DocumentCmd;
+use crate::crop_pdf;
 use crate::pdf_extract;
+use import::ClientHandler;
+use std::io::Write;
 use std::process::{Command, Stdio};
 use std::{
     fs,
     path::{Path, PathBuf},
 };
-use std::io::Write;
-use crate::crop_pdf;
-use crate::CropPdfData;
 use stellar_import as import;
 
+use std::sync::mpsc::{self, Receiver, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::thread::JoinHandle;
 use std::time::Duration;
-use std::sync::mpsc::{self, Sender, Receiver};
 
 use serde_json::json;
 
@@ -46,7 +46,8 @@ pub async fn generate_snippets(
     bottom_offset: f64,
     left_margin: Option<f64>,
     right_margin: Option<f64>,
-) -> anyhow::Result<(bool, u32)> { // (Page was imported, number of imported snippets)
+) -> anyhow::Result<(bool, u32)> {
+    // (Page was imported, number of imported snippets)
     let out_folder = Path::new(output);
     let snippets_dir = out_folder.join("snippets");
     let pages_dir = out_folder.join("pages");
@@ -88,7 +89,8 @@ pub async fn generate_snippets(
 
     let mut imported_snippets = vec![];
     for cmd in commands {
-        let snippet = process_cmd(input, &mut processor, &cmd, &snippets_dir, &dim, tx.clone()).await;
+        let snippet =
+            process_cmd(input, &mut processor, &cmd, &snippets_dir, &dim, tx.clone()).await;
 
         if let Some(snippet) = snippet {
             imported_snippets.push(snippet);
@@ -109,7 +111,7 @@ pub async fn generate_snippets(
         for snippet in imported_snippets {
             let path = snippets_dir.join(&snippet);
             let res = import::import_snippet_with_client(client, &path).await;
-            
+
             if res.is_ok() {
                 imported_snippets_count += 1;
             }
@@ -128,7 +130,8 @@ async fn process_cmd(
     snippets_dir: &Path,
     dim: &CropDimension,
     tx: Sender<CropPdfData>,
-) -> Option<String> { // true if a snippet has been imported
+) -> Option<String> {
+    // true if a snippet has been imported
     match &cmd.cmd {
         SetGlobalID(id) => {
             processor.global_id = id.to_string();
@@ -179,7 +182,8 @@ async fn process_cmd(
                 let mut output = snippets_dir.join(&snippet_id);
                 output.push("meta.json");
                 let mut file = fs::File::create(output).expect("Failed to save meta file");
-                file.write_all(meta.as_bytes()).expect("Failed to save meta file");
+                file.write_all(meta.as_bytes())
+                    .expect("Failed to save meta file");
             }
 
             processor.current_coords = None;
@@ -205,13 +209,13 @@ async fn process_cmd(
         }
         Include((id, params)) => {
             // Add snippet id to HTML page
-            
+
             let snippet = if let Some(params) = params {
                 format!("<stellar-snippet params=\"{params}\">{id}</stellar-snippet>\n")
             } else {
                 format!("<stellar-snippet>{id}</stellar-snippet>\n")
             };
-            
+
             processor.html_page.push_str(&snippet);
         }
         Plain(text) => {
@@ -225,7 +229,12 @@ async fn process_cmd(
     None
 }
 
-async fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &Path, client: &Option<&ClientHandler>) -> bool {
+async fn finalize(
+    processor: &mut DocProcessor,
+    pages_dir: &Path,
+    courses_dir: &Path,
+    client: &Option<&ClientHandler>,
+) -> bool {
     // Generate page
     let file_id = &processor.global_id;
 
@@ -239,7 +248,7 @@ async fn finalize(processor: &mut DocProcessor, pages_dir: &Path, courses_dir: &
         return if res.is_err() {
             log::error!("Couldn't write file {}", &filename);
             false
-        } else if let Some(ref client) = client {
+        } else if let Some(client) = client {
             let res = import::import_page_with_client(client, &file_path).await;
             res.is_ok()
         } else {

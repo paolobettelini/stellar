@@ -4,8 +4,8 @@ use crate::app::App;
 use crate::assets::handle_static_file;
 use crate::config::StellarConfig;
 use crate::routes::*;
-use actix_web::{get, web, HttpServer, Responder};
-use leptos::config::{get_config_from_str, Env, LeptosOptions};
+use actix_web::{HttpServer, Responder, get, web};
+use leptos::config::{Env, LeptosOptions, get_config_from_str};
 use leptos::prelude::*;
 use leptos_meta::MetaTags;
 use std::path::PathBuf;
@@ -30,7 +30,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 }
 
 pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
-    use leptos_actix::{generate_route_list, LeptosRoutes};
+    use leptos_actix::{LeptosRoutes, generate_route_list};
 
     // Check if data folder exists
     check_data_folder_exists(&config.server.data_folder);

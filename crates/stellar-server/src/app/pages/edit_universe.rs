@@ -1,4 +1,4 @@
-use crate::app::{get_universe_json, Course, Dependency, Topbar, Universe, UniverseCanvas};
+use crate::app::{Course, Dependency, Topbar, Universe, UniverseCanvas, get_universe_json};
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
@@ -573,11 +573,7 @@ fn dependency_endpoints(
     let to =
         non_empty_string(selected_to).or_else(|| ids.iter().find(|id| **id != from).cloned())?;
 
-    if from == to {
-        None
-    } else {
-        Some((from, to))
-    }
+    if from == to { None } else { Some((from, to)) }
 }
 
 fn update_course<F>(universe: RwSignal<Option<Universe>>, index: usize, update: F)
@@ -621,11 +617,7 @@ where
 
 fn non_empty_string(value: String) -> Option<String> {
     let value = value.trim().to_string();
-    if value.is_empty() {
-        None
-    } else {
-        Some(value)
-    }
+    if value.is_empty() { None } else { Some(value) }
 }
 
 fn parse_optional_f64(value: &str) -> Option<f64> {

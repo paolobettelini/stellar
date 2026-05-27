@@ -1,7 +1,9 @@
 use crate::app::{
-    get_snippet_meta_json, get_snippet_references, SnippetLibraries, SnippetsRenderer, Topbar,
+    SnippetLibraries, SnippetsRenderer, Topbar, get_snippet_exists, get_snippet_meta_json,
+    get_snippet_references,
 };
 use leptos::prelude::*;
+use leptos_router::components::Redirect;
 use leptos_router::hooks::use_params_map;
 use serde_json::Value;
 
@@ -11,6 +13,7 @@ pub fn SnippetPage() -> impl IntoView {
     let snippet =
         Signal::derive(move || params.with(|params| params.get("snippet").unwrap_or_default()));
     let title = Signal::derive(|| String::from("Snippet"));
+    let exists = Resource::new(move || snippet.get(), get_snippet_exists);
     let meta = Resource::new(move || snippet.get(), get_snippet_meta_json);
     let references = Resource::new(move || snippet.get(), get_snippet_references);
     let default_params = RwSignal::new(None::<String>);
@@ -29,7 +32,9 @@ pub fn SnippetPage() -> impl IntoView {
                 rerender_key
             )
         } else {
-            format!("<stellar-snippet>{snippet}</stellar-snippet><!-- stellar-rerender:{rerender_key} -->")
+            format!(
+                "<stellar-snippet>{snippet}</stellar-snippet><!-- stellar-rerender:{rerender_key} -->"
+            )
         }
     });
 
@@ -56,6 +61,13 @@ pub fn SnippetPage() -> impl IntoView {
         <SnippetLibraries />
 
         <div id="snippet-container">
+            <Suspense fallback=move || view! {}>
+                {move || match exists.get() {
+                    Some(Ok(false)) | Some(Err(_)) => view! { <Redirect path="/404" /> }.into_any(),
+                    _ => view! {}.into_any(),
+                }}
+            </Suspense>
+
             <div class="snippet-topbar">
                 <Topbar title />
             </div>

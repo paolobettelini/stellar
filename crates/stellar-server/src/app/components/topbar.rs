@@ -112,8 +112,7 @@ fn sync_theme_buttons(theme: &str) {
 }
 
 #[cfg(not(all(feature = "hydrate", target_arch = "wasm32")))]
-fn sync_theme_buttons(_theme: &str) {
-}
+fn sync_theme_buttons(_theme: &str) {}
 
 fn theme_button_class(current_theme: String, theme: &str) -> &'static str {
     if current_theme

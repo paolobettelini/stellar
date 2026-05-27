@@ -1,9 +1,9 @@
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{HttpResponse, Responder, get, post, web};
 
 use crate::data::ServerData;
 use futures::TryStreamExt;
-use std::path::{Path, PathBuf};
 use mime_guess::from_path;
+use std::path::{Path, PathBuf};
 
 // TODO: Move the following routes to leptos server functions
 
@@ -14,7 +14,9 @@ async fn snippet_service(
 ) -> impl Responder {
     let snippet = snippet.to_string();
     // TODO pre-create path
-    let dir = &Path::new(&data.config.server.data_folder).join("snippets").join(&snippet);
+    let dir = &Path::new(&data.config.server.data_folder)
+        .join("snippets")
+        .join(&snippet);
 
     let (file, content_type) = {
         if let Some(v) = get_snippet_file_and_content_type(dir, &snippet) {

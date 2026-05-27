@@ -10,7 +10,7 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
 
     let file_name = format!("{course}.json");
     log::info!("Reading file: {file_name:?}"); // debug
-                                               // TODO pre-create path
+    // TODO pre-create path
     let file = &Path::new(&data.config.server.data_folder)
         .join("courses")
         .join(&file_name);
@@ -20,11 +20,22 @@ pub async fn get_course_json(course: String) -> Result<String, ServerFnError> {
             v
         } else {
             log::warn!("Could not find course: {file_name}");
-            panic!("sad");
+            return Err(ServerFnError::new(format!("Course not found: {course}")));
         }
     };
 
     Ok(json)
+}
+
+#[server]
+pub async fn get_snippet_exists(snippet: String) -> Result<bool, ServerFnError> {
+    use crate::data::ServerData;
+    let data = expect_context::<ServerData>();
+
+    data.client
+        .snippet_exists(&snippet)
+        .await
+        .map_err(ServerFnError::new)
 }
 
 #[server]
@@ -48,7 +59,7 @@ pub async fn get_snippet_meta_json(snippet: String) -> Result<String, ServerFnEr
 
     let file_name = format!("{snippet}.json");
     log::info!("Reading file: {file_name:?}"); // debug
-                                               // TODO pre-create path
+    // TODO pre-create path
     let file = &Path::new(&data.config.server.data_folder)
         .join("snippets")
         .join(&snippet)
@@ -74,7 +85,7 @@ pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError
 
     let file_name = format!("{universe}.json");
     log::info!("Reading file: {file_name:?}"); // debug
-                                               // TODO pre-create path
+    // TODO pre-create path
     let file = &Path::new(&data.config.server.data_folder)
         .join("universes")
         .join(&file_name);
@@ -84,7 +95,9 @@ pub async fn get_universe_json(universe: String) -> Result<String, ServerFnError
             v
         } else {
             log::warn!("Could not find universe: {file_name}");
-            panic!("sad");
+            return Err(ServerFnError::new(format!(
+                "Universe not found: {universe}"
+            )));
         }
     };
 
@@ -113,7 +126,7 @@ pub async fn get_page_html(page: String) -> Result<String, ServerFnError> {
             v
         } else {
             log::warn!("Could not find page: {file_name}");
-            panic!("Could not find {file:?}");
+            return Err(ServerFnError::new(format!("Page not found: {page}")));
         }
     };
 

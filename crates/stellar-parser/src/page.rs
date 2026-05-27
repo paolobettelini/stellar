@@ -1,7 +1,7 @@
-use std::fs::read_to_string;
-use std::path::Path;
 use anyhow::Result;
 use html_parser::{Dom, Node};
+use std::fs::read_to_string;
+use std::path::Path;
 
 // TODO: put "stellar-snippet" in a global variable
 

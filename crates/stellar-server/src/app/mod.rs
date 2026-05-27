@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos_meta::{provide_meta_context, Meta, Stylesheet, Title};
+use leptos_meta::{Meta, Stylesheet, Title, provide_meta_context};
 use leptos_router::{
     components::{Route, Router, Routes},
     path,
@@ -48,6 +48,7 @@ pub fn App() -> impl IntoView {
                     <Route path=path!("universe/:universe") view=UniversePage/>
                     <Route path=path!("edit-universe/:universe") view=EditUniversePage/>
                     <Route path=path!("search") view=SearchPage/>
+                    <Route path=path!("404") view=NotFound/>
                 </Routes>
             </main>
         </Router>

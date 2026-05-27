@@ -19,26 +19,25 @@ pub enum Cmd {
 }
 
 impl Cmd {
-
     /// Adds a string to the command argument
     pub fn inject_additional_arguments(&mut self, arg: &str) {
         match self {
             Self::SetGlobalID(s) => s.push_str(arg),
             Self::StartSnippet(s) => s.push_str(arg),
             Self::EndSnippet(s) => {
-                if let Some(ref mut meta) = s {
+                if let Some(meta) = s {
                     meta.push_str(arg)
                 }
-            },
+            }
             Self::Include(s) => {
-                if let Some(ref mut params) = &mut s.1 {
+                if let Some(params) = &mut s.1 {
                     params.push_str(arg)
                 }
-            },
+            }
             Self::Plain(s) => {
                 s.push_str(" ");
                 s.push_str(arg);
-            },
+            }
             Self::AddSection(s) => s.push_str(arg),
             Self::AddSubSection(s) => s.push_str(arg),
             Self::AddSubSubSection(s) => s.push_str(arg),

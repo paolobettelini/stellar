@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos_router::{hooks::use_navigate, NavigateOptions};
+use leptos_router::{NavigateOptions, components::Redirect, hooks::use_navigate};
 use wasm_bindgen::prelude::*;
 
 use crate::app::get_course_json;
@@ -94,9 +94,11 @@ pub fn Navbar(
                 >
                     {move || match once.get() {
                         None => view! {}.into_any(),
-                        Some(res) => {
-                            let json = res.unwrap();
-                            let course_data: Course = serde_json::from_str(&json).unwrap();
+                        Some(Err(_)) => view! { <Redirect path="/404" /> }.into_any(),
+                        Some(Ok(json)) => {
+                            let Ok(course_data) = serde_json::from_str::<Course>(&json) else {
+                                return view! { <Redirect path="/404" /> }.into_any();
+                            };
                             let course_id = course.get();
 
                             course_data.pages.into_iter()

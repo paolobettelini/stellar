@@ -1,10 +1,10 @@
 use lopdf::{Document, Object};
-use std::path::Path;
 use std::collections::HashSet;
+use std::path::Path;
 
 pub fn parse_snippet_references(snippet_path: &Path) -> anyhow::Result<Vec<String>> {
     let mut result = HashSet::new();
-    
+
     let doc = Document::load(snippet_path)?;
 
     for page_id in doc.get_pages().values() {
@@ -24,7 +24,6 @@ pub fn parse_snippet_references(snippet_path: &Path) -> anyhow::Result<Vec<Strin
                     let id = link.replace("/snippet/", "").replace(".pdf", "");
                     result.insert(id);
                 }
-
             }
         }
     }

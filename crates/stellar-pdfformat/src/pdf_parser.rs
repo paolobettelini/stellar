@@ -43,8 +43,8 @@ pub fn pdf_extract(path: &Path) -> anyhow::Result<Vec<DocumentCmd>> {
 
             match res {
                 Some(cmd) => {
-                    result.push(DocumentCmd { coords, page, cmd });    
-                },
+                    result.push(DocumentCmd { coords, page, cmd });
+                }
                 None => {
                     // If the line does not start with a CMD,
                     // it means that the argument(s) of the last command extend to

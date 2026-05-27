@@ -1,8 +1,8 @@
 use serde::Deserialize;
-use std::{fs, path::Path};
 use std::error::Error;
 use std::net::IpAddr;
 use std::path::PathBuf;
+use std::{fs, path::Path};
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct StellarConfig {

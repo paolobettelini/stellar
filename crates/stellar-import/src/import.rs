@@ -1,12 +1,12 @@
 use crate::get_client;
+use serde::Deserialize;
+use serde_json::Value;
 use std::{
     fs,
     path::{Path, PathBuf},
 };
-use serde_json::Value;
-use serde::Deserialize;
-use stellar_utils::pathbuf_type::{get_path_type, PathBufType};
 use stellar_database::{model::*, *};
+use stellar_utils::pathbuf_type::{PathBufType, get_path_type};
 
 pub async fn import(url: &str, path: &PathBuf) -> anyhow::Result<()> {
     let data_type = get_path_type(path);
@@ -201,7 +201,8 @@ pub async fn import_snippet_with_client(client: &ClientHandler, file: &Path) -> 
             log::info!("Importing snippet: {file_name}");
 
             let snippet_path = file.join(format!("{}.pdf", &id));
-            let references = stellar_parser::parse_snippet_references(&snippet_path).unwrap_or(vec![]);
+            let references =
+                stellar_parser::parse_snippet_references(&snippet_path).unwrap_or(vec![]);
 
             let references = if references.len() == 0 {
                 None
@@ -258,7 +259,8 @@ pub async fn import_course_with_client(client: &ClientHandler, file: &Path) -> a
             for page in deserialized.pages {
                 if let Value::Array(array) = page {
                     if array.len() >= 3 {
-                        if let Value::String(id) = &array[2] { // take the id
+                        if let Value::String(id) = &array[2] {
+                            // take the id
                             pages.push(id.clone());
                         }
                     }
