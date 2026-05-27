@@ -1,3 +1,5 @@
+#[cfg(feature = "ssr")]
+use super::models::SnippetReferenceTree;
 use leptos::prelude::*;
 #[cfg(feature = "ssr")]
 use std::path::Path;
@@ -50,6 +52,61 @@ pub async fn get_snippet_references(snippet: String) -> Result<Option<Vec<String
     }
 
     Ok(None)
+}
+
+#[server]
+pub async fn get_snippet_reference_tree(snippet: String) -> Result<String, ServerFnError> {
+    use crate::data::ServerData;
+    use futures::TryStreamExt;
+    use std::collections::HashMap;
+
+    let data = expect_context::<ServerData>();
+    let mut cursor = data
+        .client
+        .query_snippets(".*")
+        .await
+        .map_err(ServerFnError::new)?;
+
+    let mut snippets = HashMap::new();
+    while let Some(document) = cursor.try_next().await.map_err(ServerFnError::new)? {
+        snippets.insert(document.id, document.references.unwrap_or_default());
+    }
+
+    let tree = build_snippet_reference_tree(&snippet, &snippets, &mut Vec::new())
+        .map_err(ServerFnError::new)?;
+    serde_json::to_string(&tree).map_err(ServerFnError::new)
+}
+
+#[cfg(feature = "ssr")]
+fn build_snippet_reference_tree(
+    snippet: &str,
+    snippets: &std::collections::HashMap<String, Vec<String>>,
+    stack: &mut Vec<String>,
+) -> Result<SnippetReferenceTree, String> {
+    if let Some(position) = stack.iter().position(|current| current == snippet) {
+        let mut cycle = stack[position..].to_vec();
+        cycle.push(snippet.to_string());
+        return Err(format!(
+            "Circular snippet reference detected: {}",
+            cycle.join(" -> ")
+        ));
+    }
+
+    let references = snippets
+        .get(snippet)
+        .ok_or_else(|| format!("Snippet not found: {snippet}"))?;
+
+    stack.push(snippet.to_string());
+    let references = references
+        .iter()
+        .map(|reference| build_snippet_reference_tree(reference, snippets, stack))
+        .collect::<Result<Vec<_>, _>>()?;
+    stack.pop();
+
+    Ok(SnippetReferenceTree {
+        id: snippet.to_string(),
+        references,
+    })
 }
 
 #[server]

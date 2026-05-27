@@ -30,3 +30,10 @@ pub struct Dependency {
 pub struct QueryEntry {
     pub id: String,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SnippetReferenceTree {
+    pub id: String,
+    #[serde(default)]
+    pub references: Vec<SnippetReferenceTree>,
+}

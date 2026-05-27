@@ -33,7 +33,7 @@ class SnippetElement extends HTMLElement {
     }
   
     /* TODO:
-        <ref snippet="text1">text2</ref>
+        <stellar-ref snippet="text1">text2</stellar-ref>
         ->
         <a href="/snippet/text1" class="....">text2</a>
     */

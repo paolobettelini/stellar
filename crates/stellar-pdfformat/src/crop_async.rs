@@ -1,19 +1,19 @@
-use std::process::{Command, Stdio};
-use std::{
-    fs,
-    path::{Path, PathBuf},
-};
-use mupdf::{
-    pdf::{PdfAnnotationType, PdfDocument, PdfPage, PdfWriteOptions},
-    Rect,
-};
-use std::sync::mpsc::Receiver;
 use anyhow::Context;
 use anyhow::{anyhow, bail};
+use mupdf::{
+    Rect,
+    pdf::{PdfAnnotationType, PdfDocument, PdfPage, PdfWriteOptions},
+};
+use std::process::{Command, Stdio};
+use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::thread::JoinHandle;
 use std::time::Duration;
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 pub struct CropPdfData {
     pub input: PathBuf,
@@ -63,8 +63,7 @@ fn crop_pdf_inner(data: &CropPdfData) -> anyhow::Result<()> {
     let right_margin = data.right_margin.unwrap_or(0.0) as f32;
     let left_margin = data.left_margin.unwrap_or(0.0) as f32;
 
-    let mut doc = PdfDocument::open(input)
-        .with_context(|| format!("Cannot open PDF: {input}"))?;
+    let mut doc = PdfDocument::open(input).with_context(|| format!("Cannot open PDF: {input}"))?;
 
     let page_index = i32::from(data.page_num);
     let page_count = doc.page_count()?;
@@ -108,65 +107,35 @@ fn crop_pdf_inner(data: &CropPdfData) -> anyhow::Result<()> {
     // above the snippet
     add_redact_annot(
         &mut page,
-        Rect::new(
-            0.0,
-            0.0,
-            page_original_width,
-            redact_top_limit,
-        ),
+        Rect::new(0.0, 0.0, page_original_width, redact_top_limit),
     )?;
 
     // below the snippet
     add_redact_annot(
         &mut page,
-        Rect::new(
-            0.0,
-            bottom,
-            page_original_width,
-            page_original_height,
-        ),
+        Rect::new(0.0, bottom, page_original_width, page_original_height),
     )?;
 
     // right margin
     add_redact_annot(
         &mut page,
-        Rect::new(
-            x2,
-            0.0,
-            page_original_width,
-            page_original_height,
-        ),
+        Rect::new(x2, 0.0, page_original_width, page_original_height),
     )?;
 
     // left margin
-    add_redact_annot(
-        &mut page,
-        Rect::new(
-            0.0,
-            0.0,
-            x1,
-            page_original_height,
-        ),
-    )?;
+    add_redact_annot(&mut page, Rect::new(0.0, 0.0, x1, page_original_height))?;
 
     page.update()?;
     page.redact()?;
 
     let keep_rect_mupdf = Rect::new(x1, top, x2, bottom);
 
-    set_page_boxes_like_set_mediabox(
-        &doc,
-        &page,
-        keep_rect_mupdf,
-        page_original_height,
-    )?;
+    set_page_boxes_like_set_mediabox(&doc, &page, keep_rect_mupdf, page_original_height)?;
 
     page.update()?;
 
     let mut options = PdfWriteOptions::default();
-    options
-        .set_garbage_level(4)
-        .set_compress(true);
+    options.set_garbage_level(4).set_compress(true);
 
     doc.save_with_options(output, options)
         .with_context(|| format!("Cannot save PDF: {output}"))?;

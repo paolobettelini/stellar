@@ -151,6 +151,29 @@
     text-transform: uppercase;
 }
 
+.snippet-tree-link {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border: 1px solid color-mix(in srgb, var(--col4) 58%, transparent);
+    border-radius: 5px;
+    color: var(--col4);
+    background: color-mix(in srgb, var(--col4) 8%, transparent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+        color 0.16s ease,
+        background-color 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.snippet-tree-link:hover {
+    color: var(--col2);
+    background: var(--col4);
+    border-color: var(--col4);
+}
+
 .snippet-meta-table {
     width: 100%;
     border-collapse: collapse;

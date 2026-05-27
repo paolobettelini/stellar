@@ -95,6 +95,12 @@ pub fn SnippetPage() -> impl IntoView {
                     <div class="snippet-panel">
                         <header class="snippet-panel-header">
                             <h2>"References"</h2>
+                            <a
+                                class="snippet-tree-link"
+                                href=move || format!("/reftree/{}", snippet.get())
+                            >
+                                "Show tree"
+                            </a>
                         </header>
 
                         <Suspense fallback=move || view! { <p class="snippet-status">"Loading..."</p> }>

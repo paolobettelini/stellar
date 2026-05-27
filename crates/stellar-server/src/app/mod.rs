@@ -42,6 +42,7 @@ pub fn App() -> impl IntoView {
                 <Routes fallback=|| view! { <NotFound/> }>
                     <Route path=path!("") view=HomePage/>
                     <Route path=path!("snippet/:snippet") view=SnippetPage/>
+                    <Route path=path!("reftree/:id") view=RefTreePage/>
                     <Route path=path!("page/:page") view=PagePage/>
                     <Route path=path!("course/:course") view=CoursePage/>
                     <Route path=path!("course/:course/:page") view=CoursePage/>

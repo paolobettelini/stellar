@@ -1,7 +1,7 @@
 use crate::models::*;
-use std::{path::Path, process::Command};
-use mupdf::{Document, TextPageFlags};
 use mupdf::text_page::TextBlockType;
+use mupdf::{Document, TextPageFlags};
+use std::{path::Path, process::Command};
 
 const GLOBAL_ID: &str = "!id";
 const SNIPPET: &str = "!snippet";
@@ -66,9 +66,8 @@ fn pdf_extract_raw_cmds(pdf_path: &Path) -> anyhow::Result<Vec<DocumentRawCmd>> 
     for page_index in 0..page_count {
         let page = document.load_page(page_index)?;
 
-        let text_page = page.to_text_page(
-            TextPageFlags::ACCURATE_BBOXES | TextPageFlags::PRESERVE_LIGATURES,
-        )?;
+        let text_page =
+            page.to_text_page(TextPageFlags::ACCURATE_BBOXES | TextPageFlags::PRESERVE_LIGATURES)?;
 
         for block in text_page.blocks() {
             if block.r#type() != TextBlockType::Text {
@@ -102,7 +101,12 @@ fn pdf_extract_raw_cmds(pdf_path: &Path) -> anyhow::Result<Vec<DocumentRawCmd>> 
                 let clean_text = clean_text(text);
                 let page = page_index as u16;
 
-                result.push(DocumentRawCmd { x, y, page, text: clean_text });
+                result.push(DocumentRawCmd {
+                    x,
+                    y,
+                    page,
+                    text: clean_text,
+                });
             }
         }
     }
