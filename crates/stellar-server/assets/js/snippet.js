@@ -30,6 +30,7 @@ class SnippetElement extends HTMLElement {
   
     constructor() {
         super();
+        this.renderToken = 0;
     }
   
     /* TODO:
@@ -39,15 +40,40 @@ class SnippetElement extends HTMLElement {
     */
 
     connectedCallback() {
-        // Render snippet
-        setTimeout(() => { // the /snippet page doesn't work without this 0 delay. Why?
+        this.scheduleRender(5);
+    }
 
-        let snippetName = this.innerHTML;
-        this.innerHTML = "";
+    scheduleRender(retries = 0) {
+        const token = ++this.renderToken;
+
+        requestAnimationFrame(() => {
+            if (!this.isConnected || token !== this.renderToken) {
+                return;
+            }
+
+            this.renderSnippet(token, retries);
+        });
+    }
+
+    renderSnippet(token, retries) {
+        const snippetName = this.getSnippetName();
+        if (!snippetName) {
+            if (retries > 0) {
+                this.scheduleRender(retries - 1);
+            }
+            return;
+        }
+
+        this.dataset.snippetName = snippetName;
+        this.textContent = "";
         let index = ++window.stellarSnippetIndexCounter;
 
-        postData(`/snippet/${snippetName}`)
+        postData(`/snippet/${encodeURIComponent(snippetName)}`)
             .then(response => {
+                if (!this.isConnected || token !== this.renderToken) {
+                    return;
+                }
+
                 if (!response.ok) {
                     // Display error
                     let p = document.createElement('p');
@@ -55,17 +81,25 @@ class SnippetElement extends HTMLElement {
                     p.style.padding = '20px';
                     p.style.backgroundColor = 'red'
                     this.appendChild(p);
-                    // throw new Error('Request failed with status: ' + response.status);
+                    return;
                 }
 
                 let arrayBuffer = response.arrayBuffer();
                 arrayBuffer.then(buffer => {
+                    if (!this.isConnected || token !== this.renderToken) {
+                        return;
+                    }
+
                     //let buffer = new Uint8Array(arrayBuffer);
                     let contentType = response.headers.get('content-type');
             
                     if (contentType == 'application/pdf') {
                         ensurePdfJs()
                             .then(() => {
+                                if (!this.isConnected || token !== this.renderToken) {
+                                    return;
+                                }
+
                                 // Load PDF
                                 let canvas = document.createElement('canvas');
                     
@@ -87,6 +121,10 @@ class SnippetElement extends HTMLElement {
                                     });
                             })
                             .catch(error => {
+                                if (!this.isConnected || token !== this.renderToken) {
+                                    return;
+                                }
+
                                 console.error(error);
                                 let p = document.createElement('p');
                                 p.innerHTML = `Error while loading PDF.js for snippet {<b>${snippetName}</b>}.`;
@@ -111,8 +149,27 @@ class SnippetElement extends HTMLElement {
                         nodeStyleReplace(this);
                     }
                 });
+            })
+            .catch(error => {
+                if (!this.isConnected || token !== this.renderToken) {
+                    return;
+                }
+
+                console.error(error);
+                let p = document.createElement('p');
+                p.innerHTML = `Error while loading snippet {<b>${snippetName}</b>}.`;
+                p.style.padding = '20px';
+                p.style.backgroundColor = 'red';
+                this.appendChild(p);
             });
-        }, 0);
+    }
+
+    getSnippetName() {
+        if (this.dataset.snippetName) {
+            return this.dataset.snippetName.trim();
+        }
+
+        return this.textContent.trim();
     }
 }
 
