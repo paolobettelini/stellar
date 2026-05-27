@@ -159,7 +159,14 @@ as well as the server.</p>
 <p>The webserver uses <a href="https://github.com/leptos-rs/leptos/">leptos</a>. </p>
 <pre><code class="language-bash">git clone https://github.com/paolobettelini/stellar
 cd stellar
-cargo leptos build --release
+
+# In release mode the static files are embedded in the executable
+# These commands ensure it works properly
+cargo clean -p stellar-server -p stellar-cli
+cargo leptos build --release --frontend-only
+cargo clean -p stellar-server -p stellar-cli
+cargo build --release --package stellar-cli --bin stellar-cli --no-default-features
+
 mv target/release/stellar-cli /usr/local/bin
 </code></pre>
 <h1 id="development"><a class="header" href="#development">Development</a></h1>
