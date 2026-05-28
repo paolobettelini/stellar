@@ -69,7 +69,7 @@ pub fn SnippetPage() -> impl IntoView {
             </Suspense>
 
             <div class="snippet-topbar">
-                <Topbar title />
+                <Topbar title show_home=true />
             </div>
 
             <main id="snippet-page">

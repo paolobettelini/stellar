@@ -155,7 +155,7 @@ fn UniverseEditor(universe_id: String, initial: Universe) -> impl IntoView {
         <div class="universe-editor-page">
             <div class="universe-editor-canvas-panel">
                 <div class="universe-page-topbar universe-editor-topbar">
-                    <Topbar title=topbar_title />
+                    <Topbar title=topbar_title show_home=true />
                 </div>
 
                 <UniverseCanvas

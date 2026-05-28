@@ -70,6 +70,16 @@ body {
     padding: 20px;
 }
 
+.navbar-home {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.navbar-home img {
+    display: block;
+}
+
 #navbar a {
     color: var(--col1);
     text-decoration: none;

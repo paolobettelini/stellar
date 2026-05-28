@@ -21,7 +21,7 @@ pub fn UniversePage() -> impl IntoView {
     view! {
         <div class="universe-page">
             <div class="universe-page-topbar">
-                <Topbar title edit_href />
+                <Topbar title show_home=true edit_href />
             </div>
 
             <UniverseRenderer universe />

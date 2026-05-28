@@ -129,6 +129,7 @@ fn theme_button_class(current_theme: String, theme: &str) -> &'static str {
 pub fn Topbar(
     title: Signal<String>,
     #[prop(optional)] set_navbar_hidden: Option<WriteSignal<bool>>,
+    #[prop(default = false)] show_home: bool,
     #[prop(default = true)] show_search: bool,
     #[prop(optional)] edit_href: Option<Signal<String>>,
     #[prop(optional)] share_href: Option<Signal<String>>,
@@ -154,136 +155,155 @@ pub fn Topbar(
 
     // https://carloskiki.github.io/icondata/
 
-    view! {
-        <div id="top-bar">
-            <div id="top-bar-icons">
-                {set_navbar_hidden.map(|set_navbar_hidden| {
-                    view! {
-                        <i id="topbar-hamburger" on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
-                            <a href=""><Icon icon=icondata::FaBarsSolid/></a>
-                        </i>
-                    }
-                })}
-                {show_search.then(|| {
-                    view! {
-                        <i id="topbar-search">
-                            <a
-                                style="color: inherit"
-                                href="/search" >
-                                <Icon icon=icondata::ImSearch/>
-                            </a>
-                        </i>
-                    }
-                })}
-                {edit_href.map(|edit_href| {
-                    view! {
-                        <i id="topbar-edit">
-                            <a
-                                style="color: inherit"
-                                href=move || edit_href.get() >
-                                <Icon icon=icondata::FaPenToSquareSolid/>
-                            </a>
-                        </i>
-                    }
-                })}
-                {share_href.map(|share_href| {
-                    view! {
-                        <i id="topbar-share">
-                            <a
-                                style="color: inherit"
-                                href=move || share_href.get()
-                                on:click=move |event| {
-                                    event.prevent_default();
-                                    copyHrefToClipboard(&share_href.get());
-                                    set_share_popup_visible.set(true);
-                                    let _ = leptos::leptos_dom::helpers::set_timeout(
-                                        move || set_share_popup_visible.set(false),
-                                        Duration::from_millis(1800),
-                                    );
-                                }
-                            >
-                                <Icon icon=icondata::FaCopySolid/>
-                            </a>
-                        </i>
-                    }
-                })}
-                <i
-                    id="topbar-theme"
-                    on:click=move |_| {
-                        #[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
-                        {
-                            let theme = getCurrentTheme();
-                            set_current_theme.set(theme.clone());
-                            sync_theme_buttons(&theme);
-                        }
-                        set_themes_hidden.update(|v| *v = !*v)
-                    }
-                >
-                    <a href=""><Icon icon=icondata::FaPaintbrushSolid/></a>
-                </i>
-                <ul
-                    id="theme-list"
-                    style:display=move || if themes_hidden() { "none" } else { "block" }
-                >
-                    <button
-                        type="button"
-                        data-theme="theme-light"
-                        class=move || theme_button_class(current_theme(), "theme-light")
-                        on:click=move |_| set_theme("theme-light")
-                    >"Light"</button>
-                    <button
-                        type="button"
-                        data-theme="theme-dark"
-                        class=move || theme_button_class(current_theme(), "theme-dark")
-                        on:click=move |_| set_theme("theme-dark")
-                    >"Dark"</button>
-                    <button
-                        type="button"
-                        data-theme="theme-violet"
-                        class=move || theme_button_class(current_theme(), "theme-violet")
-                        on:click=move |_| set_theme("theme-violet")
-                    >"Violet"</button>
-                    <button
-                        type="button"
-                        data-theme="theme-mint"
-                        class=move || theme_button_class(current_theme(), "theme-mint")
-                        on:click=move |_| set_theme("theme-mint")
-                    >"Mint"</button>
-                    <button
-                        type="button"
-                        data-theme="theme-sepia"
-                        class=move || theme_button_class(current_theme(), "theme-sepia")
-                        on:click=move |_| set_theme("theme-sepia")
-                    >"Sepia"</button>
-                    <button
-                        type="button"
-                        data-theme="theme-earth"
-                        class=move || theme_button_class(current_theme(), "theme-earth")
-                        on:click=move |_| set_theme("theme-earth")
-                    >"Earth"</button>
-                    <button
-                        type="button"
-                        data-theme="theme-brutalist"
-                        class=move || theme_button_class(current_theme(), "theme-brutalist")
-                        on:click=move |_| set_theme("theme-brutalist")
-                    >"Brutalist"</button>
-                </ul>
-                <i id="topbar-github">
-                    <a
-                        style="color: inherit"
-                        href="https://github.com/paolobettelini/notes"
-                        target="_blank" >
-                        <Icon icon=icondata::BsGithub/>
-                    </a>
-                </i>
-            </div>
+    let shell_class = if show_home {
+        "topbar-shell with-home"
+    } else {
+        "topbar-shell"
+    };
 
-            <div id="top-bar-title">{title}</div>
-            <div
-                id="topbar-share-popup"
-                class:visible=move || share_popup_visible()
-            >
-                "Course link copied to clipboard"
+    view! {
+        <div class=shell_class>
+            {show_home.then(|| {
+                view! {
+                    <a
+                        id="topbar-home"
+                        href="/"
+                        aria-label="Stellar home"
+                    >
+                        <img src="/assets/logo.png" alt="Stellar" />
+                    </a>
+                }
+            })}
+            <div id="top-bar">
+                <div id="top-bar-icons">
+                    {set_navbar_hidden.map(|set_navbar_hidden| {
+                        view! {
+                            <i id="topbar-hamburger" on:click=move |_| set_navbar_hidden.update(|v| *v = !*v)>
+                                <a href=""><Icon icon=icondata::FaBarsSolid/></a>
+                            </i>
+                        }
+                    })}
+                    {show_search.then(|| {
+                        view! {
+                            <i id="topbar-search">
+                                <a
+                                    style="color: inherit"
+                                    href="/search" >
+                                    <Icon icon=icondata::ImSearch/>
+                                </a>
+                            </i>
+                        }
+                    })}
+                    {edit_href.map(|edit_href| {
+                        view! {
+                            <i id="topbar-edit">
+                                <a
+                                    style="color: inherit"
+                                    href=move || edit_href.get() >
+                                    <Icon icon=icondata::FaPenToSquareSolid/>
+                                </a>
+                            </i>
+                        }
+                    })}
+                    {share_href.map(|share_href| {
+                        view! {
+                            <i id="topbar-share">
+                                <a
+                                    style="color: inherit"
+                                    href=move || share_href.get()
+                                    on:click=move |event| {
+                                        event.prevent_default();
+                                        copyHrefToClipboard(&share_href.get());
+                                        set_share_popup_visible.set(true);
+                                        let _ = leptos::leptos_dom::helpers::set_timeout(
+                                            move || set_share_popup_visible.set(false),
+                                            Duration::from_millis(1800),
+                                        );
+                                    }
+                                >
+                                    <Icon icon=icondata::FaCopySolid/>
+                                </a>
+                            </i>
+                        }
+                    })}
+                    <i
+                        id="topbar-theme"
+                        on:click=move |_| {
+                            #[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
+                            {
+                                let theme = getCurrentTheme();
+                                set_current_theme.set(theme.clone());
+                                sync_theme_buttons(&theme);
+                            }
+                            set_themes_hidden.update(|v| *v = !*v)
+                        }
+                    >
+                        <a href=""><Icon icon=icondata::FaPaintbrushSolid/></a>
+                    </i>
+                    <ul
+                        id="theme-list"
+                        style:display=move || if themes_hidden() { "none" } else { "block" }
+                    >
+                        <button
+                            type="button"
+                            data-theme="theme-light"
+                            class=move || theme_button_class(current_theme(), "theme-light")
+                            on:click=move |_| set_theme("theme-light")
+                        >"Light"</button>
+                        <button
+                            type="button"
+                            data-theme="theme-dark"
+                            class=move || theme_button_class(current_theme(), "theme-dark")
+                            on:click=move |_| set_theme("theme-dark")
+                        >"Dark"</button>
+                        <button
+                            type="button"
+                            data-theme="theme-violet"
+                            class=move || theme_button_class(current_theme(), "theme-violet")
+                            on:click=move |_| set_theme("theme-violet")
+                        >"Violet"</button>
+                        <button
+                            type="button"
+                            data-theme="theme-mint"
+                            class=move || theme_button_class(current_theme(), "theme-mint")
+                            on:click=move |_| set_theme("theme-mint")
+                        >"Mint"</button>
+                        <button
+                            type="button"
+                            data-theme="theme-sepia"
+                            class=move || theme_button_class(current_theme(), "theme-sepia")
+                            on:click=move |_| set_theme("theme-sepia")
+                        >"Sepia"</button>
+                        <button
+                            type="button"
+                            data-theme="theme-earth"
+                            class=move || theme_button_class(current_theme(), "theme-earth")
+                            on:click=move |_| set_theme("theme-earth")
+                        >"Earth"</button>
+                        <button
+                            type="button"
+                            data-theme="theme-brutalist"
+                            class=move || theme_button_class(current_theme(), "theme-brutalist")
+                            on:click=move |_| set_theme("theme-brutalist")
+                        >"Brutalist"</button>
+                    </ul>
+                    <i id="topbar-github">
+                        <a
+                            style="color: inherit"
+                            href="https://github.com/paolobettelini/notes"
+                            target="_blank" >
+                            <Icon icon=icondata::BsGithub/>
+                        </a>
+                    </i>
+                </div>
+
+                <div id="top-bar-title">{title}</div>
+                <div
+                    id="topbar-share-popup"
+                    class:visible=move || share_popup_visible()
+                >
+                    "Course link copied to clipboard"
+                </div>
             </div>
         </div>
     }

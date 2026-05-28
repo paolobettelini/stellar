@@ -84,8 +84,8 @@ pub fn Navbar(
 
     view! {
         <div id="navbar" class:hidden=move || hidden() class:full=move || full_navbar()>
-            <a href="/">
-                <img style="padding-left: 10px; padding-top: 10px" src="/assets/logo.png" width="64px" height="64px" alt="Home" />
+            <a class="navbar-home" href="/">
+                <img src="/assets/logo.png" width="64px" height="64px" alt="Home" />
             </a>
             <div id="navbar-content">
                 <Suspense

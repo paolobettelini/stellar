@@ -31,7 +31,7 @@ pub fn SearchPage() -> impl IntoView {
     view! {
         <div id="search-container">
             <div class="search-topbar">
-                <Topbar title show_search=false />
+                <Topbar title show_home=true show_search=false />
             </div>
 
             <section id="search-panel">
