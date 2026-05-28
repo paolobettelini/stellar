@@ -241,7 +241,16 @@ primary file.</p>
 </tbody></table>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{
-    &quot;default-params&quot;: &quot;width=70%|src=https://youtu.be/dQw4w9WgXcQ&amp;&quot;,
+    &quot;default-params&quot;: &quot;width=70%&amp;id=dQw4w9WgXcQ&quot;,
+    &quot;requires&quot;: [&quot;some-lib-snippet&quot;]
+}
+</code></pre>
+<p>Equivalently,</p>
+<pre><code class="language-json">{
+    &quot;default-params&quot;: {
+        &quot;width&quot;: &quot;70%&quot;,
+        &quot;id&quot;: &quot;dQw4w9WgXcQ&quot;
+    },
     &quot;requires&quot;: [&quot;some-lib-snippet&quot;]
 }
 </code></pre>
@@ -258,14 +267,14 @@ mechanism as snippets.</p>
 <pre><code class="language-html">&lt;stellar-snippet&gt;ID&lt;/stellar-snippet&gt;
 </code></pre>
 <p>Parameters can be passed as follows:</p>
-<pre><code class="language-html">&lt;stellar-snippet params=&quot;param1=v1|param2=v2&quot;&gt;ID&lt;/stellar-snippet&gt;
+<pre><code class="language-html">&lt;stellar-snippet params=&quot;param1=v1&amp;param2=v2&quot;&gt;ID&lt;/stellar-snippet&gt;
 </code></pre>
 <p>Here is an example of a page content:</p>
 <pre><code class="language-html">&lt;h1&gt;Welcome to this page&lt;h1&gt;
 
 Here is some normal text which will be displayed
 
-&lt;stellar-snippet params=&quot;src=https://...&quot;&gt;yt-embed&lt;/stellar-snippet&gt;
+&lt;stellar-snippet params=&quot;id=...&quot;&gt;yt-embed&lt;/stellar-snippet&gt;
 
 And here is a snippet
 </code></pre>
@@ -406,7 +415,7 @@ The file is available <a href="https://github.com/paolobettelini/stellar/blob/ma
 </code></pre>
 <p>To include a snippet:</p>
 <pre><code class="language-latex">\includesnpt{snippet-identifier}
-\includesnpt[param1=value1|param2=value2]{snippet-identifier}
+\includesnpt[param1=value1,param2=value2]{snippet-identifier}
 </code></pre>
 <p>Create snippets using environments:</p>
 <pre><code class="language-latex">\begin{snippet}{snippet-identifier}

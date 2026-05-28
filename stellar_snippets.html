@@ -188,7 +188,16 @@ primary file.</p>
 </tbody></table>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{
-    &quot;default-params&quot;: &quot;width=70%|src=https://youtu.be/dQw4w9WgXcQ&amp;&quot;,
+    &quot;default-params&quot;: &quot;width=70%&amp;id=dQw4w9WgXcQ&quot;,
+    &quot;requires&quot;: [&quot;some-lib-snippet&quot;]
+}
+</code></pre>
+<p>Equivalently,</p>
+<pre><code class="language-json">{
+    &quot;default-params&quot;: {
+        &quot;width&quot;: &quot;70%&quot;,
+        &quot;id&quot;: &quot;dQw4w9WgXcQ&quot;
+    },
     &quot;requires&quot;: [&quot;some-lib-snippet&quot;]
 }
 </code></pre>
