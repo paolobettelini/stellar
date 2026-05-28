@@ -1,5 +1,5 @@
 use crate::app::get_page_html;
-use crate::app::{SnippetLibraries, SnippetsRenderer};
+use crate::app::{LoadingIndicator, SnippetLibraries, SnippetsRenderer};
 use leptos::prelude::*;
 use leptos_router::components::Redirect;
 
@@ -25,8 +25,9 @@ pub fn PageRenderer(
 
         <Suspense
             fallback=move || view! {
-                <p>"Loading..."</p>
-                <br></br>
+                <div class="stellar-loading-center">
+                    <LoadingIndicator />
+                </div>
             }
         >
             {move || match once.get() {

@@ -111,7 +111,11 @@ pub fn SearchPage() -> impl IntoView {
 
             <div id="results">
                 <Suspense
-                    fallback=move || view! { <p class="search-status">Loading...</p> }
+                    fallback=move || view! {
+                        <div class="stellar-loading-center">
+                            <LoadingIndicator />
+                        </div>
+                    }
                 >
                     {move || match req.get() {
                         None => view! {}.into_any(),

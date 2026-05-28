@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos_router::{NavigateOptions, components::Redirect, hooks::use_navigate};
 use wasm_bindgen::prelude::*;
 
-use crate::app::get_course_json;
+use crate::app::{LoadingIndicator, get_course_json};
 
 #[derive(serde::Deserialize)]
 struct Course {
@@ -90,8 +90,7 @@ pub fn Navbar(
             <div id="navbar-content">
                 <Suspense
                     fallback=move || view! {
-                        <p>"Loading..."</p>
-                        <br></br>
+                        <LoadingIndicator />
                     }
                 >
                     {move || match once.get() {

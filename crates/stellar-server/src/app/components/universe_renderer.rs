@@ -1,4 +1,4 @@
-use crate::app::{Universe, get_universe_json};
+use crate::app::{LoadingIndicator, Universe, get_universe_json};
 use leptos::html::{Canvas, Div};
 use leptos::prelude::*;
 use leptos_router::components::Redirect;
@@ -16,7 +16,11 @@ pub fn UniverseRenderer(universe: Signal<String>) -> impl IntoView {
     );
 
     view! {
-        <Suspense fallback=move || view! { <p class="universe-status">"Loading..."</p> }>
+        <Suspense fallback=move || view! {
+            <div class="stellar-loading-page">
+                <LoadingIndicator />
+            </div>
+        }>
             {move || match once.get() {
                 None => view! {}.into_any(),
                 Some(Err(_)) => view! { <Redirect path="/404" /> }.into_any(),

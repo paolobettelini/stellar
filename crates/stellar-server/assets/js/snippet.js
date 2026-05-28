@@ -7,6 +7,7 @@ window.stellarSnippetIndexCounter = window.stellarSnippetIndexCounter || 0;
 
 const PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs";
 const PDFJS_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs";
+const MAX_SNIPPET_LOAD_RETRIES = 2;
 
 function ensurePdfJs() {
     if (window.pdfjsLib) {
@@ -68,87 +69,66 @@ class SnippetElement extends HTMLElement {
         this.textContent = "";
         let index = ++window.stellarSnippetIndexCounter;
 
-        postData(`/snippet/${encodeURIComponent(snippetName)}`)
-            .then(response => {
+        loadSnippetPayload(snippetName, MAX_SNIPPET_LOAD_RETRIES)
+            .then(({ response, buffer }) => {
                 if (!this.isConnected || token !== this.renderToken) {
                     return;
                 }
 
-                if (!response.ok) {
-                    // Display error
-                    let p = document.createElement('p');
-                    p.innerHTML = `Error while loading snippet {<b>${snippetName}</b>}. Status: ${response.status}`;
-                    p.style.padding = '20px';
-                    p.style.backgroundColor = 'red'
-                    this.appendChild(p);
-                    return;
+                //let buffer = new Uint8Array(arrayBuffer);
+                let contentType = response.headers.get('content-type');
+
+                if (contentType == 'application/pdf') {
+                    return ensurePdfJs()
+                        .then(() => {
+                            if (!this.isConnected || token !== this.renderToken) {
+                                return;
+                            }
+
+                            // Load PDF
+                            let canvas = document.createElement('canvas');
+
+                            let textLayer = document.createElement('div');
+                            textLayer.classList.add('textLayer');
+
+                            let canvasId = `pdf${index}`;
+                            let textLayerId = `tl${index}`;
+                            canvas.id = canvasId;
+                            textLayer.id = textLayerId;
+
+                            this.appendChild(canvas);
+                            this.appendChild(textLayer);
+                            loadPDF(buffer, canvasId, textLayerId,
+                                () => {
+                                    // Apply filter
+                                    let theme = localStorage.getItem('theme');
+                                    applyFilter(canvas, theme);
+                                });
+                        })
+                        .catch(error => {
+                            if (!this.isConnected || token !== this.renderToken) {
+                                return;
+                            }
+
+                            console.error(error);
+                            appendSnippetError(this, `Error while loading PDF.js for snippet {${snippetName}}.`);
+                        });
+                } else if (contentType == 'text/html') {
+                    const decoder = new TextDecoder();
+                    let content = decoder.decode(buffer);
+
+                    let paramsRaw = this.getAttribute('params');
+                    if (paramsRaw != null) {
+                        let paramMap = extractParameterMap(paramsRaw);
+                        content = injectParameters(paramMap, content);
+                    }
+
+                    this.innerHTML = content;
+
+                    // Handle <script> because they dont't work
+                    nodeScriptReplace(this);
+                    nodeStyleReplace(this);
                 }
-
-                let arrayBuffer = response.arrayBuffer();
-                arrayBuffer.then(buffer => {
-                    if (!this.isConnected || token !== this.renderToken) {
-                        return;
-                    }
-
-                    //let buffer = new Uint8Array(arrayBuffer);
-                    let contentType = response.headers.get('content-type');
-            
-                    if (contentType == 'application/pdf') {
-                        ensurePdfJs()
-                            .then(() => {
-                                if (!this.isConnected || token !== this.renderToken) {
-                                    return;
-                                }
-
-                                // Load PDF
-                                let canvas = document.createElement('canvas');
-                    
-                                let textLayer = document.createElement('div');
-                                textLayer.classList.add('textLayer');
-
-                                let canvasId = `pdf${index}`;
-                                let textLayerId = `tl${index}`;
-                                canvas.id = canvasId;
-                                textLayer.id = textLayerId;
-
-                                this.appendChild(canvas);
-                                this.appendChild(textLayer);
-                                loadPDF(buffer, canvasId, textLayerId,
-                                    () => {
-                                        // Apply filter
-                                        let theme = localStorage.getItem('theme');
-                                        applyFilter(canvas, theme);
-                                    });
-                            })
-                            .catch(error => {
-                                if (!this.isConnected || token !== this.renderToken) {
-                                    return;
-                                }
-
-                                console.error(error);
-                                let p = document.createElement('p');
-                                p.innerHTML = `Error while loading PDF.js for snippet {<b>${snippetName}</b>}.`;
-                                p.style.padding = '20px';
-                                p.style.backgroundColor = 'red';
-                                this.appendChild(p);
-                            });
-                    } else if (contentType == 'text/html') {
-                        const decoder = new TextDecoder();
-                        let content = decoder.decode(buffer);
-
-                        let paramsRaw = this.getAttribute('params');
-                        if (paramsRaw != null) {
-                            let paramMap = extractParameterMap(paramsRaw);
-                            content = injectParameters(paramMap, content);
-                        }
-
-                        this.innerHTML = content;
-
-                        // Handle <script> because they dont't work
-                        nodeScriptReplace(this);
-                        nodeStyleReplace(this);
-                    }
-                });
             })
             .catch(error => {
                 if (!this.isConnected || token !== this.renderToken) {
@@ -156,11 +136,8 @@ class SnippetElement extends HTMLElement {
                 }
 
                 console.error(error);
-                let p = document.createElement('p');
-                p.innerHTML = `Error while loading snippet {<b>${snippetName}</b>}.`;
-                p.style.padding = '20px';
-                p.style.backgroundColor = 'red';
-                this.appendChild(p);
+                let status = error.status ? ` Status: ${error.status}.` : "";
+                appendSnippetError(this, `Error while loading snippet {${snippetName}}.${status}`);
             });
     }
 
@@ -171,6 +148,46 @@ class SnippetElement extends HTMLElement {
 
         return this.textContent.trim();
     }
+}
+
+function loadSnippetPayload(snippetName, retriesLeft) {
+    return postData(`/snippet/${encodeURIComponent(snippetName)}`)
+        .then(response => {
+            if (!response.ok) {
+                let error = new Error(`Snippet request failed with status ${response.status}`);
+                error.status = response.status;
+                throw error;
+            }
+
+            return response.arrayBuffer()
+                .then(buffer => ({ response, buffer }));
+        })
+        .catch(error => {
+            if (retriesLeft <= 0 || !isServerError(error)) {
+                throw error;
+            }
+
+            return waitBeforeRetry(retriesLeft)
+                .then(() => loadSnippetPayload(snippetName, retriesLeft - 1));
+        });
+}
+
+function isServerError(error) {
+    return error.status >= 500 && error.status < 600;
+}
+
+function waitBeforeRetry(retriesLeft) {
+    let attempt = MAX_SNIPPET_LOAD_RETRIES - retriesLeft + 1;
+    console.log("Retrying to load snippet after server error.");
+    return new Promise(resolve => setTimeout(resolve, 150 * attempt));
+}
+
+function appendSnippetError(target, message) {
+    let p = document.createElement('p');
+    p.textContent = message;
+    p.style.padding = '20px';
+    p.style.backgroundColor = 'red';
+    target.appendChild(p);
 }
 
 function extractParameterMap(paramsRaw) {

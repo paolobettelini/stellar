@@ -1,4 +1,4 @@
-use crate::app::{SnippetReferenceTree, Topbar, get_snippet_reference_tree};
+use crate::app::{LoadingIndicator, SnippetReferenceTree, Topbar, get_snippet_reference_tree};
 use leptos::html::{Canvas, Div};
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
@@ -45,7 +45,9 @@ pub fn RefTreePage() -> impl IntoView {
             </div>
 
             <Suspense fallback=move || view! {
-                <p class="reftree-status">"Loading..."</p>
+                <div class="stellar-loading-page">
+                    <LoadingIndicator />
+                </div>
             }>
                 {move || match tree.get() {
                     None => view! {}.into_any(),

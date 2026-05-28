@@ -1,0 +1,113 @@
+.stellar-loading {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 132px;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid color-mix(in srgb, var(--col1) 18%, transparent);
+    border-radius: 8px;
+    color: var(--col1);
+    background:
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--col3) 86%, var(--col2)),
+            color-mix(in srgb, var(--col2) 92%, var(--col3))
+        );
+    box-shadow:
+        0 12px 28px color-mix(in srgb, var(--col1) 10%, transparent),
+        inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+    font-size: 0.86rem;
+    font-weight: 800;
+    line-height: 1;
+    overflow: hidden;
+}
+
+.stellar-loading::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--col4) 12%, transparent),
+        transparent
+    );
+    transform: translateX(-110%);
+    animation: stellar-loading-sheen 1.6s ease-in-out infinite;
+}
+
+.stellar-loading-dots,
+.stellar-loading-label {
+    position: relative;
+    z-index: 1;
+}
+
+.stellar-loading-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stellar-loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--col4);
+    animation: stellar-loading-dot 0.95s ease-in-out infinite;
+}
+
+.stellar-loading-dots span:nth-child(2) {
+    animation-delay: 0.12s;
+}
+
+.stellar-loading-dots span:nth-child(3) {
+    animation-delay: 0.24s;
+}
+
+.stellar-loading-label::after {
+    content: "...";
+}
+
+.stellar-loading-center {
+    display: grid;
+    width: 100%;
+    min-height: 180px;
+    place-items: center;
+}
+
+.stellar-loading-page {
+    display: grid;
+    width: 100%;
+    min-height: 100vh;
+    place-items: center;
+    color: var(--col1);
+    background: var(--col2);
+}
+
+@keyframes stellar-loading-dot {
+    0%,
+    80%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+@keyframes stellar-loading-sheen {
+    0% {
+        transform: translateX(-110%);
+    }
+
+    55%,
+    100% {
+        transform: translateX(110%);
+    }
+}

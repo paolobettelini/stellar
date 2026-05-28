@@ -1,4 +1,6 @@
-use crate::app::{Course, Dependency, Topbar, Universe, UniverseCanvas, get_universe_json};
+use crate::app::{
+    Course, Dependency, LoadingIndicator, Topbar, Universe, UniverseCanvas, get_universe_json,
+};
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
@@ -35,7 +37,11 @@ pub fn EditUniversePage() -> impl IntoView {
     );
 
     view! {
-        <Suspense fallback=move || view! { <p class="universe-status">"Loading..."</p> }>
+        <Suspense fallback=move || view! {
+            <div class="stellar-loading-page">
+                <LoadingIndicator />
+            </div>
+        }>
             {move || match once.get() {
                 None => view! {}.into_any(),
                 Some(Err(_)) => view! { <p class="universe-status">"Could not load universe"</p> }.into_any(),

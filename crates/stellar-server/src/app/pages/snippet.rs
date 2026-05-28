@@ -1,6 +1,6 @@
 use crate::app::{
-    SnippetLibraries, SnippetsRenderer, Topbar, get_snippet_exists, get_snippet_meta_json,
-    get_snippet_references,
+    LoadingIndicator, SnippetLibraries, SnippetsRenderer, Topbar, get_snippet_exists,
+    get_snippet_meta_json, get_snippet_references,
 };
 use leptos::prelude::*;
 use leptos_router::components::Redirect;
@@ -83,7 +83,11 @@ pub fn SnippetPage() -> impl IntoView {
                             <h2>"Metadata"</h2>
                         </header>
 
-                        <Suspense fallback=move || view! { <p class="snippet-status">"Loading..."</p> }>
+                        <Suspense fallback=move || view! {
+                            <div class="stellar-loading-center">
+                                <LoadingIndicator />
+                            </div>
+                        }>
                             {move || match meta.get() {
                                 None => view! {}.into_any(),
                                 Some(Err(_)) => view! { <p class="snippet-status">"Could not load metadata"</p> }.into_any(),
@@ -103,7 +107,11 @@ pub fn SnippetPage() -> impl IntoView {
                             </a>
                         </header>
 
-                        <Suspense fallback=move || view! { <p class="snippet-status">"Loading..."</p> }>
+                        <Suspense fallback=move || view! {
+                            <div class="stellar-loading-center">
+                                <LoadingIndicator />
+                            </div>
+                        }>
                             {move || match references.get() {
                                 None => view! {}.into_any(),
                                 Some(Ok(Some(references))) if !references.is_empty() => view! {

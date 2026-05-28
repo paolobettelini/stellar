@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
-use crate::app::{Navbar, PageRenderer, Topbar};
+use crate::app::{LoadingIndicator, Navbar, PageRenderer, Topbar};
 
 #[component]
 pub fn CoursePage() -> impl IntoView {
@@ -50,8 +50,9 @@ pub fn CoursePage() -> impl IntoView {
                     {move || {
                         if page.get().is_empty() {
                             view! {
-                                <p>"Loading..."</p>
-                                <br></br>
+                                <div class="stellar-loading-center">
+                                    <LoadingIndicator />
+                                </div>
                             }.into_any()
                         } else {
                             view! {

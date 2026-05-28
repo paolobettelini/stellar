@@ -1,9 +1,11 @@
+mod loading;
 mod navbar;
 mod page_renderer;
 mod snippets;
 mod topbar;
 mod universe_renderer;
 
+pub use loading::*;
 pub use navbar::*;
 pub use page_renderer::*;
 pub use snippets::*;
