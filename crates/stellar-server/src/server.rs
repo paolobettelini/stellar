@@ -4,10 +4,11 @@ use crate::app::App;
 use crate::assets::handle_static_file;
 use crate::config::StellarConfig;
 use crate::routes::*;
-use actix_web::{HttpServer, Responder, get, web};
+use actix_web::{HttpServer, Responder, get, middleware::NormalizePath, web};
 use leptos::config::{Env, LeptosOptions, get_config_from_str};
 use leptos::prelude::*;
 use leptos_meta::MetaTags;
+use leptos_router::Method;
 use std::path::PathBuf;
 use stellar_database::*;
 
@@ -66,8 +67,11 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
         let data = data.clone();
         let data2 = data.clone();
         let options = leptos_options.clone();
+        let fallback_data = data.clone();
+        let fallback_options = options.clone();
 
         actix_web::App::new()
+            .wrap(NormalizePath::trim())
             .service(snippet_service)
             .service(snippet_complementary_service)
             .service(favicon)
@@ -82,6 +86,14 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
                 move || provide_context(data.clone()),
                 move || shell(options.clone()),
             )
+            .default_service(leptos_actix::render_app_to_stream_with_context(
+                move || {
+                    provide_context(Method::Get);
+                    provide_context(fallback_data.clone());
+                },
+                move || shell(fallback_options.clone()),
+                Method::Get,
+            ))
             // Data
             .app_data(web::Data::new(data2))
     })

@@ -58,7 +58,7 @@ fn get_snippet_file_and_content_type(dir: &Path, snippet: &str) -> Option<(PathB
     None
 }
 
-#[get("/snippet/{snippet}/{file_name:.*}")]
+#[get("/snippet/{snippet}/{file_name:.+}")]
 async fn snippet_complementary_service(
     data: web::Data<ServerData>,
     params: web::Path<(String, String)>,
