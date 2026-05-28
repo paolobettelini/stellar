@@ -4,22 +4,59 @@ use crate::app::{
 };
 use leptos::prelude::*;
 use leptos_router::components::Redirect;
-use leptos_router::hooks::use_params_map;
+use leptos_router::hooks::{use_location, use_params_map};
 use serde_json::Value;
+use std::time::Duration;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen(inline_js = r#"
+export function setSnippetUrlParams(params) {
+    const cleanParams = params && params.startsWith('?') ? params.slice(1) : params;
+    const nextUrl = `${window.location.pathname}${cleanParams ? `?${cleanParams}` : ''}${window.location.hash}`;
+    window.history.replaceState({}, '', nextUrl);
+}
+
+export function copyCurrentSnippetUrl() {
+    const url = window.location.href;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url);
+        return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = url;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+}
+"#)]
+extern "C" {
+    fn setSnippetUrlParams(params: &str);
+    fn copyCurrentSnippetUrl();
+}
 
 #[component]
 pub fn SnippetPage() -> impl IntoView {
     let params = use_params_map();
+    let location = use_location();
     let snippet =
         Signal::derive(move || params.with(|params| params.get("snippet").unwrap_or_default()));
+    let url_params = Signal::derive(move || non_empty_string(location.search.get()));
     let title = Signal::derive(|| String::from("Snippet"));
     let exists = Resource::new(move || snippet.get(), get_snippet_exists);
     let meta = Resource::new(move || snippet.get(), get_snippet_meta_json);
     let references = Resource::new(move || snippet.get(), get_snippet_references);
-    let default_params = RwSignal::new(None::<String>);
-    let params_draft = RwSignal::new(String::new());
-    let applied_params = RwSignal::new(None::<String>);
+    let initial_url_params = non_empty_string(location.search.get_untracked());
+    let params_placeholder = RwSignal::new(initial_url_params.clone());
+    let params_draft = RwSignal::new(initial_url_params.clone().unwrap_or_default());
+    let applied_params = RwSignal::new(initial_url_params);
     let snippet_rerender_key = RwSignal::new(0_u64);
+    let copy_popup_visible = RwSignal::new(false);
     let content = Signal::derive(move || {
         let snippet = html_text_escape(&snippet.get());
         let rerender_key = snippet_rerender_key.get();
@@ -52,9 +89,16 @@ pub fn SnippetPage() -> impl IntoView {
         };
 
         let params = default_params_from_json(&json);
-        params_draft.set(params.clone().unwrap_or_default());
-        applied_params.set(params.clone());
-        default_params.set(params);
+        let url_params = url_params.get();
+        params_placeholder.set(params.clone().or_else(|| url_params.clone()));
+
+        if let Some(url_params) = url_params {
+            params_draft.set(url_params.clone());
+            applied_params.set(Some(url_params));
+        } else {
+            params_draft.set(params.clone().unwrap_or_default());
+            applied_params.set(params);
+        }
     });
 
     view! {
@@ -136,7 +180,7 @@ pub fn SnippetPage() -> impl IntoView {
                 </section>
 
                 <section id="snippet-rendered-free">
-                    {move || default_params.get().map(|default_params| {
+                    {move || params_placeholder.get().map(|params_placeholder| {
                         view! {
                             <div class="snippet-params-row">
                                 <label class="snippet-param-field">
@@ -144,9 +188,11 @@ pub fn SnippetPage() -> impl IntoView {
                                     <input
                                         type="text"
                                         value=move || params_draft.get()
-                                        placeholder=default_params
+                                        placeholder=params_placeholder
                                         on:input=move |event| {
-                                            params_draft.set(event_target_value(&event));
+                                            let value = event_target_value(&event);
+                                            setSnippetUrlParams(&value);
+                                            params_draft.set(value);
                                         }
                                     />
                                 </label>
@@ -159,6 +205,26 @@ pub fn SnippetPage() -> impl IntoView {
                                 >
                                     "Reload"
                                 </button>
+                                <button
+                                    type="button"
+                                    on:click=move |_| {
+                                        setSnippetUrlParams(&params_draft.get());
+                                        copyCurrentSnippetUrl();
+                                        copy_popup_visible.set(true);
+                                        let _ = leptos::leptos_dom::helpers::set_timeout(
+                                            move || copy_popup_visible.set(false),
+                                            Duration::from_millis(1800),
+                                        );
+                                    }
+                                >
+                                    "Copy URL"
+                                </button>
+                                <span
+                                    class="snippet-copy-popup"
+                                    class:visible=move || copy_popup_visible()
+                                >
+                                    "Snippet link copied to clipboard"
+                                </span>
                             </div>
                         }
                     })}
@@ -178,6 +244,10 @@ fn default_params_from_json(json: &str) -> Option<String> {
         Value::Null => None,
         value => Some(json_value_label(value)),
     }
+}
+
+fn non_empty_string(value: String) -> Option<String> {
+    (!value.is_empty()).then_some(value)
 }
 
 fn metadata_table(json: String) -> AnyView {
