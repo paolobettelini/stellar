@@ -14,7 +14,7 @@ There is a special tag which can be used to include snippets in the page
 ```
 Parameters can be passed as follows:
 ```html
-<stellar-snippet params="param1=v1|param2=v2">ID</stellar-snippet>
+<stellar-snippet params="param1=v1&param2=v2">ID</stellar-snippet>
 ```
 
 Here is an example of a page content:
@@ -23,7 +23,7 @@ Here is an example of a page content:
 
 Here is some normal text which will be displayed
 
-<stellar-snippet params="src=https://...">yt-embed</stellar-snippet>
+<stellar-snippet params="id=...">yt-embed</stellar-snippet>
 
 And here is a snippet
 ```

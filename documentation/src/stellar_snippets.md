@@ -56,7 +56,17 @@ A special secondary file is the `meta.json` which contains additional metadata (
 
 ```json
 {
-    "default-params": "width=70%|src=https://youtu.be/dQw4w9WgXcQ&",
+    "default-params": "width=70%&id=dQw4w9WgXcQ",
+    "requires": ["some-lib-snippet"]
+}
+```
+Equivalently,
+```json
+{
+    "default-params": {
+        "width": "70%",
+        "id": "dQw4w9WgXcQ"
+    },
     "requires": ["some-lib-snippet"]
 }
 ```

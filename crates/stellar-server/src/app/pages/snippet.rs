@@ -12,7 +12,11 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen(inline_js = r#"
 export function setSnippetUrlParams(params) {
     const cleanParams = params && params.startsWith('?') ? params.slice(1) : params;
-    const nextUrl = `${window.location.pathname}${cleanParams ? `?${cleanParams}` : ''}${window.location.hash}`;
+
+    // Since these parameters are going into a URL we are encoding the special characters with escape sequences
+    const encodedParams = encodeURIComponent(cleanParams);
+
+    const nextUrl = `${window.location.pathname}${encodedParams ? `?${encodedParams}` : ''}${window.location.hash}`;
     window.history.replaceState({}, '', nextUrl);
 }
 
@@ -46,12 +50,12 @@ pub fn SnippetPage() -> impl IntoView {
     let location = use_location();
     let snippet =
         Signal::derive(move || params.with(|params| params.get("snippet").unwrap_or_default()));
-    let url_params = Signal::derive(move || non_empty_string(location.search.get()));
+    let url_params = Signal::derive(move || decode_uri_component(location.search.get()));
     let title = Signal::derive(|| String::from("Snippet"));
     let exists = Resource::new(move || snippet.get(), get_snippet_exists);
     let meta = Resource::new(move || snippet.get(), get_snippet_meta_json);
     let references = Resource::new(move || snippet.get(), get_snippet_references);
-    let initial_url_params = non_empty_string(location.search.get_untracked());
+    let initial_url_params = decode_uri_component(location.search.get_untracked());
     let params_placeholder = RwSignal::new(initial_url_params.clone());
     let params_draft = RwSignal::new(initial_url_params.clone().unwrap_or_default());
     let applied_params = RwSignal::new(initial_url_params);
@@ -235,15 +239,44 @@ pub fn SnippetPage() -> impl IntoView {
     }
 }
 
+// E.g.
+// "default-params": "a=b&c=d" returns a=b&c=d
+// "default-params": {
+//   "key1": "val1",
+//   "key2": "val2"
+// }
+// => returns key1=val1&key2=val2
 fn default_params_from_json(json: &str) -> Option<String> {
     let value = serde_json::from_str::<Value>(json).ok()?;
     let default_params = value.get("default-params")?;
 
     match default_params {
         Value::String(value) => Some(value.clone()),
+
+        Value::Object(map) => {
+            Some(
+                map.iter()
+                    .map(|(key, value)| {
+                        let value = value.as_str().unwrap_or_default();
+                        format!("{key}={value}")
+                    })
+                    .collect::<Vec<_>>()
+                    .join("&")
+            )
+        }
+
         Value::Null => None,
+
         value => Some(json_value_label(value)),
     }
+}
+
+fn decode_uri_component(value: String) -> Option<String> {
+    let decoded = urlencoding::decode(&value)
+        .map(|value| value.into_owned())
+        .unwrap_or(value);
+
+    non_empty_string(decoded)
 }
 
 fn non_empty_string(value: String) -> Option<String> {

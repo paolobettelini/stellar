@@ -23,7 +23,7 @@ You can reference another snippet using:
 To include a snippet:
 ```latex
 \includesnpt{snippet-identifier}
-\includesnpt[param1=value1|param2=value2]{snippet-identifier}
+\includesnpt[param1=value1,param2=value2]{snippet-identifier}
 ```
 Create snippets using environments:
 ```latex

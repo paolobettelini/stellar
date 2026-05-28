@@ -191,9 +191,9 @@ function appendSnippetError(target, message) {
 }
 
 function extractParameterMap(paramsRaw) {
-    // Example: "param1=Hello World!|param2|Hello World 2|width=500px"
+    // Example: "param1=Hello World!&param2=Hello World 2&width=500px"
 
-    let parts = paramsRaw.split('|');
+    let parts = paramsRaw.split('&');
     let paramMap = {};
 
     parts.forEach((part) => {
@@ -205,7 +205,7 @@ function extractParameterMap(paramsRaw) {
 
             paramMap[key] = value;
 
-            // TODO: consider escape char '\' for '=' and '|'
+            // TODO: consider escape char '\' for '=' and '&'
             // Note that this is going to break the injection
             // Also, the " characters should be escaped
         }
