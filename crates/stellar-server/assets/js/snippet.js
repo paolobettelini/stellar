@@ -86,6 +86,9 @@ class SnippetElement extends HTMLElement {
                             }
 
                             // Load PDF
+                            let pdfPage = document.createElement('div');
+                            pdfPage.classList.add('snippet-pdf-page');
+
                             let canvas = document.createElement('canvas');
 
                             let textLayer = document.createElement('div');
@@ -96,8 +99,9 @@ class SnippetElement extends HTMLElement {
                             canvas.id = canvasId;
                             textLayer.id = textLayerId;
 
-                            this.appendChild(canvas);
-                            this.appendChild(textLayer);
+                            pdfPage.appendChild(canvas);
+                            pdfPage.appendChild(textLayer);
+                            this.appendChild(pdfPage);
                             loadPDF(buffer, canvasId, textLayerId,
                                 () => {
                                     // Apply filter

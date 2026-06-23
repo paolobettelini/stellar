@@ -27,17 +27,22 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
         let pageNumber = 1;
 
         pdf.getPage(pageNumber).then(function(page) {
-            document.querySelector(':root').style.setProperty('--scale-factor', scale);
-
             // This line breaks interactivity on the animation canvas
             let viewport = page.getViewport({scale: scale});
             // Prepare canvas using PDF page dimensions
 
             let canvas = document.getElementById(canvasId);
             let context = canvas.getContext('2d');
+            let textLayerDiv = document.getElementById(textLayerId);
+            let pdfPage = canvas.parentElement;
             
             canvas.height = viewport.height;
             canvas.width = viewport.width;
+
+            if (pdfPage) {
+                pdfPage.style.width = `${viewport.width}px`;
+                pdfPage.style.height = `${viewport.height}px`;
+            }
 
             // Render PDF page into canvas context
             var renderContext = {
@@ -46,7 +51,11 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
             };
             var renderTask = page.render(renderContext);
             
-            let textLayerDiv = document.getElementById(textLayerId);
+            textLayerDiv.style.left = '0px';
+            textLayerDiv.style.top = '0px';
+            textLayerDiv.style.width = `${viewport.width}px`;
+            textLayerDiv.style.height = `${viewport.height}px`;
+            textLayerDiv.style.setProperty('--scale-factor', scale);
             //let annotationLayerDiv = document.getElementById(annotationLayerId);
             renderTask.promise
                 // Render annotations
@@ -55,9 +64,6 @@ function loadPDF(buffer, canvasId, textLayerId, postRender = function () {}) {
             // Render text
             page.getTextContent().then(function(textContent) {
                 // Render text layer
-                textLayerDiv.style.left = canvas.offsetLeft + 'px';
-                textLayerDiv.style.top = canvas.offsetTop + 'px';
-
                 const textLayer = new pdfjsLib.TextLayer({
                     textContentSource: textContent,
                     container: textLayerDiv,

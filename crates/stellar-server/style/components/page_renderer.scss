@@ -20,6 +20,17 @@ stellar-snippet {
   margin: 0;
 }
 
+.snippet-pdf-page {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 0;
+}
+
+.snippet-pdf-page canvas {
+  display: block;
+}
+
 #inner-content, h1, h2, h3, h4, h5, h6 {
   color: var(--col1);
 }
