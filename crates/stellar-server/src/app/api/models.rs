@@ -26,6 +26,20 @@ pub struct Dependency {
     pub curve: Option<f64>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CourseDocument {
+    pub title: String,
+    #[serde(default)]
+    pub pages: Vec<CoursePageEntry>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum CoursePageEntry {
+    Empty((u8, String)),
+    Ref((u8, String, String)),
+}
+
 #[derive(Debug, Deserialize)]
 pub struct QueryEntry {
     pub id: String,

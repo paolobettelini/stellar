@@ -2,20 +2,7 @@ use leptos::prelude::*;
 use leptos_router::{NavigateOptions, components::Redirect, hooks::use_navigate};
 use wasm_bindgen::prelude::*;
 
-use crate::app::{LoadingIndicator, get_course_json};
-
-#[derive(serde::Deserialize)]
-struct Course {
-    title: String,
-    pages: Vec<Page>,
-}
-
-#[derive(serde::Deserialize)]
-#[serde(untagged)]
-enum Page {
-    Empty((u8, String)),
-    Ref((u8, String, String)),
-}
+use crate::app::{CourseDocument, CoursePageEntry, LoadingIndicator, get_course_json};
 
 #[wasm_bindgen(inline_js = r#"
 export function getPageWidth() {
@@ -48,7 +35,7 @@ pub fn Navbar(
         let Some(Ok(json)) = once.get() else {
             return;
         };
-        let Ok(course_data) = serde_json::from_str::<Course>(&json) else {
+        let Ok(course_data) = serde_json::from_str::<CourseDocument>(&json) else {
             return;
         };
 
@@ -97,7 +84,7 @@ pub fn Navbar(
                         None => view! {}.into_any(),
                         Some(Err(_)) => view! { <Redirect path="/404" /> }.into_any(),
                         Some(Ok(json)) => {
-                            let Ok(course_data) = serde_json::from_str::<Course>(&json) else {
+                            let Ok(course_data) = serde_json::from_str::<CourseDocument>(&json) else {
                                 return view! { <Redirect path="/404" /> }.into_any();
                             };
                             let course_id = course.get();
@@ -105,8 +92,8 @@ pub fn Navbar(
                             course_data.pages.into_iter()
                                 .map(|page| {
                                     let (lvl, title, id) = match page {
-                                        Page::Empty((lvl, title)) => (lvl, title, None),
-                                        Page::Ref((lvl, title, id)) => (lvl, title, Some(id)),
+                                        CoursePageEntry::Empty((lvl, title)) => (lvl, title, None),
+                                        CoursePageEntry::Ref((lvl, title, id)) => (lvl, title, Some(id)),
                                     };
                                     let id_is_none = id.is_none();
                                     let lvl_class = format!("nav-title-level-{lvl}");
@@ -165,9 +152,9 @@ pub fn Navbar(
     }
 }
 
-fn first_content_page(course: &Course) -> Option<String> {
+fn first_content_page(course: &CourseDocument) -> Option<String> {
     course.pages.iter().find_map(|page| match page {
-        Page::Empty(_) => None,
-        Page::Ref((_, _, id)) => Some(id.clone()),
+        CoursePageEntry::Empty(_) => None,
+        CoursePageEntry::Ref((_, _, id)) => Some(id.clone()),
     })
 }

@@ -15,6 +15,7 @@
       - [Usage](./usage.md)
       - [Example](./example.md)
       - [Visual Studio Code](./vscode.md)
+  - [Routes](./stellar_routes.md)
   - [Stellar CLI](./stellar_cli.md)
 
 # LaTeX-driven Implementation

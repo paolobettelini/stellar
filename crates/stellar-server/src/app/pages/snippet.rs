@@ -188,7 +188,7 @@ pub fn SnippetPage() -> impl IntoView {
                         view! {
                             <div class="snippet-params-row">
                                 <label class="snippet-param-field">
-                                    <span>"Default parameters"</span>
+                                    <span>"Snippet parameters"</span>
                                     <input
                                         type="text"
                                         value=move || params_draft.get()

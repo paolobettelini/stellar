@@ -44,7 +44,12 @@ pub fn EditUniversePage() -> impl IntoView {
         }>
             {move || match once.get() {
                 None => view! {}.into_any(),
-                Some(Err(_)) => view! { <p class="universe-status">"Could not load universe"</p> }.into_any(),
+                Some(Err(_)) => view! {
+                    <UniverseEditor
+                        universe_id=universe_id.get()
+                        initial=empty_universe(&universe_id.get())
+                    />
+                }.into_any(),
                 Some(Ok(content)) => {
                     match serde_json::from_str::<Universe>(&content) {
                         Ok(universe) => view! {
@@ -58,6 +63,18 @@ pub fn EditUniversePage() -> impl IntoView {
                 }
             }}
         </Suspense>
+    }
+}
+
+fn empty_universe(universe_id: &str) -> Universe {
+    Universe {
+        title: if universe_id.is_empty() {
+            String::from("New universe")
+        } else {
+            universe_id.to_string()
+        },
+        courses: Vec::new(),
+        dependencies: Vec::new(),
     }
 }
 

@@ -1,4 +1,5 @@
 mod course;
+mod edit_course;
 mod edit_universe;
 mod home;
 mod not_found;
@@ -9,6 +10,7 @@ mod snippet;
 mod universe;
 
 pub use course::*;
+pub use edit_course::*;
 pub use edit_universe::*;
 pub use home::*;
 pub use not_found::*;
