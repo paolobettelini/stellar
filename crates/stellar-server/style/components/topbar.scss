@@ -34,13 +34,18 @@
 	text-align: center;
 }
 
-#top-bar-icons {
+#top-bar-icons,
+#top-bar-actions {
 	color: var(--col1);
 	flex: 1;
 	display: flex;
 	gap: 24px;
 
 	font-size: 28px;
+}
+
+#top-bar-actions {
+	justify-content: flex-end;
 }
 
 #top-bar-title {
@@ -52,7 +57,8 @@
 	opacity: 0.65;
 }
 
-#top-bar-icons i {
+#top-bar-icons i,
+#top-bar-actions i {
 	opacity: 50%;
 	transition: opacity 0.1s ease;
 	width: 40px;
@@ -84,21 +90,23 @@
 	transform: translateY(2px);
 }
 
-#top-bar-icons i:hover {
+#top-bar-icons i:hover,
+#top-bar-actions i:hover {
 	opacity: 100%;
 }
 
 #top-bar-icons a,
+#top-bar-actions a,
 #topbar-home {
 	text-decoration: inherit;
     color: inherit;
     cursor: inherit;
 }
 
-#theme-list {
+#theme-list,
+#settings-list {
 	position: absolute;
 	top: calc(100% + 10px);
-	left: 64px;
 	display: none;
 	z-index: 1000;
 	min-width: 170px;
@@ -110,8 +118,20 @@
 	list-style-type: none;
 }
 
-#theme-list button {
-	display: block;
+#theme-list {
+	left: 64px;
+}
+
+#settings-list {
+	right: 0;
+}
+
+#theme-list button,
+#settings-list button,
+#settings-list .settings-list-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
 	width: 100%;
 	padding: 9px 11px;
 	border: 0;
@@ -128,13 +148,19 @@
 
 #theme-list button:hover,
 #theme-list button:focus-visible,
-#theme-list button.active {
+#theme-list button.active,
+#settings-list button:hover,
+#settings-list button:focus-visible,
+#settings-list button.active,
+#settings-list .settings-list-item:hover,
+#settings-list .settings-list-item:focus-visible {
 	color: var(--col2);
 	background: var(--col4);
 	outline: none;
 }
 
-#theme-list button.active {
+#theme-list button.active,
+#settings-list button.active {
 	cursor: default;
 }
 

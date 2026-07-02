@@ -45,3 +45,8 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     or partially not clickable */
   z-index: 1000;
 }
+
+.stellar-pdf-debug .snippet-pdf-page a,
+.stellar-pdf-debug .snippet-link {
+  border: 1px solid green;
+}

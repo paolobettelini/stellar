@@ -96,6 +96,15 @@ extern "C" {
     fn copyHrefToClipboard(href: &str);
 }
 
+#[wasm_bindgen(inline_js = r#"
+export function setPdfLinkDebug(enabled) {
+    document.documentElement.classList.toggle('stellar-pdf-debug', enabled);
+}
+"#)]
+extern "C" {
+    fn setPdfLinkDebug(enabled: bool);
+}
+
 #[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
 fn current_theme_initial_value() -> String {
     getCurrentTheme()
@@ -133,10 +142,14 @@ pub fn Topbar(
     #[prop(default = true)] show_search: bool,
     #[prop(optional)] edit_href: Option<Signal<String>>,
     #[prop(optional)] share_href: Option<Signal<String>>,
+    #[prop(default = false)] show_pdf_debug: bool,
 ) -> impl IntoView {
     let (themes_hidden, set_themes_hidden) = signal(true);
+    let (settings_hidden, set_settings_hidden) = signal(true);
     let (share_popup_visible, set_share_popup_visible) = signal(false);
+    let (pdf_debug_enabled, set_pdf_debug_enabled) = signal(false);
     let (current_theme, set_current_theme) = signal(current_theme_initial_value());
+    let has_settings = edit_href.is_some() || show_pdf_debug;
 
     #[cfg(all(feature = "hydrate", target_arch = "wasm32"))]
     Effect::new(move |_| {
@@ -190,17 +203,6 @@ pub fn Topbar(
                                     style="color: inherit"
                                     href="/search" >
                                     <Icon icon=icondata::ImSearch/>
-                                </a>
-                            </i>
-                        }
-                    })}
-                    {edit_href.map(|edit_href| {
-                        view! {
-                            <i id="topbar-edit">
-                                <a
-                                    style="color: inherit"
-                                    href=move || edit_href.get() >
-                                    <Icon icon=icondata::FaPenToSquareSolid/>
                                 </a>
                             </i>
                         }
@@ -298,6 +300,50 @@ pub fn Topbar(
                 </div>
 
                 <div id="top-bar-title">{title}</div>
+                <div id="top-bar-actions">
+                    {has_settings.then(|| {
+                        view! {
+                            <i
+                                id="topbar-settings"
+                                on:click=move |_| set_settings_hidden.update(|v| *v = !*v)
+                            >
+                                <a href=""><Icon icon=icondata::FaGearSolid/></a>
+                            </i>
+                            <ul
+                                id="settings-list"
+                                style:display=move || if settings_hidden() { "none" } else { "block" }
+                            >
+                                {edit_href.map(|edit_href| {
+                                    view! {
+                                        <a
+                                            class="settings-list-item"
+                                            href=move || edit_href.get()
+                                        >
+                                            <Icon icon=icondata::FaPenToSquareSolid/>
+                                            "Edit"
+                                        </a>
+                                    }
+                                })}
+                                {show_pdf_debug.then(|| {
+                                    view! {
+                                        <button
+                                            type="button"
+                                            class:active=move || pdf_debug_enabled()
+                                            on:click=move |_| {
+                                                let enabled = !pdf_debug_enabled();
+                                                set_pdf_debug_enabled.set(enabled);
+                                                setPdfLinkDebug(enabled);
+                                            }
+                                        >
+                                            <Icon icon=icondata::FaBugSolid/>
+                                            "Debug"
+                                        </button>
+                                    }
+                                })}
+                            </ul>
+                        }
+                    })}
+                </div>
                 <div
                     id="topbar-share-popup"
                     class:visible=move || share_popup_visible()

@@ -14,6 +14,7 @@ pub fn CoursePage() -> impl IntoView {
         params.with(|params| params.get("page").filter(|page| !page.trim().is_empty()))
     });
     let course_share_href = Signal::derive(move || format!("/course/{}", course.get()));
+    let course_edit_href = Signal::derive(move || format!("/edit-course/{}", course.get()));
     let page_sig = RwSignal::new("".to_string());
     let page = page_sig.read_only();
     let (title, set_title) = signal("".to_string());
@@ -44,6 +45,8 @@ pub fn CoursePage() -> impl IntoView {
                         title=title.into()
                         set_navbar_hidden
                         share_href=course_share_href
+                        edit_href=course_edit_href
+                        show_pdf_debug=true
                     />
                 </div>
                 <div class="course-content">
