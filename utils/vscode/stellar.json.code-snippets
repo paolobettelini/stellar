@@ -76,4 +76,9 @@
 		"body": ["\\documentclass[preview]{standalone}\n\n\\usepackage{amsmath}\n\\usepackage{amssymb}\n\\usepackage{stellar}\n\\usepackage{definitions}\n\n\\begin{document}\n\n\\id{${1:id}}\n\\genpage\n\n\n\n\\end{document}"],
 		"description": "Stellar document"
 	},
+	"Random UUID": {
+		"prefix": ["uuid"],
+		"body": ["$UUID"],
+		"description": "Random UUID"
+	},
 }
