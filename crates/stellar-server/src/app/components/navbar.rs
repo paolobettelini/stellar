@@ -82,11 +82,58 @@ pub fn Navbar(
                 >
                     {move || match once.get() {
                         None => view! {}.into_any(),
-                        Some(Err(_)) => view! { <Redirect path="/404" /> }.into_any(),
+                        Some(Err(_)) => view! {
+                            <Redirect
+                                path="/404"
+                                options=NavigateOptions {
+                                    replace: true,
+                                    ..Default::default()
+                                }
+                            />
+                        }
+                        .into_any(),
                         Some(Ok(json)) => {
+                            // Invalid JSON - still redirect to 404
                             let Ok(course_data) = serde_json::from_str::<CourseDocument>(&json) else {
-                                return view! { <Redirect path="/404" /> }.into_any();
+                                return view! {
+                                    <Redirect
+                                        path="/404"
+                                        options=NavigateOptions {
+                                            replace: true,
+                                            ..Default::default()
+                                        }
+                                    />
+                                }
+                                .into_any();
                             };
+
+                            // Check that the page is actually part of this course
+                            if let Some(requested_page) = route_page
+                                .get()
+                                .filter(|page| !page.trim().is_empty())
+                            {
+                                let page_belongs_to_course =
+                                    course_data.pages.iter().any(|entry| match entry {
+                                        CoursePageEntry::Empty(_) => false,
+                                        CoursePageEntry::Ref((_, _, page_id)) => {
+                                            page_id == &requested_page
+                                        }
+                                    });
+
+                                if !page_belongs_to_course {
+                                    return view! {
+                                        <Redirect
+                                            path="/404"
+                                            options=NavigateOptions {
+                                                replace: true,
+                                                ..Default::default()
+                                            }
+                                        />
+                                    }
+                                    .into_any();
+                                }
+                            }
+
                             let course_id = course.get();
 
                             course_data.pages.into_iter()

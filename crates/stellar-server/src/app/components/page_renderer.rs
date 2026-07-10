@@ -1,7 +1,10 @@
 use crate::app::get_page_html;
 use crate::app::{LoadingIndicator, SnippetLibraries, SnippetsRenderer};
 use leptos::prelude::*;
-use leptos_router::components::Redirect;
+use leptos_router::{
+    NavigateOptions,
+    components::Redirect,
+};
 
 #[component]
 pub fn PageRenderer(
@@ -47,7 +50,16 @@ pub fn PageRenderer(
                             view! {}.into_any()
                         }
                     } else {
-                        view! { <Redirect path="/404" /> }.into_any()
+                        view! {
+                            <Redirect
+                                path="/404"
+                                options=NavigateOptions {
+                                    replace: true,
+                                    ..Default::default()
+                                }
+                            />
+                        }
+                        .into_any()
                     }
                 }
             }}
