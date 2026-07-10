@@ -164,10 +164,17 @@ function loadSnippetPayload(snippetName, retriesLeft) {
             }
 
             return response.arrayBuffer()
-                .then(buffer => ({ response, buffer }));
+                .then(buffer => ({ response, buffer }))
+                .catch(cause => {
+                    const error = new Error(`Could not read snippet response body (status ${response.status})`);
+                    error.status = response.status;
+                    error.responseBodyFailed = true;
+                    error.cause = cause;
+                    throw error;
+                });
         })
         .catch(error => {
-            if (retriesLeft <= 0 || !isServerError(error)) {
+            if (retriesLeft <= 0 || !isTransientSnippetError(error)) {
                 throw error;
             }
 
@@ -180,9 +187,15 @@ function isServerError(error) {
     return error.status >= 500 && error.status < 600;
 }
 
+function isTransientSnippetError(error) {
+    return isServerError(error)
+        || error.responseBodyFailed === true
+        || error instanceof TypeError;
+}
+
 function waitBeforeRetry(retriesLeft) {
     let attempt = MAX_SNIPPET_LOAD_RETRIES - retriesLeft + 1;
-    console.log("Retrying to load snippet after server error.");
+    console.log("Retrying to load snippet after a transient response error.");
     return new Promise(resolve => setTimeout(resolve, 150 * attempt));
 }
 
