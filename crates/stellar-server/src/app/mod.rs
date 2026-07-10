@@ -47,6 +47,7 @@ pub fn App() -> impl IntoView {
                     <Route path=path!("page/:page") view=PagePage/>
                     <Route path=path!("course/:course") view=CoursePage/>
                     <Route path=path!("course/:course/:page") view=CoursePage/>
+                    <Route path=path!("edit-course/:course") view=EditCoursePage/>
                     <Route path=path!("universe/:universe") view=UniversePage/>
                     <Route path=path!("edit-universe/:universe") view=EditUniversePage/>
                     <Route path=path!("search") view=SearchPage/>
