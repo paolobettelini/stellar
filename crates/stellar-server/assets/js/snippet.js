@@ -76,7 +76,10 @@ class SnippetElement extends HTMLElement {
                 }
 
                 //let buffer = new Uint8Array(arrayBuffer);
-                let contentType = response.headers.get('content-type');
+                const contentType = (response.headers.get('content-type') || '')
+                    .split(';', 1)[0]
+                    .trim()
+                    .toLowerCase();
 
                 if (contentType == 'application/pdf') {
                     return ensurePdfJs()
