@@ -21,12 +21,6 @@
     pdfpagemode=FullScreen,
 }
 
-% Disable hyphenation globally, which can cause problems
-\tolerance=1
-\emergencystretch=\maxdimen
-\hyphenpenalty=10000
-\hbadness=10000
-
 %%%%%%%%%% Stellar commands utils %%%%%%%%%%
 
 \ExplSyntaxOn
@@ -52,11 +46,16 @@
 }
 
 % Command to break lines before and after the content.
-% Used for every PDF command.
-\newcommand{\@padcmd}[1]{
+% Used for every PDF command. The zero-width box keeps the command on one
+% unbreakable line while allowing it to extend beyond the page boundary.
+\newcommand{\@padcmd}[1]{%
+\begingroup
+\hbadness=10000
 \beginnewline~\\
-#1
+\makebox[0pt][l]{#1}%
 \beginnewline~\\
+\par
+\endgroup
 }
 
 \renewcommand{\section}[1]{\@padcmd{!section #1}}
