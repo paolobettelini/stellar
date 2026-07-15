@@ -1,7 +1,8 @@
 use crate::models::*;
 use mupdf::text_page::TextBlockType;
 use mupdf::{Document, TextPageFlags};
-use std::{path::Path, process::Command};
+use std::{path::Path};
+use unicode_normalization::UnicodeNormalization;
 
 const GLOBAL_ID: &str = "!id";
 const SNIPPET: &str = "!snippet";
@@ -114,21 +115,24 @@ fn pdf_extract_raw_cmds(pdf_path: &Path) -> anyhow::Result<Vec<DocumentRawCmd>> 
     Ok(result)
 }
 
+/// Normalizes Unicode text using NFKC, converting compatibility characters
+/// such as ligatures and typographic variants into their standard forms,
+/// then replaces curly quotes and apostrophes with their ASCII equivalents.
 fn clean_text(text: &str) -> String {
-    text.replace('’', "'")
-        .replace('ﬀ', "ff")
-        .replace('ô', "o")
-        .replace('”', "\"")
+    text.nfkc()
+        .collect::<String>()
+        .replace('’', "'")
+        .replace('‘', "'")
         .replace('“', "\"")
+        .replace('”', "\"")
 }
 
 pub fn parse_cmd(line: &str) -> Option<Cmd> {
     let cmd = if line.starts_with(SNIPPET) {
-        let id = parse_start_snippet(line)?;
-        Cmd::StartSnippet(id)
-    } else if line.starts_with(END_SNIPPET) {
-        let v = parse_endsnippet(line);
-        Cmd::EndSnippet(v)
+        let (id, metadata) = parse_start_snippet(line)?;
+        Cmd::StartSnippet { id, metadata }
+    } else if line == END_SNIPPET {
+        Cmd::EndSnippet
     } else if line.starts_with(GEN_PAGE) {
         let v = parse_gen_page(line)?;
         Cmd::SetGenPage(v)
@@ -157,9 +161,22 @@ pub fn parse_cmd(line: &str) -> Option<Cmd> {
     Some(cmd)
 }
 
-fn parse_start_snippet(line: &str) -> Option<String> {
-    let id = &line[(SNIPPET.len() + 1)..];
-    Some(id.to_string())
+fn parse_start_snippet(line: &str) -> Option<(String, Option<String>)> {
+    let text = line.strip_prefix(SNIPPET)?.strip_prefix(' ')?;
+    let (id, metadata) = match text.split_once(' ') {
+        Some((id, metadata)) => {
+            let metadata = metadata.trim();
+            let metadata = (!metadata.is_empty()).then(|| metadata.to_string());
+            (id, metadata)
+        }
+        None => (text, None),
+    };
+
+    if id.is_empty() {
+        None
+    } else {
+        Some((id.to_string(), metadata))
+    }
 }
 
 fn parse_gen_page(line: &str) -> Option<bool> {
@@ -179,15 +196,6 @@ fn parse_include(line: &str) -> Option<(String, Option<String>)> {
     } else {
         // no parameters
         Some((text.to_string(), None))
-    }
-}
-
-fn parse_endsnippet(line: &str) -> Option<String> {
-    if line.len() == END_SNIPPET.len() {
-        None
-    } else {
-        let text = &line[(END_SNIPPET.len() + 1)..];
-        Some(text.to_string())
     }
 }
 

@@ -47,6 +47,8 @@ A special secondary file is the `meta.json` which contains additional metadata (
 
 | Field               | Type                      | Description                      |
 | ------------------- | ------------------------- | -------------------------------  |
+| `type`              | String                    | Semantic type of the snippet, such as `Definition`, `Theorem`, or `Proof`. |
+| `proves`            | Snippet ID                | Statement proved by a proof snippet. |
 | `generalizations`   | Array of snippet IDs      | Mathematical generalizations.    |
 | `requires`          | Array of snippet IDs      | Necessary libraries.             |
 | `default-params`    | Params string             | Default parameters for snippet.  |

@@ -3,8 +3,8 @@ use crate::CropPdfData;
 use crate::DocumentCmd;
 use crate::crop_pdf;
 use crate::pdf_extract;
+use anyhow::{Context, bail};
 use import::ClientHandler;
-use std::io::Write;
 use std::process::{Command, Stdio};
 use std::{
     fs,
@@ -12,13 +12,12 @@ use std::{
 };
 use stellar_import as import;
 
-use std::sync::mpsc::{self, Receiver, Sender};
+use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::thread::JoinHandle;
-use std::time::Duration;
 
-use serde_json::json;
+use serde_json::{Map, Value};
 
 #[derive(Debug, Default)]
 struct DocProcessor {
@@ -27,6 +26,7 @@ struct DocProcessor {
     gen_page: bool,
     current_coords: Option<(f64, f64)>,
     current_id: Option<String>,
+    current_metadata: Option<Map<String, Value>>,
     current_page: Option<u16>,
 }
 
@@ -58,7 +58,7 @@ pub async fn generate_snippets(
     create_if_necessary(&pages_dir);
     create_if_necessary(&courses_dir);
 
-    let commands = pdf_extract(input).unwrap();
+    let commands = pdf_extract(input)?;
     let mut processor = DocProcessor::default();
 
     // Set default global ID using the file name
@@ -90,7 +90,7 @@ pub async fn generate_snippets(
     let mut imported_snippets = vec![];
     for cmd in commands {
         let snippet =
-            process_cmd(input, &mut processor, &cmd, &snippets_dir, &dim, tx.clone()).await;
+            process_cmd(input, &mut processor, &cmd, &snippets_dir, &dim, tx.clone()).await?;
 
         if let Some(snippet) = snippet {
             imported_snippets.push(snippet);
@@ -130,19 +130,25 @@ async fn process_cmd(
     snippets_dir: &Path,
     dim: &CropDimension,
     tx: Sender<CropPdfData>,
-) -> Option<String> {
+) -> anyhow::Result<Option<String>> {
     // true if a snippet has been imported
     match &cmd.cmd {
         SetGlobalID(id) => {
             processor.global_id = id.to_string();
         }
         SetGenPage(gen_page) => processor.gen_page = *gen_page,
-        StartSnippet(id) => {
+        StartSnippet { id, metadata } => {
             processor.current_coords = Some(cmd.coords);
             processor.current_page = Some(cmd.page);
             processor.current_id = Some(id.to_string());
+            processor.current_metadata = metadata
+                .as_deref()
+                .map(merge_metadata_fragments)
+                .transpose()
+                .with_context(|| format!("Invalid metadata for snippet {id}"))?
+                .flatten();
         }
-        EndSnippet(meta) => {
+        EndSnippet => {
             let snippet_id = processor.current_id.clone().unwrap();
 
             let output = snippets_dir.join(&snippet_id);
@@ -178,19 +184,20 @@ async fn process_cmd(
             }
 
             // Generate meta.json
-            if let Some(meta) = meta {
+            if let Some(meta) = processor.current_metadata.take() {
                 let mut output = snippets_dir.join(&snippet_id);
                 output.push("meta.json");
-                let mut file = fs::File::create(output).expect("Failed to save meta file");
-                file.write_all(meta.as_bytes())
-                    .expect("Failed to save meta file");
+                let file = fs::File::create(&output)
+                    .with_context(|| format!("Failed to create {}", output.display()))?;
+                serde_json::to_writer_pretty(file, &meta)
+                    .with_context(|| format!("Failed to write {}", output.display()))?;
             }
 
             processor.current_coords = None;
             processor.current_page = None;
             processor.current_id = None;
 
-            return Some(snippet_id);
+            return Ok(Some(snippet_id));
         }
         AddSection(title) => {
             // Add title to HTML page
@@ -226,7 +233,30 @@ async fn process_cmd(
         }
     }
 
-    None
+    Ok(None)
+}
+
+fn merge_metadata_fragments(raw: &str) -> anyhow::Result<Option<Map<String, Value>>> {
+    let mut merged = Map::new();
+    let mut found_fragment = false;
+
+    for (index, fragment) in serde_json::Deserializer::from_str(raw)
+        .into_iter::<Value>()
+        .enumerate()
+    {
+        let fragment =
+            fragment.with_context(|| format!("Could not parse metadata object {}", index + 1))?;
+        let Value::Object(fields) = fragment else {
+            bail!("Metadata fragment {} is not a JSON object", index + 1);
+        };
+
+        found_fragment = true;
+        for (key, value) in fields {
+            merged.insert(key, value);
+        }
+    }
+
+    Ok(found_fragment.then_some(merged))
 }
 
 async fn finalize(

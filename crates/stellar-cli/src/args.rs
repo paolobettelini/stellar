@@ -1,6 +1,6 @@
 use clap::{Args, Parser, Subcommand};
 use std::{
-    net::{IpAddr, Ipv4Addr},
+    net::IpAddr,
     path::PathBuf,
 };
 

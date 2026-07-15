@@ -30,4 +30,3 @@
 # Miscellaneous
   - [Fish configuration](./misc_fish.md)
   - [VS Code configuration](./misc_vscode.md)
-  - [TODO](./misc_todo.md)

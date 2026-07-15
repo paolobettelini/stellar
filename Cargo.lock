@@ -3878,6 +3878,7 @@ dependencies = [
  "stellar-parser",
  "stellar-utils",
  "tokio",
+ "unicode-normalization",
  "uuid",
 ]
 

@@ -9,8 +9,11 @@ pub struct DocumentCmd {
 pub enum Cmd {
     SetGlobalID(String),
     SetGenPage(bool),
-    StartSnippet(String),
-    EndSnippet(Option<String>),
+    StartSnippet {
+        id: String,
+        metadata: Option<String>,
+    },
+    EndSnippet,
     Include((String, Option<String>)),
     Plain(String),
     AddSection(String),
@@ -23,10 +26,12 @@ impl Cmd {
     pub fn inject_additional_arguments(&mut self, arg: &str) {
         match self {
             Self::SetGlobalID(s) => s.push_str(arg),
-            Self::StartSnippet(s) => s.push_str(arg),
-            Self::EndSnippet(s) => {
-                if let Some(meta) = s {
-                    meta.push_str(arg)
+            Self::StartSnippet { metadata, .. } => {
+                if let Some(metadata) = metadata {
+                    metadata.push(' ');
+                    metadata.push_str(arg);
+                } else {
+                    *metadata = Some(arg.to_string());
                 }
             }
             Self::Include(s) => {
