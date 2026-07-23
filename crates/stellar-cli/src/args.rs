@@ -54,11 +54,11 @@ pub struct GenerateArgs {
     pub connection_url: Option<String>,
 
     /// Snippet cut top offset
-    #[arg(long, default_value_t = -20.0)]
+    #[arg(long, default_value_t = 20.0)]
     pub top_offset: f64,
 
     /// Snippet cut bottom offset
-    #[arg(long, default_value_t = 2.5)]
+    #[arg(long, default_value_t = -9.5)]
     pub bottom_offset: f64,
 
     /// Snippet cut left margin
