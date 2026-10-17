@@ -4,7 +4,9 @@ use crate::app::App;
 use crate::assets::handle_static_file;
 use crate::config::StellarConfig;
 use crate::routes::*;
-use actix_web::{HttpServer, Responder, get, middleware::NormalizePath, web};
+use actix_web::{
+    HttpServer, Responder, dev::Service, get, http::Uri, middleware::NormalizePath, web,
+};
 use leptos::config::{Env, LeptosOptions, get_config_from_str};
 use leptos::prelude::*;
 use leptos_meta::MetaTags;
@@ -78,6 +80,7 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
         let shell_base = base_path.clone();
         let fallback_base = base_path.clone();
         let scope_data = data.clone();
+        let api_base = base_path.clone();
 
         actix_web::App::new()
             .wrap(NormalizePath::trim())
@@ -96,11 +99,20 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
                     .configure(|cfg| {
                         for (path, _) in leptos::server_fn::actix::server_fn_paths() {
                             let context_data = scope_data.clone();
-                            cfg.route(
-                                path,
-                                leptos_actix::handle_server_fns_with_context(move || {
-                                    provide_context(context_data.clone())
-                                }),
+                            let api_base = api_base.clone();
+                            cfg.service(
+                                web::resource(path)
+                                    .wrap_fn(move |mut req, service| {
+                                        if !api_base.is_empty() {
+                                            // Leptos looks up server functions by the original /api path.
+                                            let uri = server_fn_uri(req.uri(), &api_base);
+                                            req.head_mut().uri = uri;
+                                        }
+                                        service.call(req)
+                                    })
+                                    .route(leptos_actix::handle_server_fns_with_context(
+                                        move || provide_context(context_data.clone()),
+                                    )),
                             );
                         }
                     })
@@ -121,6 +133,23 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     .await?;
 
     Ok(())
+}
+
+fn server_fn_uri(uri: &Uri, base_path: &str) -> Uri {
+    let path_and_query = uri
+        .path_and_query()
+        .expect("server function request has a path");
+    let path = path_and_query.path();
+    let relative_path = path.strip_prefix(base_path).unwrap_or(path);
+    let relative_path = if let Some(query) = path_and_query.query() {
+        format!("{relative_path}?{query}")
+    } else {
+        relative_path.to_string()
+    };
+    Uri::builder()
+        .path_and_query(relative_path)
+        .build()
+        .expect("valid server function URI")
 }
 
 pub fn normalize_base_path(path: &str) -> anyhow::Result<String> {
@@ -180,7 +209,7 @@ fn check_data_folder_exists(path: &PathBuf) {
 
 #[cfg(test)]
 mod tests {
-    use super::normalize_base_path;
+    use super::{normalize_base_path, server_fn_uri};
 
     #[test]
     fn normalizes_base_paths() {
