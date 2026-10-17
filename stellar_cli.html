@@ -164,15 +164,22 @@ Options:
 <p>The <code>web</code> subcommand is used to start the web server.</p>
 <pre><code>Help message for web
 
-Usage: stellar web [OPTIONS] --data &lt;DATA&gt; --connection-url &lt;CONNECTION_URL&gt;
+Usage: stellar web [OPTIONS]
 
 Options:
   -a, --address &lt;ADDRESS&gt;                Listening address [default: 0.0.0.0]
   -p, --port &lt;PORT&gt;                      Listening port [default: 8080]
   -d, --data &lt;DATA&gt;                      Data folder
   -c, --connection-url &lt;CONNECTION_URL&gt;  MongoDB Connection URL
+      --config &lt;CONFIG&gt;                  Config file
+      --base-path &lt;BASE_PATH&gt;            URL prefix for the site (default: /)
   -h, --help                             Print help
 </code></pre>
+<p>To serve the entire site below <code>/stellar</code>, run <code>stellar web --base-path /stellar</code> with
+the usual data and connection options. The path must begin with <code>/</code>; a trailing
+slash is accepted. The default <code>/</code> serves the site at the domain root.
+The same setting is available as <code>base-path = &quot;/stellar&quot;</code> under <code>[server]</code> in
+the TOML config; the CLI option overrides it.</p>
 <h1 id="stellar-import"><a class="header" href="#stellar-import">stellar import</a></h1>
 <p>The <code>import</code> subcommand is used to process data and import it to the MongoDB database.</p>
 <pre><code>Help message for import
