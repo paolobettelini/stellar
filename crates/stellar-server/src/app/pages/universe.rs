@@ -16,7 +16,8 @@ pub fn UniversePage() -> impl IntoView {
             format!("Universe / {universe}")
         }
     });
-    let edit_href = Signal::derive(move || format!("/edit-universe/{}", universe.get()));
+    let edit_href =
+        Signal::derive(move || crate::app::base_url(&format!("/edit-universe/{}", universe.get())));
 
     view! {
         <div class="universe-page">

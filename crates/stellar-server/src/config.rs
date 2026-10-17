@@ -12,6 +12,8 @@ pub struct StellarConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct StellarServerConf {
+    #[serde(default = "default_base_path", rename = "base-path")]
+    pub base_path: String,
     pub address: IpAddr,
     pub port: u16,
     #[serde(rename(deserialize = "connection-url"))]
@@ -49,4 +51,8 @@ pub fn parse_toml_config<P: AsRef<Path>, ConfigType: for<'a> Deserialize<'a>>(
 
 fn default_false() -> bool {
     false
+}
+
+fn default_base_path() -> String {
+    "/".to_string()
 }

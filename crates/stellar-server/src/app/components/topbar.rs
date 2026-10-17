@@ -1,3 +1,4 @@
+use crate::app::base_url;
 use leptos::prelude::*;
 use std::time::Duration;
 use wasm_bindgen::prelude::*;
@@ -144,6 +145,9 @@ pub fn Topbar(
     #[prop(optional)] share_href: Option<Signal<String>>,
     #[prop(default = false)] show_pdf_debug: bool,
 ) -> impl IntoView {
+    let home_url = base_url("/");
+    let logo_url = base_url("/assets/logo.png");
+    let search_url = base_url("/search");
     let (themes_hidden, set_themes_hidden) = signal(true);
     let (settings_hidden, set_settings_hidden) = signal(true);
     let (share_popup_visible, set_share_popup_visible) = signal(false);
@@ -180,10 +184,10 @@ pub fn Topbar(
                 view! {
                     <a
                         id="topbar-home"
-                        href="/"
+                        href=home_url
                         aria-label="Stellar home"
                     >
-                        <img src="/assets/logo.png" alt="Stellar" />
+                        <img src=logo_url alt="Stellar" />
                     </a>
                 }
             })}
@@ -201,7 +205,7 @@ pub fn Topbar(
                             <i id="topbar-search">
                                 <a
                                     style="color: inherit"
-                                    href="/search" >
+                                    href=search_url >
                                     <Icon icon=icondata::ImSearch/>
                                 </a>
                             </i>

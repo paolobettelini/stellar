@@ -71,8 +71,8 @@ pub fn Navbar(
 
     view! {
         <div id="navbar" class:hidden=move || hidden() class:full=move || full_navbar()>
-            <a class="navbar-home" href="/">
-                <img src="/assets/logo.png" width="64px" height="64px" alt="Home" />
+            <a class="navbar-home" href=crate::app::base_url("/")>
+                <img src=crate::app::base_url("/assets/logo.png") width="64px" height="64px" alt="Home" />
             </a>
             <div id="navbar-content">
                 <Suspense
@@ -155,6 +155,7 @@ pub fn Navbar(
                                         .unwrap_or_else(|| String::from("#"));
                                     let id_clone = id.clone();
                                     let href_clone = href.clone();
+                                    let display_href = if href == "#" { href.clone() } else { crate::app::base_url(&href) };
                                     let navigate = navigate.clone();
 
                                     view! {
@@ -183,7 +184,7 @@ pub fn Navbar(
                                                     set_full_navbar.set(false)
                                                 }
                                             }
-                                            href=href
+                                            href=display_href
                                             id=id_str>
                                             {title}
                                         </a>

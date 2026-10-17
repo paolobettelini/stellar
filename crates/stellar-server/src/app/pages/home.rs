@@ -16,7 +16,7 @@ pub fn HomePage() -> impl IntoView {
                     <div class="home-brand">
                         <img
                             class="home-logo"
-                            src="/assets/logo.png"
+                            src=crate::app::base_url("/assets/logo.png")
                             alt="Stellar"
                             width="132"
                             height="132"
@@ -38,7 +38,7 @@ pub fn HomePage() -> impl IntoView {
                         "."
                     </p>
 
-                    <a class="home-search-link" href="/search">
+                    <a class="home-search-link" href=crate::app::base_url("/search")>
                         "Go to Search"
                     </a>
                 </section>

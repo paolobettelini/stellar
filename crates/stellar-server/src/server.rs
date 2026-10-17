@@ -12,19 +12,21 @@ use leptos_router::Method;
 use std::path::PathBuf;
 use stellar_database::*;
 
-pub fn shell(options: LeptosOptions) -> impl IntoView {
+pub fn shell(options: LeptosOptions, base_path: String) -> impl IntoView {
+    let app_base = base_path.clone();
     view! {
         <!DOCTYPE html>
         <html>
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="stellar-base-path" content=base_path.clone()/>
                 <AutoReload options=options.clone()/>
-                <HydrationScripts options/>
+                <HydrationScripts options root=base_path/>
                 <MetaTags/>
             </head>
             <body>
-                <App/>
+                <App base_path=app_base/>
             </body>
         </html>
     }
@@ -32,6 +34,8 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 
 pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     use leptos_actix::{LeptosRoutes, generate_route_list};
+
+    let base_path = normalize_base_path(&config.server.base_path)?;
 
     // Check if data folder exists
     check_data_folder_exists(&config.server.data_folder);
@@ -60,7 +64,8 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     };
 
     // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(App);
+    let route_base = base_path.clone();
+    let routes = generate_route_list(move || view! { <App base_path=route_base.clone()/> });
     let listen_addr = leptos_options.site_addr;
 
     HttpServer::new(move || {
@@ -69,31 +74,45 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
         let options = leptos_options.clone();
         let fallback_data = data.clone();
         let fallback_options = options.clone();
+        let scope_base = base_path.clone();
+        let shell_base = base_path.clone();
+        let fallback_base = base_path.clone();
+        let scope_data = data.clone();
 
         actix_web::App::new()
             .wrap(NormalizePath::trim())
-            .service(snippet_service)
-            .service(snippet_complementary_service)
-            .service(favicon)
-            // /pkg/<path> -> <site_root>/pkg/<path>
-            //.service(Files::new("/pkg", format!("{site_root}/pkg")))
-            .service(static_assets)
-            // /assets/<path> -> <site_root>/<path>
-            //.service(Files::new("/assets", site_root))
-            .service(static_pkg)
             .leptos_routes_with_context(
                 routes.to_owned(),
                 move || provide_context(data.clone()),
-                move || shell(options.clone()),
+                move || shell(options.clone(), shell_base.clone()),
             )
-            .default_service(leptos_actix::render_app_to_stream_with_context(
-                move || {
-                    provide_context(Method::Get);
-                    provide_context(fallback_data.clone());
-                },
-                move || shell(fallback_options.clone()),
-                Method::Get,
-            ))
+            .service(
+                web::scope(&scope_base)
+                    .service(snippet_service)
+                    .service(snippet_complementary_service)
+                    .service(favicon)
+                    .service(static_assets)
+                    .service(static_pkg)
+                    .configure(|cfg| {
+                        for (path, _) in leptos::server_fn::actix::server_fn_paths() {
+                            let context_data = scope_data.clone();
+                            cfg.route(
+                                path,
+                                leptos_actix::handle_server_fns_with_context(move || {
+                                    provide_context(context_data.clone())
+                                }),
+                            );
+                        }
+                    })
+                    .default_service(leptos_actix::render_app_to_stream_with_context(
+                        move || {
+                            provide_context(Method::Get);
+                            provide_context(fallback_data.clone());
+                        },
+                        move || shell(fallback_options.clone(), fallback_base.clone()),
+                        Method::Get,
+                    )),
+            )
             // Data
             .app_data(web::Data::new(data2))
     })
@@ -102,6 +121,27 @@ pub async fn start_server(config: StellarConfig) -> anyhow::Result<()> {
     .await?;
 
     Ok(())
+}
+
+pub fn normalize_base_path(path: &str) -> anyhow::Result<String> {
+    if path == "/" {
+        return Ok(String::new());
+    }
+    let path = path.trim_end_matches('/');
+    anyhow::ensure!(
+        path.len() > 1
+            && path.starts_with('/')
+            && path.split('/').skip(1).all(|segment| {
+                !segment.is_empty()
+                    && segment != "."
+                    && segment != ".."
+                    && segment
+                        .bytes()
+                        .all(|c| c.is_ascii_alphanumeric() || c == b'-' || c == b'_')
+            }),
+        "Invalid base path: use / or a path like /stellar/notes"
+    );
+    Ok(path.to_string())
 }
 
 #[get("/assets/{_:.*}")]
@@ -135,5 +175,45 @@ fn check_data_folder_exists(path: &PathBuf) {
         }
 
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_base_path;
+
+    #[test]
+    fn normalizes_base_paths() {
+        assert_eq!(normalize_base_path("/").unwrap(), "");
+        assert_eq!(normalize_base_path("/stellar/").unwrap(), "/stellar");
+        assert_eq!(
+            normalize_base_path("/stellar/notes").unwrap(),
+            "/stellar/notes"
+        );
+        for invalid in [
+            "",
+            "stellar",
+            "////",
+            "/stellar//notes",
+            "/../notes",
+            "/stellar?x=1",
+        ] {
+            assert!(normalize_base_path(invalid).is_err());
+        }
+    }
+
+    #[test]
+    fn leptos_routes_include_base_path() {
+        use crate::app::App;
+        use leptos::prelude::*;
+
+        let routes =
+            leptos_actix::generate_route_list(|| view! { <App base_path="/stellar".to_string()/> });
+        assert!(routes.iter().any(|route| route.path() == "/stellar/search"));
+        assert!(
+            routes
+                .iter()
+                .any(|route| route.path() == "/stellar/course/{course}")
+        );
     }
 }

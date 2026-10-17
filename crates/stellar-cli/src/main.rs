@@ -108,6 +108,10 @@ pub async fn parse_web_args(args: &WebArgs) -> anyhow::Result<()> {
         config.server.data_folder = data.clone();
     }
 
+    if let Some(base_path) = &args.base_path {
+        config.server.base_path = base_path.clone();
+    }
+
     // Start the server
     web::start_server(*config).await?;
 

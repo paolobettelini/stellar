@@ -25,15 +25,23 @@ The `web` subcommand is used to start the web server.
 ```
 Help message for web
 
-Usage: stellar web [OPTIONS] --data <DATA> --connection-url <CONNECTION_URL>
+Usage: stellar web [OPTIONS]
 
 Options:
   -a, --address <ADDRESS>                Listening address [default: 0.0.0.0]
   -p, --port <PORT>                      Listening port [default: 8080]
   -d, --data <DATA>                      Data folder
   -c, --connection-url <CONNECTION_URL>  MongoDB Connection URL
+      --config <CONFIG>                  Config file
+      --base-path <BASE_PATH>            URL prefix for the site (default: /)
   -h, --help                             Print help
 ```
+
+To serve the entire site below `/stellar`, run `stellar web --base-path /stellar` with
+the usual data and connection options. The path must begin with `/`; a trailing
+slash is accepted. The default `/` serves the site at the domain root.
+The same setting is available as `base-path = "/stellar"` under `[server]` in
+the TOML config; the CLI option overrides it.
 
 # stellar import
 

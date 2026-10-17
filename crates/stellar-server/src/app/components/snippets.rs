@@ -1,3 +1,4 @@
+use crate::app::base_url;
 use leptos::prelude::*;
 
 #[component]
@@ -10,6 +11,10 @@ pub fn SnippetsRenderer(content: String) -> impl IntoView {
 
 #[component]
 pub fn SnippetLibraries() -> impl IntoView {
+    let filter = base_url("/assets/js/filter.js");
+    let pdf = base_url("/assets/js/load-pdf.js");
+    let utils = base_url("/assets/js/utils.js");
+    let snippet = base_url("/assets/js/snippet.js");
     view! {
         <script type="module">
             {r#"
@@ -23,9 +28,9 @@ pub fn SnippetLibraries() -> impl IntoView {
             }
             "#}
         </script>
-        <script src="/assets/js/filter.js" />
-        <script src="/assets/js/load-pdf.js" />
-        <script src="/assets/js/utils.js" />
-        <script src="/assets/js/snippet.js" />
+        <script src=filter />
+        <script src=pdf />
+        <script src=utils />
+        <script src=snippet />
     }
 }

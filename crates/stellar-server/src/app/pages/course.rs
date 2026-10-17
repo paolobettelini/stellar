@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
-use crate::app::{LoadingIndicator, Navbar, PageRenderer, Topbar};
+use crate::app::{LoadingIndicator, Navbar, PageRenderer, Topbar, base_url};
 
 #[component]
 pub fn CoursePage() -> impl IntoView {
@@ -13,8 +13,9 @@ pub fn CoursePage() -> impl IntoView {
     let route_page = Signal::derive(move || {
         params.with(|params| params.get("page").filter(|page| !page.trim().is_empty()))
     });
-    let course_share_href = Signal::derive(move || format!("/course/{}", course.get()));
-    let course_edit_href = Signal::derive(move || format!("/edit-course/{}", course.get()));
+    let course_share_href = Signal::derive(move || base_url(&format!("/course/{}", course.get())));
+    let course_edit_href =
+        Signal::derive(move || base_url(&format!("/edit-course/{}", course.get())));
     let page_sig = RwSignal::new("".to_string());
     let page = page_sig.read_only();
     let (title, set_title) = signal("".to_string());

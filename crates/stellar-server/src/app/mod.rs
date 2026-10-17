@@ -6,21 +6,27 @@ use leptos_router::{
 };
 
 mod api;
+mod base_path;
 mod components;
 mod pages;
 
 pub use api::*;
+pub use base_path::*;
 pub use components::*;
 pub use pages::*;
 
 #[component]
-pub fn App() -> impl IntoView {
+pub fn App(base_path: String) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
+    provide_context(BasePath(base_path.clone()));
+
+    let stylesheet_url = format!("{base_path}/pkg/stellar.css");
+    let init_url = format!("{base_path}/assets/js/init.js");
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/stellar.css"/>
-        <script src="/assets/js/init.js" />
+        <Stylesheet id="leptos" href=stylesheet_url/>
+        <script src=init_url />
 
         // Meta
         <Meta property="og:site_name" content="Stellar" />
@@ -37,7 +43,7 @@ pub fn App() -> impl IntoView {
 
         <Title text="Stellar"/>
 
-        <Router>
+        <Router base=base_path>
             <main>
                 <Routes fallback=|| view! { <NotFound/> }>
                     <Route path=path!("") view=HomePage/>

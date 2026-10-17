@@ -143,7 +143,7 @@ pub fn SearchPage() -> impl IntoView {
                                 <div class="results-list">
                                     {results.into_iter()
                                         .map(|entry| {
-                                            let link = format!("/{}/{}", query_type, entry.id);
+                                            let link = crate::app::base_url(&format!("/{}/{}", query_type, entry.id));
                                             view! {
                                                 <a
                                                     class="result-entry"

@@ -1,5 +1,5 @@
 async function postData(url = '', data = {}) {
-    const response = await fetch('/api' + url, {
+    const response = await fetch(window.stellarPath('/api' + url), {
         method: 'POST',
         cache: 'no-cache',
         referrerPolicy: 'no-referrer',

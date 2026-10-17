@@ -149,7 +149,7 @@ pub fn SnippetPage() -> impl IntoView {
                             <h2>"References"</h2>
                             <a
                                 class="snippet-tree-link"
-                                href=move || format!("/reftree/{}", snippet.get())
+                                href=move || crate::app::base_url(&format!("/reftree/{}", snippet.get()))
                             >
                                 "Show tree"
                             </a>
@@ -166,7 +166,7 @@ pub fn SnippetPage() -> impl IntoView {
                                     <div class="snippet-reference-list">
                                         {references.into_iter()
                                             .map(|id| {
-                                                let href = format!("/snippet/{id}");
+                                                let href = crate::app::base_url(&format!("/snippet/{id}"));
                                                 view! {
                                                     <a class="snippet-reference" href=href>
                                                         <span>{id}</span>

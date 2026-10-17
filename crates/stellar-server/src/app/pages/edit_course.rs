@@ -114,8 +114,8 @@ fn CourseEditor(course_id: String, initial: CourseDocument) -> impl IntoView {
 
                 <div class="course-editor-preview-shell">
                     <aside id="navbar" class="course-editor-navbar">
-                        <a class="navbar-home" href="/">
-                            <img src="/assets/logo.png" width="64px" height="64px" alt="Home" />
+                        <a class="navbar-home" href=crate::app::base_url("/")>
+                            <img src=crate::app::base_url("/assets/logo.png") width="64px" height="64px" alt="Home" />
                         </a>
                         <div id="navbar-content">
                             {move || {

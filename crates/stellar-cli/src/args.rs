@@ -1,8 +1,5 @@
 use clap::{Args, Parser, Subcommand};
-use std::{
-    net::IpAddr,
-    path::PathBuf,
-};
+use std::{net::IpAddr, path::PathBuf};
 
 /// Stellar CLI
 #[derive(Parser, Debug)]
@@ -72,6 +69,10 @@ pub struct GenerateArgs {
 
 #[derive(Debug, Args)]
 pub struct WebArgs {
+    /// URL prefix under which the site is served (e.g. /stellar)
+    #[arg(long)]
+    pub base_path: Option<String>,
+
     /// Listening address
     #[arg(short, long)]
     pub address: Option<IpAddr>,

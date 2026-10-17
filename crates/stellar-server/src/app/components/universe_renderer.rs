@@ -145,7 +145,7 @@ pub fn UniverseCanvas(
                         .enumerate()
                         .map(|(index, course)| {
                             let title_id = format!("course-{}", course.id);
-                            let title_href = format!("/course/{}", course.id);
+                            let title_href = crate::app::base_url(&format!("/course/{}", course.id));
                             let href = if editable {
                                 String::from("#")
                             } else {

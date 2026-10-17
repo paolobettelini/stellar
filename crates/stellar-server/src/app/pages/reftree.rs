@@ -228,7 +228,7 @@ fn ReferenceTreeCanvas(tree: SnippetReferenceTree) -> impl IntoView {
                         .into_iter()
                         .map(|node| {
                             let id = node.id.clone();
-                            let href = format!("/snippet/{id}");
+                            let href = crate::app::base_url(&format!("/snippet/{id}"));
                             let element_id = format!("reftree-node-{}", node.index);
                             let is_target = node.index == root_index;
                             let left = node.x;

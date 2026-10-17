@@ -122,7 +122,7 @@ function setupAnnotations(page, viewport, container) {
                     let title = str.split('|')[1];
                     let id = url.split('/').pop();
     
-                    data.url = url;
+                    data.url = window.stellarPath(url);
     
                     element.href = data.url;
     

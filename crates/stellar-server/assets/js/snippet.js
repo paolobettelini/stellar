@@ -131,6 +131,7 @@ class SnippetElement extends HTMLElement {
                     }
 
                     this.innerHTML = content;
+                    window.rewriteStellarUrls?.(this);
 
                     // Handle <script> because they dont't work
                     nodeScriptReplace(this);

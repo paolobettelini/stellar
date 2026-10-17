@@ -44,14 +44,14 @@ pub fn NotFound() -> impl IntoView {
                 <h1>"ERROR 404"</h1>
                 <p>"We couldn't find the page you were looking for"</p>
 
-                <a class="not-found-search-button" href="/search">
+                <a class="not-found-search-button" href=crate::app::base_url("/search")>
                     <SearchIcon />
                     <span>"Go to Search"</span>
                 </a>
 
                 <img
                     class="not-found-logo"
-                    src="/assets/logo.png"
+                    src=crate::app::base_url("/assets/logo.png")
                     alt="Stellar"
                     width="112"
                     height="112"
