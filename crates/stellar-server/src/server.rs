@@ -16,6 +16,7 @@ use stellar_database::*;
 
 pub fn shell(options: LeptosOptions, base_path: String) -> impl IntoView {
     let app_base = base_path.clone();
+    let favicon_url = format!("{base_path}/favicon.ico");
     view! {
         <!DOCTYPE html>
         <html>
@@ -23,6 +24,7 @@ pub fn shell(options: LeptosOptions, base_path: String) -> impl IntoView {
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <meta name="stellar-base-path" content=base_path.clone()/>
+                <link rel="icon" href=favicon_url/>
                 <AutoReload options=options.clone()/>
                 <HydrationScripts options root=base_path/>
                 <MetaTags/>
